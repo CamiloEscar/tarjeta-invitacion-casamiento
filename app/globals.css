@@ -1,0 +1,655 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400;1,500;1,700&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400;1,500&family=Jost:wght@200;300;400;500&display=swap');
+
+/* ─────────────────────────────────────────────────────
+   DESIGN TOKENS
+   ───────────────────────────────────────────────────── */
+/* ─────────────────────────────────────────────────────
+   THEMES — controlled by data-theme on <html>
+   ─────────────────────────────────────────────────────
+   Default (gold-wine) lives in :root.
+   Other themes override the accent variables only.
+   ───────────────────────────────────────────────────── */
+
+/* ── Sage Ivory ── */
+[data-theme="sage-ivory"] {
+  --c-base:     #F5F2EC;
+  --c-linen:    #EAE6DC;
+  --c-warm:     #DDD7C8;
+  --c-dark:     #1C2318;
+  --c-dark-2:   #2A3325;
+  --c-dark-3:   #374430;
+  --c-gold:     #7A9E6E;
+  --c-gold-lt:  #98C289;
+  --c-gold-dk:  #5C7A52;
+  --c-wine:     #8A6E3C;
+  --c-wine-lt:  #A88A52;
+  --c-wine-dk:  #6A5228;
+  --c-text-1:   #1C2318;
+  --c-text-2:   #4A5E42;
+  --c-text-3:   #7A9070;
+  --c-text-inv: #F0EDE6;
+  --c-text-inv2:#C8D8BC;
+  --c-border:   rgba(122,158,110,0.18);
+  --c-border-2: rgba(122,158,110,0.32);
+}
+
+/* ── Dusty Rose ── */
+[data-theme="dusty-rose"] {
+  --c-base:     #F7F0EE;
+  --c-linen:    #EEE3DF;
+  --c-warm:     #E4D3CE;
+  --c-dark:     #2C1A18;
+  --c-dark-2:   #3E2420;
+  --c-dark-3:   #4A2C28;
+  --c-gold:     #C49A8C;
+  --c-gold-lt:  #D8B4A8;
+  --c-gold-dk:  #A87C6E;
+  --c-wine:     #8C4A52;
+  --c-wine-lt:  #A86068;
+  --c-wine-dk:  #6E3038;
+  --c-text-1:   #2C1A18;
+  --c-text-2:   #6B4840;
+  --c-text-3:   #9A7870;
+  --c-text-inv: #F8F0EE;
+  --c-text-inv2:#D4B0A8;
+  --c-border:   rgba(196,154,140,0.18);
+  --c-border-2: rgba(196,154,140,0.32);
+}
+
+/* ── Navy Champagne ── */
+[data-theme="navy-champagne"] {
+  --c-base:     #F4F0E8;
+  --c-linen:    #EAE4D8;
+  --c-warm:     #DED5C4;
+  --c-dark:     #0E1830;
+  --c-dark-2:   #182440;
+  --c-dark-3:   #22304E;
+  --c-gold:     #C4A862;
+  --c-gold-lt:  #D8C080;
+  --c-gold-dk:  #A88E48;
+  --c-wine:     #1C3C6E;
+  --c-wine-lt:  #2A5290;
+  --c-wine-dk:  #102850;
+  --c-text-1:   #0E1830;
+  --c-text-2:   #3A4E70;
+  --c-text-3:   #7A8AA8;
+  --c-text-inv: #F0EEE8;
+  --c-text-inv2:#C8C0A0;
+  --c-border:   rgba(196,168,98,0.18);
+  --c-border-2: rgba(196,168,98,0.32);
+}
+
+/* ── Emerald Gold ── */
+[data-theme="emerald-gold"] {
+  --c-base:     #F2F5EE;
+  --c-linen:    #E6EBE0;
+  --c-warm:     #D8DFD0;
+  --c-dark:     #0E2018;
+  --c-dark-2:   #182E22;
+  --c-dark-3:   #223C2C;
+  --c-gold:     #C4A84A;
+  --c-gold-lt:  #D8C068;
+  --c-gold-dk:  #A88E32;
+  --c-wine:     #1A5C38;
+  --c-wine-lt:  #24784A;
+  --c-wine-dk:  #104028;
+  --c-text-1:   #0E2018;
+  --c-text-2:   #3A5840;
+  --c-text-3:   #6A9070;
+  --c-text-inv: #F0F5EE;
+  --c-text-inv2:#BCCC98;
+  --c-border:   rgba(196,168,74,0.18);
+  --c-border-2: rgba(196,168,74,0.32);
+}
+
+:root {
+  /* Surfaces */
+  --c-base:    #F5EFE4;
+  --c-linen:   #EDE4D6;
+  --c-warm:    #E3D6C3;
+  --c-dark:    #2C1A10;
+  --c-dark-2:  #3E2418;
+  --c-dark-3:  #4A2C1C;
+
+  /* Accent */
+  --c-gold:    #B5894E;
+  --c-gold-lt: #CFAA70;
+  --c-gold-dk: #8A6530;
+  --c-wine:    #6B2635;
+  --c-wine-lt: #8A3347;
+  --c-wine-dk: #4A1820;
+
+  /* Text */
+  --c-text-1:  #251508;
+  --c-text-2:  #6B5038;
+  --c-text-3:  #9A8068;
+  --c-text-inv:#F0E8DA;
+  --c-text-inv2:#C4A882;
+
+  /* UI */
+  --c-border:  rgba(181,137,78,0.16);
+  --c-border-2:rgba(181,137,78,0.30);
+
+  /* Typography */
+  --font-display: var(--font-playfair), "Playfair Display", Georgia, serif;
+  --font-serif:   var(--font-cormorant), "Cormorant Garamond", Georgia, serif;
+  --font-sans:    var(--font-jost), "Jost", system-ui, sans-serif;
+}
+
+/* ─────────────────────────────────────────────────────
+   BASE
+   ───────────────────────────────────────────────────── */
+@layer base {
+  *, *::before, *::after { box-sizing: border-box; }
+
+  html {
+    font-size: 16px;
+    scroll-behavior: smooth;
+    scroll-padding-top: 56px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    background: var(--c-base);
+    color: var(--c-text-1);
+    font-family: var(--font-sans);
+    font-weight: 300;
+    overflow-x: hidden;
+    min-height: 100dvh;
+  }
+
+  ::selection {
+    background: var(--c-wine);
+    color: white;
+  }
+
+  ::-webkit-scrollbar       { width: 3px; }
+  ::-webkit-scrollbar-track { background: var(--c-linen); }
+  ::-webkit-scrollbar-thumb { background: var(--c-gold); border-radius: 2px; }
+
+  img, video { max-width: 100%; display: block; }
+  a { color: inherit; text-decoration: none; }
+  button { cursor: pointer; border: none; background: none; font-family: inherit; }
+}
+
+/* ─────────────────────────────────────────────────────
+   TYPOGRAPHY SCALE
+   ───────────────────────────────────────────────────── */
+@layer utilities {
+  /* Display — Playfair, for names / hero */
+  .t-hero {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(4.5rem, 18vw, 11rem);
+    line-height: 0.9;
+    letter-spacing: -0.01em;
+  }
+
+  /* Section titles */
+  .t-title {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(2.2rem, 5vw, 3.4rem);
+    line-height: 1.08;
+  }
+
+  /* Subtitle — Cormorant italic */
+  .t-subtitle {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: clamp(1.15rem, 2.5vw, 1.6rem);
+    line-height: 1.5;
+    font-weight: 300;
+  }
+
+  /* Body */
+  .t-body {
+    font-family: var(--font-sans);
+    font-size: 0.9rem;
+    line-height: 1.85;
+    font-weight: 300;
+  }
+
+  /* Caption / label */
+  .t-label {
+    font-family: var(--font-sans);
+    font-size: 0.62rem;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    font-weight: 400;
+  }
+
+  /* Eyebrow accent */
+  .t-eye {
+    font-family: var(--font-sans);
+    font-size: 0.6rem;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    font-weight: 400;
+    color: var(--c-gold);
+  }
+
+  /* Section spacing */
+  .s-pad { @apply py-24 md:py-36; }
+  .s-pad-sm { @apply py-16 md:py-24; }
+
+  /* Max widths */
+  .w-content { max-width: 900px; margin-left: auto; margin-right: auto; }
+  .w-narrow  { max-width: 640px; margin-left: auto; margin-right: auto; }
+  .w-wide    { max-width: 1100px; margin-left: auto; margin-right: auto; }
+}
+
+/* ─────────────────────────────────────────────────────
+   COMPONENT LIBRARY
+   ───────────────────────────────────────────────────── */
+@layer components {
+
+  /* ── Gold divider line ── */
+  .g-line {
+    display: block;
+    width: 48px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--c-gold), transparent);
+    margin: 1.4rem 0;
+  }
+  .g-line-c { margin-left: auto; margin-right: auto; }
+
+  /* ── Ornament row ── */
+  .ornament-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+  }
+  .ornament-row::before,
+  .ornament-row::after {
+    content: '';
+    flex: 1;
+    max-width: 60px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--c-gold));
+    opacity: 0.5;
+  }
+  .ornament-row::after {
+    background: linear-gradient(270deg, transparent, var(--c-gold));
+  }
+
+  /* ── Buttons ── */
+  .btn {
+    @apply relative inline-flex items-center justify-center gap-2
+           text-[0.65rem] tracking-[0.24em] uppercase font-sans font-medium
+           overflow-hidden;
+    padding: 1rem 2.4rem;
+    transition: color 0.35s ease;
+  }
+  .btn::after {
+    content: '';
+    position: absolute; inset: 0;
+    transition: transform 0.42s cubic-bezier(0.4, 0, 0.2, 1);
+    transform: scaleX(0);
+    transform-origin: right;
+  }
+  .btn:hover::after {
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+  .btn > span { position: relative; z-index: 1; }
+
+  .btn-wine {
+    @apply btn;
+    background: var(--c-wine);
+    color: var(--c-text-inv);
+    border: 1px solid transparent;
+  }
+  .btn-wine::after { background: var(--c-wine-lt); }
+
+  .btn-outline-dark {
+    @apply btn;
+    background: transparent;
+    color: var(--c-dark);
+    border: 1px solid var(--c-border-2);
+  }
+  .btn-outline-dark::after { background: var(--c-gold); }
+  .btn-outline-dark:hover { color: white; }
+
+  .btn-outline-light {
+    @apply btn;
+    background: transparent;
+    color: var(--c-text-inv);
+    border: 1px solid rgba(240,232,218,0.2);
+  }
+  .btn-outline-light::after { background: rgba(181,137,78,0.2); }
+  .btn-outline-light:hover { color: var(--c-gold-lt); }
+
+  /* ── Form field ── */
+  .f-field {
+    @apply flex flex-col gap-1.5;
+  }
+  .f-label {
+    font-family: var(--font-sans);
+    font-size: 0.6rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    font-weight: 400;
+    color: var(--c-text-inv2);
+  }
+  .f-input {
+    background: rgba(255,255,255,0.05);
+    border: none;
+    border-bottom: 1px solid rgba(181,137,78,0.22);
+    padding: 0.75rem 0.25rem;
+    font-family: var(--font-sans);
+    font-size: 0.9rem;
+    font-weight: 300;
+    color: var(--c-text-inv);
+    outline: none;
+    width: 100%;
+    border-radius: 0;
+    transition: border-color 0.25s;
+    -webkit-appearance: none;
+  }
+  .f-input::placeholder { color: rgba(154,128,104,0.55); }
+  .f-input:focus { border-bottom-color: var(--c-gold); }
+  .f-input option { background: var(--c-dark); color: var(--c-text-inv); }
+
+  /* ── Section surface variants ── */
+  .surf-sand    { background: var(--c-base); }
+  .surf-linen   { background: var(--c-linen); }
+  .surf-warm    { background: var(--c-warm); }
+  .surf-dark    { background: var(--c-dark); }
+  .surf-dark-2  { background: var(--c-dark-2); }
+  .surf-dark-3  { background: var(--c-dark-3); }
+
+  /* ── Card ── */
+  .card-light {
+    background: var(--c-base);
+    border: 1px solid var(--c-border);
+  }
+  .card-dark {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(181,137,78,0.14);
+  }
+
+  /* ── Polaroid ── */
+  .polaroid {
+    background: white;
+    padding: 0.5rem 0.5rem 2.5rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.08), 0 10px 30px rgba(44,26,16,0.18);
+    position: relative;
+  }
+}
+
+/* ─────────────────────────────────────────────────────
+   CURSOR BLINK
+   ───────────────────────────────────────────────────── */
+@keyframes cursorPulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+.cursor-blink { animation: cursorPulse 1s ease-in-out infinite; }
+
+/* ─────────────────────────────────────────────────────
+   GRAIN OVERLAY (subtle paper texture)
+   ───────────────────────────────────────────────────── */
+body::after {
+  content: '';
+  position: fixed; inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.018;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ─────────────────────────────────────────────────────
+   JOURNEY LINE — decorative thread connecting sections
+   ───────────────────────────────────────────────────── */
+
+/* Vertical connector between sections */
+.journey-connector {
+  position: relative;
+  z-index: 0;
+}
+.journey-connector::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: -2rem;
+  bottom: -2rem;
+  width: 1px;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgba(181,137,78,0.25) 20%,
+    rgba(181,137,78,0.25) 80%,
+    transparent 100%
+  );
+  transform: translateX(-50%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Section separator ornament */
+.section-sep {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 0;
+  position: relative;
+  z-index: 1;
+}
+.section-sep::before,
+.section-sep::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  max-width: 120px;
+  background: linear-gradient(90deg, transparent, rgba(181,137,78,0.3));
+}
+.section-sep::after {
+  background: linear-gradient(270deg, transparent, rgba(181,137,78,0.3));
+}
+
+/* ─────────────────────────────────────────────────────
+   ANIMATED ICONS
+   ───────────────────────────────────────────────────── */
+@keyframes heartbeat {
+  0%,100% { transform: scale(1);    }
+  14%     { transform: scale(1.2);  }
+  28%     { transform: scale(1);    }
+  42%     { transform: scale(1.15); }
+  56%     { transform: scale(1);    }
+}
+@keyframes ringPulse {
+  0%,100% { transform: scale(1) rotate(0deg);   opacity:1; }
+  50%     { transform: scale(1.1) rotate(10deg); opacity:0.85; }
+}
+@keyframes floatIcon {
+  0%,100% { transform: translateY(0) rotate(-3deg); }
+  50%     { transform: translateY(-8px) rotate(3deg); }
+}
+@keyframes sparkle {
+  0%,100% { opacity:1; transform: scale(1) rotate(0deg); }
+  25%     { opacity:0.6; transform: scale(0.85) rotate(90deg); }
+  50%     { opacity:1; transform: scale(1.15) rotate(180deg); }
+  75%     { opacity:0.7; transform: scale(0.9) rotate(270deg); }
+}
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+.icon-heartbeat { animation: heartbeat 2.5s ease-in-out infinite; }
+.icon-ring      { animation: ringPulse 3s ease-in-out infinite; }
+.icon-float     { animation: floatIcon 4s ease-in-out infinite; }
+.icon-sparkle   { animation: sparkle 4s linear infinite; }
+.icon-spin      { animation: spin-slow 8s linear infinite; }
+
+/* ─────────────────────────────────────────────────────
+   CAROUSEL
+   ───────────────────────────────────────────────────── */
+.carousel-track {
+  display: flex;
+  gap: 1rem;
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform;
+}
+
+/* ─────────────────────────────────────────────────────
+   PRINT CARD
+   ───────────────────────────────────────────────────── */
+@media print {
+  body * { visibility: hidden; }
+  #print-card, #print-card * { visibility: visible; }
+  #print-card {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+/* ─────────────────────────────────────────────────────
+   TRIVIA
+   ───────────────────────────────────────────────────── */
+.trivia-opt {
+  width: 100%;
+  text-align: left;
+  padding: 0.85rem 1.1rem;
+  border: 1px solid rgba(181,137,78,0.2);
+  background: rgba(255,255,255,0.03);
+  color: var(--c-text-inv);
+  font-family: var(--font-jost);
+  font-size: 0.88rem;
+  font-weight: 300;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+.trivia-opt:hover {
+  border-color: var(--c-gold);
+  background: rgba(181,137,78,0.08);
+}
+.trivia-opt.correct {
+  border-color: #4caf50;
+  background: rgba(76,175,80,0.12);
+  color: #a5d6a7;
+}
+.trivia-opt.wrong {
+  border-color: var(--c-wine);
+  background: rgba(107,38,53,0.15);
+  color: rgba(240,200,200,0.8);
+}
+
+/* ─────────────────────────────────────────────────────
+   RESPONSIVE IMPROVEMENTS
+   ───────────────────────────────────────────────────── */
+
+/* Reduce padding on very small screens */
+@media (max-width: 380px) {
+  .s-pad    { @apply py-16 !important; }
+  .s-pad-sm { @apply py-12 !important; }
+  .w-content, .w-narrow { padding-left: 1rem; padding-right: 1rem; }
+}
+
+/* Tap targets — make sure all interactive elements are at least 44px */
+@media (hover: none) and (pointer: coarse) {
+  .btn, .btn-wine, .btn-outline-dark, .btn-outline-light {
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  button, [role="button"] {
+    min-height: 40px;
+  }
+  /* More spacing in forms on touch devices */
+  .f-input {
+    font-size: 16px !important; /* prevents iOS zoom on focus */
+    padding-bottom: 0.9rem;
+  }
+  select.f-input {
+    font-size: 16px !important;
+  }
+}
+
+/* Safe area insets (iPhone notch / home indicator) */
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  .fixed-bottom-safe {
+    padding-bottom: calc(1rem + env(safe-area-inset-bottom));
+  }
+  body {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
+/* Better text on small screens */
+@media (max-width: 640px) {
+  .t-hero {
+    font-size: clamp(3.5rem, 16vw, 6rem) !important;
+  }
+  .t-title {
+    font-size: clamp(1.8rem, 7vw, 2.8rem) !important;
+  }
+}
+
+/* ─────────────────────────────────────────────────────
+   HERO VIDEO UTILITIES
+   ───────────────────────────────────────────────────── */
+
+/* Ensure video fills container and transitions smoothly */
+.hero-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+/* ─────────────────────────────────────────────────────
+   SMOOTH SCROLL + FOCUS
+   ───────────────────────────────────────────────────── */
+
+/* Remove focus ring on mouse click, keep for keyboard */
+:focus:not(:focus-visible) { outline: none; }
+:focus-visible {
+  outline: 2px solid var(--c-gold);
+  outline-offset: 2px;
+}
+
+/* Selection color */
+::selection {
+  background: rgba(181,137,78,0.25);
+  color: var(--c-text-1);
+}
+
+/* ─────────────────────────────────────────────────────
+   PRINT STYLES — /print route
+   ───────────────────────────────────────────────────── */
+@media print {
+  .no-print { display: none !important; }
+
+  body {
+    background: white !important;
+    margin: 0 !important;
+  }
+
+  #print-card {
+    box-shadow: none !important;
+    width: 100% !important;
+    max-width: 540px;
+    margin: 0 auto;
+  }
+}
+
+@keyframes pcSpin {
+  to { transform: rotate(360deg); }
+}
