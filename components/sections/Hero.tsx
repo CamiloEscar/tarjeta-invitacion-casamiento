@@ -159,7 +159,7 @@ function VideoLoadBar({ progress, visible }: { progress: number; visible: boolea
             textTransform: "uppercase",
             color: isReady ? "var(--c-gold-lt)" : "rgba(181,137,78,0.45)",
           }}>
-            {isReady ? "▶ Reproduciendo" : "Cargando video"}
+            {isReady ? "Reproduciendo" : "Cargando video"}
           </span>
 
           {/* Countdown — aparece cuando hay estimación ≤ 30 seg */}
@@ -265,6 +265,8 @@ export default function Hero() {
   const bgImage      = W.heroBgImage || DEFAULT_BG;
   const filterPreset = FILTERS[W.heroFilter] ?? FILTERS.romance;
 
+  const [showVideo, setShowVideo] = useState(false);
+
   // Track buffered progress
   useEffect(() => {
     const v = vidRef.current;
@@ -290,7 +292,13 @@ export default function Hero() {
 
     const onPlaying = () => {
       setVideoReady(true);
-      // Hide bar after brief moment showing "Reproduciendo"
+
+      // ⏳ Delay de 3s antes de mostrar el video
+      setTimeout(() => {
+        setShowVideo(true);
+      }, 7000);
+
+      // Tu lógica actual
       setTimeout(() => setShowLoadBar(false), 4000);
     };
 
@@ -329,10 +337,10 @@ export default function Hero() {
     >
       {/* ── Background Layer ───────────────────────────────── */}
       <motion.div
-        style={{ y: bgY }}
+        style={{ overflow: "hidden", y: bgY }}
         className="absolute inset-0 -z-10"
         // Extra overflow clip on the parallax element itself
-        css={{ overflow: "hidden" }}
+        // css={{ overflow: "hidden" }}
       >
         {/* Image background — always rendered underneath */}
         <div
@@ -345,7 +353,7 @@ export default function Hero() {
             filter: filterPreset.filter,
             transform: "scale(1.08)",
             // Transition out when video takes over
-            opacity: videoReady ? 0 : 1,
+            opacity: showVideo ? 0 : 1,
             transition: "opacity 1.2s ease",
           }}
         />
@@ -368,7 +376,7 @@ export default function Hero() {
               objectFit: "cover",
               objectPosition: "center",
               filter: filterPreset.filter,
-              opacity: videoReady ? 1 : 0,
+              opacity: showVideo ? 1 : 0,
               transition: "opacity 1.2s ease",
               transform: "scale(1.08)",
             }}

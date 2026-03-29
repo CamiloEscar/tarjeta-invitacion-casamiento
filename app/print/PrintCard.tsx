@@ -364,7 +364,7 @@ function InviteGenerator() {
   const [name,   setName]   = useState("");
   const [list,   setList]   = useState<Array<{ name: string; url: string; wa: string }>>([]);
   const [copied, setCopied] = useState<number | null>(null);
-  const [origin, setOrigin] = useState(W.baseUrl);
+  const [origin, setOrigin] = useState<string>(W.baseUrl);
 
   useEffect(() => { setOrigin(window.location.origin); }, []);
 

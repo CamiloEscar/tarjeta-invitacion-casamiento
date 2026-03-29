@@ -12,7 +12,7 @@ export const W = {
   introText:       "Con alegría enorme queremos que seas parte del día más lindo de nuestras vidas",
   footerMessage:   "Gracias por acompañarnos. Que estés acá significa todo para nosotros.",
   location:        "Concepción del Uruguay, Entre Ríos",
-  baseUrl:         "https://6bda-190-225-197-25.ngrok-free.app",
+  baseUrl:         "https://invitacion-leo-pao.vercel.app/",
 
   ceremony: {
     name:    "Nombre IGLESIA",
