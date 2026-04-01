@@ -76,171 +76,221 @@ function CountUnit({ val, label, ready }: { val: number; label: string; ready: b
 }
 
 // ── Video load bar — franja horizontal integrada en bottom bar
-function VideoLoadBar({ progress, visible }: { progress: number; visible: boolean }) {
-  const [countdown, setCountdown] = useState<number | null>(null);
-  const startTimeRef = useRef<number | null>(null);
+// function VideoLoadBar({ progress, visible }: { progress: number; visible: boolean }) {
+//   const [countdown, setCountdown] = useState<number | null>(null);
+//   const startTimeRef = useRef<number | null>(null);
 
-  useEffect(() => {
-    if (!visible || progress >= 100) return;
-    if (startTimeRef.current === null && progress > 0) {
-      startTimeRef.current = Date.now();
-    }
-    if (startTimeRef.current && progress > 0 && progress < 100) {
-      const elapsed   = (Date.now() - startTimeRef.current) / 1000;
-      const rate      = progress / elapsed;
-      const remaining = rate > 0 ? (100 - progress) / rate : null;
-      setCountdown(remaining !== null ? Math.ceil(remaining) : null);
-    }
-  }, [progress, visible]);
+//   useEffect(() => {
+//     if (!visible || progress >= 100) return;
+//     if (startTimeRef.current === null && progress > 0) {
+//       startTimeRef.current = Date.now();
+//     }
+//     if (startTimeRef.current && progress > 0 && progress < 100) {
+//       const elapsed   = (Date.now() - startTimeRef.current) / 1000;
+//       const rate      = progress / elapsed;
+//       const remaining = rate > 0 ? (100 - progress) / rate : null;
+//       setCountdown(remaining !== null ? Math.ceil(remaining) : null);
+//     }
+//   }, [progress, visible]);
 
-  const isReady = progress >= 100;
+//   const isReady = progress >= 100;
 
+//   return (
+//     <div style={{
+//       display: "flex",
+//       alignItems: "center",
+//       gap: "clamp(0.75rem, 3vw, 1.5rem)",
+//       padding: "0.6rem clamp(1rem, 4vw, 2rem) 0.9rem",
+//       borderTop: "1px solid rgba(181,137,78,0.1)",
+//     }}>
+
+//       {/* Spinner / play icon */}
+//       <div style={{ position: "relative", width: 22, height: 22, flexShrink: 0 }}>
+//         {isReady ? (
+//           <motion.div
+//             initial={{ scale: 0.5, opacity: 0 }}
+//             animate={{ scale: 1, opacity: 1 }}
+//             style={{
+//               width: 22, height: 22,
+//               borderRadius: "50%",
+//               background: "rgba(181,137,78,0.15)",
+//               border: "1px solid rgba(181,137,78,0.35)",
+//               display: "flex", alignItems: "center", justifyContent: "center",
+//             }}
+//           >
+//             <svg width="7" height="8" viewBox="0 0 7 8" fill="none">
+//               <path d="M1 1l5 3-5 3V1z" fill="var(--c-gold)" />
+//             </svg>
+//           </motion.div>
+//         ) : (
+//           <>
+//             <motion.div
+//               animate={{ scale: [1, 1.55, 1], opacity: [0.5, 0, 0.5] }}
+//               transition={{ duration: 1.8, repeat: Infinity }}
+//               style={{
+//                 position: "absolute", inset: 0,
+//                 borderRadius: "50%",
+//                 border: "1px solid rgba(181,137,78,0.35)",
+//               }}
+//             />
+//             <motion.div
+//               animate={{ rotate: 360 }}
+//               transition={{ duration: 1.1, repeat: Infinity, ease: "linear" }}
+//               style={{
+//                 position: "absolute", inset: 3,
+//                 borderRadius: "50%",
+//                 border: "1.5px solid transparent",
+//                 borderTopColor: "var(--c-gold)",
+//               }}
+//             />
+//           </>
+//         )}
+//       </div>
+
+//       {/* Label + bar + countdown */}
+//       <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "0.35rem" }}>
+
+//         {/* Top row: label izq, countdown der */}
+//         <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between" }}>
+//           <span style={{
+//             fontFamily: "var(--font-jost)",
+//             fontSize: "clamp(0.38rem, 0.9vw, 0.46rem)",
+//             letterSpacing: "0.24em",
+//             textTransform: "uppercase",
+//             color: isReady ? "var(--c-gold-lt)" : "rgba(181,137,78,0.45)",
+//           }}>
+//             {isReady ? "Reproduciendo" : "Cargando video"}
+//           </span>
+
+//           {/* Countdown — aparece cuando hay estimación ≤ 30 seg */}
+//           <AnimatePresence mode="wait">
+//             {!isReady && countdown !== null && countdown > 0 && countdown <= 60 && (
+//               <motion.div
+//                 key={countdown}
+//                 initial={{ opacity: 0, y: -3 }}
+//                 animate={{ opacity: 1, y: 0 }}
+//                 exit={{ opacity: 0 }}
+//                 transition={{ duration: 0.25 }}
+//                 style={{ display: "flex", alignItems: "baseline", gap: "0.18rem" }}
+//               >
+//                 <span style={{
+//                   fontFamily: "var(--font-playfair)",
+//                   fontStyle: "italic",
+//                   fontSize: "clamp(0.85rem, 2.5vw, 1.1rem)",
+//                   color: "var(--c-gold-lt)",
+//                   lineHeight: 1,
+//                   fontVariantNumeric: "tabular-nums",
+//                 }}>
+//                   {countdown}
+//                 </span>
+//                 <span style={{
+//                   fontFamily: "var(--font-jost)",
+//                   fontSize: "clamp(0.3rem, 0.7vw, 0.38rem)",
+//                   letterSpacing: "0.18em",
+//                   textTransform: "uppercase",
+//                   color: "rgba(154,128,104,0.38)",
+//                 }}>
+//                   seg
+//                 </span>
+//               </motion.div>
+//             )}
+//           </AnimatePresence>
+//         </div>
+
+//         {/* Progress track */}
+//         <div style={{
+//           width: "100%",
+//           height: 2,
+//           background: "rgba(181,137,78,0.1)",
+//           overflow: "hidden",
+//           position: "relative",
+//         }}>
+//           <motion.div
+//             animate={{ width: `${progress}%` }}
+//             transition={{ duration: 3, ease: "linear" }}
+//             style={{
+//               height: "100%",
+//               background: isReady
+//                 ? "linear-gradient(to right, var(--c-wine), var(--c-gold))"
+//                 : "linear-gradient(to right, rgba(181,137,78,0.25), var(--c-gold))",
+//             }}
+//           />
+//           {!isReady && (
+//             <motion.div
+//               animate={{ x: ["-100%", "500%"] }}
+//               transition={{ duration: 3.5, repeat: Infinity, ease: "linear" }}
+//               style={{
+//                 position: "absolute", top: 0, left: 0,
+//                 width: "25%", height: "100%",
+//                 background: "linear-gradient(to right, transparent, rgba(255,220,150,0.5), transparent)",
+//               }}
+//             />
+//           )}
+//         </div>
+//       </div>
+
+//       {/* Percentage */}
+//       <span style={{
+//         fontFamily: "var(--font-jost)",
+//         fontSize: "clamp(0.36rem, 0.8vw, 0.42rem)",
+//         letterSpacing: "0.14em",
+//         color: "rgba(154,128,104,0.28)",
+//         flexShrink: 0,
+//         minWidth: "2.5ch",
+//         textAlign: "right",
+//       }}>
+//         {progress}%
+//       </span>
+//     </div>
+//   );
+// }
+
+function VideoLoadBar({ progress }: { progress: number }) {
   return (
     <div style={{
-      display: "flex",
-      alignItems: "center",
-      gap: "clamp(0.75rem, 3vw, 1.5rem)",
       padding: "0.6rem clamp(1rem, 4vw, 2rem) 0.9rem",
       borderTop: "1px solid rgba(181,137,78,0.1)",
+      display: "flex",
+      flexDirection: "column",
+      gap: "0.4rem",
     }}>
-
-      {/* Spinner / play icon */}
-      <div style={{ position: "relative", width: 22, height: 22, flexShrink: 0 }}>
-        {isReady ? (
-          <motion.div
-            initial={{ scale: 0.5, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            style={{
-              width: 22, height: 22,
-              borderRadius: "50%",
-              background: "rgba(181,137,78,0.15)",
-              border: "1px solid rgba(181,137,78,0.35)",
-              display: "flex", alignItems: "center", justifyContent: "center",
-            }}
-          >
-            <svg width="7" height="8" viewBox="0 0 7 8" fill="none">
-              <path d="M1 1l5 3-5 3V1z" fill="var(--c-gold)" />
-            </svg>
-          </motion.div>
-        ) : (
-          <>
-            <motion.div
-              animate={{ scale: [1, 1.55, 1], opacity: [0.5, 0, 0.5] }}
-              transition={{ duration: 1.8, repeat: Infinity }}
-              style={{
-                position: "absolute", inset: 0,
-                borderRadius: "50%",
-                border: "1px solid rgba(181,137,78,0.35)",
-              }}
-            />
-            <motion.div
-              animate={{ rotate: 360 }}
-              transition={{ duration: 1.1, repeat: Infinity, ease: "linear" }}
-              style={{
-                position: "absolute", inset: 3,
-                borderRadius: "50%",
-                border: "1.5px solid transparent",
-                borderTopColor: "var(--c-gold)",
-              }}
-            />
-          </>
-        )}
-      </div>
-
-      {/* Label + bar + countdown */}
-      <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "0.35rem" }}>
-
-        {/* Top row: label izq, countdown der */}
-        <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between" }}>
-          <span style={{
-            fontFamily: "var(--font-jost)",
-            fontSize: "clamp(0.38rem, 0.9vw, 0.46rem)",
-            letterSpacing: "0.24em",
-            textTransform: "uppercase",
-            color: isReady ? "var(--c-gold-lt)" : "rgba(181,137,78,0.45)",
-          }}>
-            {isReady ? "Reproduciendo" : "Cargando video"}
-          </span>
-
-          {/* Countdown — aparece cuando hay estimación ≤ 30 seg */}
-          <AnimatePresence mode="wait">
-            {!isReady && countdown !== null && countdown > 0 && countdown <= 30 && (
-              <motion.div
-                key={countdown}
-                initial={{ opacity: 0, y: -3 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.25 }}
-                style={{ display: "flex", alignItems: "baseline", gap: "0.18rem" }}
-              >
-                <span style={{
-                  fontFamily: "var(--font-playfair)",
-                  fontStyle: "italic",
-                  fontSize: "clamp(0.85rem, 2.5vw, 1.1rem)",
-                  color: "var(--c-gold-lt)",
-                  lineHeight: 1,
-                  fontVariantNumeric: "tabular-nums",
-                }}>
-                  {countdown}
-                </span>
-                <span style={{
-                  fontFamily: "var(--font-jost)",
-                  fontSize: "clamp(0.3rem, 0.7vw, 0.38rem)",
-                  letterSpacing: "0.18em",
-                  textTransform: "uppercase",
-                  color: "rgba(154,128,104,0.38)",
-                }}>
-                  seg
-                </span>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-
-        {/* Progress track */}
-        <div style={{
-          width: "100%",
-          height: 2,
-          background: "rgba(181,137,78,0.1)",
-          overflow: "hidden",
-          position: "relative",
+      {/* Label + porcentaje */}
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
+        <span style={{
+          fontFamily: "var(--font-jost)",
+          fontSize: "clamp(0.38rem, 0.9vw, 0.46rem)",
+          letterSpacing: "0.24em",
+          textTransform: "uppercase",
+          color: "rgba(181,137,78,0.45)",
         }}>
-          <motion.div
-            animate={{ width: `${progress}%` }}
-            transition={{ duration: 1.2, ease: "linear" }}
-            style={{
-              height: "100%",
-              background: isReady
-                ? "linear-gradient(to right, var(--c-wine), var(--c-gold))"
-                : "linear-gradient(to right, rgba(181,137,78,0.25), var(--c-gold))",
-            }}
-          />
-          {!isReady && (
-            <motion.div
-              animate={{ x: ["-100%", "500%"] }}
-              transition={{ duration: 1.8, repeat: Infinity, ease: "linear" }}
-              style={{
-                position: "absolute", top: 0, left: 0,
-                width: "25%", height: "100%",
-                background: "linear-gradient(to right, transparent, rgba(255,220,150,0.5), transparent)",
-              }}
-            />
-          )}
-        </div>
+          Cargando video
+        </span>
+        <span style={{
+          fontFamily: "var(--font-jost)",
+          fontSize: "clamp(0.36rem, 0.8vw, 0.42rem)",
+          letterSpacing: "0.14em",
+          color: "rgba(154,128,104,0.4)",
+        }}>
+          {progress}%
+        </span>
       </div>
 
-      {/* Percentage */}
-      <span style={{
-        fontFamily: "var(--font-jost)",
-        fontSize: "clamp(0.36rem, 0.8vw, 0.42rem)",
-        letterSpacing: "0.14em",
-        color: "rgba(154,128,104,0.28)",
-        flexShrink: 0,
-        minWidth: "2.5ch",
-        textAlign: "right",
+      {/* Barra */}
+      <div style={{
+        width: "100%",
+        height: 2,
+        background: "rgba(181,137,78,0.1)",
+        overflow: "hidden",
       }}>
-        {progress}%
-      </span>
+        <motion.div
+          animate={{ width: `${progress}%` }}
+          transition={{ duration: 2.5, ease: "linear" }}
+          style={{
+            height: "100%",
+            background: "linear-gradient(to right, rgba(181,137,78,0.25), var(--c-gold))",
+          }}
+        />
+      </div>
     </div>
   );
 }
@@ -265,61 +315,93 @@ export default function Hero() {
   const bgImage      = W.heroBgImage || DEFAULT_BG;
   const filterPreset = FILTERS[W.heroFilter] ?? FILTERS.romance;
 
-  const [showVideo, setShowVideo] = useState(false);
+  // // Track buffered progress
+  // useEffect(() => {
+  //   const v = vidRef.current;
+  //   if (!v || !W.heroVideo) return;
 
-  // Track buffered progress
+  //   // Show bar shortly after mount so user knows video is coming
+  //   const showTimer = setTimeout(() => setShowLoadBar(true), 500);
+
+  //   const updateProgress = () => {
+  //     if (!v.duration) return;
+  //     const buffered = v.buffered;
+  //     if (buffered.length > 0) {
+  //       const loaded = (buffered.end(buffered.length - 1) / v.duration) * 100;
+  //       setLoadProgress(Math.min(Math.round(loaded), 100));
+  //     }
+  //   };
+
+  //   const onCanPlay = () => {
+  //     setLoadProgress(100);
+  //     v.muted = true;
+  //     v.play().catch(() => {});
+  //   };
+
+  //   const onPlaying = () => {
+  //     setTimeout(() => {
+  //       setVideoReady(true);
+  //       setTimeout(() => setShowLoadBar(false), 8000); // luego oculta la barra
+  //     }, 3000); // retrasa la transición visual
+  //   };
+
+  //   const onError = () => {
+  //     setVideoError(true);
+  //     setShowLoadBar(false);
+  //   };
+
+  //   v.addEventListener("progress",   updateProgress);
+  //   v.addEventListener("canplay",    onCanPlay);
+  //   v.addEventListener("playing",    onPlaying);
+  //   v.addEventListener("error",      onError);
+
+  //   return () => {
+  //     clearTimeout(showTimer);
+  //     v.removeEventListener("progress",   updateProgress);
+  //     v.removeEventListener("canplay",    onCanPlay);
+  //     v.removeEventListener("playing",    onPlaying);
+  //     v.removeEventListener("error",      onError);
+  //   };
+  // }, []);
+
   useEffect(() => {
-    const v = vidRef.current;
-    if (!v || !W.heroVideo) return;
+  const v = vidRef.current;
+  if (!v || !W.heroVideo) return;
 
-    // Show bar shortly after mount so user knows video is coming
-    const showTimer = setTimeout(() => setShowLoadBar(true), 1000);
+  const showTimer = setTimeout(() => setShowLoadBar(true), 500);
 
-    const updateProgress = () => {
-      if (!v.duration) return;
-      const buffered = v.buffered;
-      if (buffered.length > 0) {
-        const loaded = (buffered.end(buffered.length - 1) / v.duration) * 100;
-        setLoadProgress(Math.min(Math.round(loaded), 100));
-      }
-    };
+  const updateProgress = () => {
+    if (!v.duration || !v.buffered.length) return;
+    const loaded = (v.buffered.end(v.buffered.length - 1) / v.duration) * 100;
+    setLoadProgress(Math.min(Math.round(loaded), 100));
+  };
 
-    const onCanPlay = () => {
-      setLoadProgress(100);
-      v.muted = true;
-      v.play().catch(() => {});
-    };
+  const onCanPlay = () => {
+    setLoadProgress(100);
+    v.muted = true;
+    v.play().catch(() => {});
+  };
 
-    const onPlaying = () => {
-      setVideoReady(true);
+  const onPlaying = () => {
+    setVideoReady(true);
+    setTimeout(() => setShowLoadBar(false), 2000);
+  };
 
-      // ⏳ Delay de 3s antes de mostrar el video
-      setTimeout(() => {
-        setShowVideo(true);
-      }, 7000);
+  const onError = () => setShowLoadBar(false);
 
-      // Tu lógica actual
-      setTimeout(() => setShowLoadBar(false), 4000);
-    };
+  v.addEventListener("progress", updateProgress);
+  v.addEventListener("canplay",  onCanPlay);
+  v.addEventListener("playing",  onPlaying);
+  v.addEventListener("error",    onError);
 
-    const onError = () => {
-      setVideoError(true);
-      setShowLoadBar(false);
-    };
-
-    v.addEventListener("progress",   updateProgress);
-    v.addEventListener("canplay",    onCanPlay);
-    v.addEventListener("playing",    onPlaying);
-    v.addEventListener("error",      onError);
-
-    return () => {
-      clearTimeout(showTimer);
-      v.removeEventListener("progress",   updateProgress);
-      v.removeEventListener("canplay",    onCanPlay);
-      v.removeEventListener("playing",    onPlaying);
-      v.removeEventListener("error",      onError);
-    };
-  }, []);
+  return () => {
+    clearTimeout(showTimer);
+    v.removeEventListener("progress", updateProgress);
+    v.removeEventListener("canplay",  onCanPlay);
+    v.removeEventListener("playing",  onPlaying);
+    v.removeEventListener("error",    onError);
+  };
+}, []);
 
   return (
     <section
@@ -353,7 +435,7 @@ export default function Hero() {
             filter: filterPreset.filter,
             transform: "scale(1.08)",
             // Transition out when video takes over
-            opacity: showVideo ? 0 : 1,
+            opacity: videoReady ? 0 : 1,
             transition: "opacity 1.2s ease",
           }}
         />
@@ -376,7 +458,7 @@ export default function Hero() {
               objectFit: "cover",
               objectPosition: "center",
               filter: filterPreset.filter,
-              opacity: showVideo ? 1 : 0,
+              opacity: videoReady ? 1 : 0,
               transition: "opacity 1.2s ease",
               transform: "scale(1.08)",
             }}
@@ -672,7 +754,9 @@ export default function Hero() {
               exit={{ opacity: 0, height: 0, transition: { delay: 0.6, duration: 0.5 } }}
               style={{ overflow: "hidden" }}
             >
-              <VideoLoadBar progress={loadProgress} visible={true} />
+              <VideoLoadBar progress={loadProgress} 
+              // visible={true} 
+              />
             </motion.div>
           )}
         </AnimatePresence>
