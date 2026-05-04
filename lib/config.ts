@@ -3,45 +3,81 @@
 // ═══════════════════════════════════════════════════
 
 export const W = {
-  bride:           "Pao",
+  bride:           "Paola",
   groom:           "Leo",
-  weddingDate:     "2026-10-12T18:00:00-03:00",
-  weddingDateLabel:"12 de Octubre, 2026",
-  rsvpDeadline:    "12 de septiembre de 2026",
+  weddingDate:     "2026-10-17T18:00:00-03:00",
+  weddingDateLabel:"17 de Octubre, 2026",
+  rsvpDeadline:    "17 de septiembre de 2026",
   heroPhrase:      "Dos almas que se encuentran y deciden no separarse jamás",
-  introText:       "Con alegría enorme queremos que seas parte del día más lindo de nuestras vidas",
-  footerMessage:   "Gracias por acompañarnos. Que estés acá significa todo para nosotros.",
+  introText:       "Con inmensa alegría queremos invitarte a celebrar nuestro matrimonio",
+  footerMessage:   "Gracias por acompañarnos en uno de los días más importantes de nuestra vida. Su presencia llena de amor cada momento de este día que tanto esperamos.",
   location:        "Concepción del Uruguay, Entre Ríos",
-  baseUrl:         "https://invitacion-leo-pao.vercel.app/",
+  baseUrl:         "https://leo-paola.vercel.app", // ← cambiá por tu dominio real
 
   ceremony: {
-    name:    "Nombre IGLESIA",
-    address: "Galarza 130, Concepción del Uruguay",
-    time:    "18:00 hs",
-    note:    "Se ruega llegar a las 17:30 hs",
-    mapsUrl: "https://maps.google.com/?q=Basilica+Inmaculada+Concepcion+Galarza+130+Concepcion+del+Uruguay",
+    name:    "Centro Civico",
+    address: "Bv. De los Constituyentes 52, Concepción del Uruguay (Terminal de omnibus)",
+    time:    "16/10/2026 10:00 hs",
+    note:    "",
+    mapsUrl: "https://maps.app.goo.gl/yUB9QuVCkznjQtsF6",
   },
   reception: {
-    name:     "Salon NOMBRE",
-    address:  "Ruta 39 — Concepción del Uruguay",
-    time:     "20:30 hs",
-    cocktail: "Cocktail desde las 20:00 hs",
-    dresscode:"Formal elegante · sin blanco, por favor 🙏",
-    mapsUrl:  "https://maps.google.com/?q=Concepcion+del+Uruguay+Entre+Rios",
+    name:     "Il Palatium",
+    address:  "Barrio hipodromo loteo cacho silva, E3260 Concepción del Uruguay, Entre Ríos",
+    time:     "17/10/2026 21:30 hs",
+    cocktail: "",
+    dresscode:"$45000",
+    mapsUrl:  "https://maps.app.goo.gl/i8FE4fa4iCsofHmr6",
   },
 
-  mapEmbedSrc: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d26876.26!2d-58.2416!3d-32.4826!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x95afefaef7a9a16d%3A0xd9a0a4f3c8e8a1e0!2sConcepci%C3%B3n+del+Uruguay%2C+Entre+R%C3%ADos!5e0!3m2!1ses!2sar!4v1700000000000",
-
+  mapEmbedSrc:     "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d4342.022412335781!2d-58.32569542335288!3d-32.50055614949931!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x95afd91f2444def5%3A0x9209bc52896b0637!2sil%20palatium!5e1!3m2!1ses!2sar!4v1777662359464!5m2!1ses!2sar",
   // ── Regalos (Argentina) ────────────────────────────────
-  gifts: {
-    alias:    "LEO.PAOLA.BODA",
-    cbu:      "0000000000000000000000",
-    bank:     "Banco Galicia",
+gifts: {
+    alias:        "LEO.PAOLA.BODA",
+    cbu:          "0000000000000000000000",
+    bank:         "Banco Galicia",
+    listUrl:      "#",
+    honeymoonUrl: "#",
     cvu:      "ABC",          // CVU de Mercado Pago si tienen
     mpLink:   "CDA",          // Link de cobro Mercado Pago: https://mpago.la/...
     modoLink: "ASDF",          // Link de MODO: https://transferencias.modo.com.ar/...
     message:  "Si querés hacernos un regalo, la forma más fácil es una transferencia. ¡Con lo que puedas ya es más que suficiente para nosotros!",
+    extra: {
+      icon: "🎁",
+      title: "Regalo especial",
+      description: "Si querés hacernos un regalo adicional, podés verlo acá.",
+      buttonText: "Ver regalo",
+      url: "/gifts",
+    },
   },
+
+  giftList: [
+  {
+    name: "Juego de vajilla",
+    price: "$85.000",
+    emoji: "🍽️",
+    reserved: false,
+  },
+  {
+    name: "Cafetera",
+    price: "$120.000",
+    emoji: "☕",
+    reserved: false,
+  },
+  {
+    name: "Juego de sábanas",
+    price: "$65.000",
+    emoji: "🛏️",
+    reserved: false,
+  },
+  {
+    name: "Freidora de aire",
+    price: "$140.000",
+    emoji: "🍟",
+    reserved: false,
+  },
+],
+  
 
   // ── Logística ──────────────────────────────────────────
   logistics: {
@@ -81,11 +117,13 @@ export const W = {
 
   // ── WhatsApp y contacto ────────────────────────────────
   whatsapp:        "5493442000000",
-  whatsappMessage: "¡Hola! Tengo una consulta sobre el casamiento de Paola y Leo 💌",
+  whatsappMessage: "¡Hola! Tengo una consulta sobre el casamiento",
 
   // ── Media ──────────────────────────────────────────────
   photoAlbumUrl:   "https://photos.app.goo.gl/sS3YiuNvKkYFiAdB8",
-  appsScriptUrl:   "https://script.google.com/macros/s/AKfycbyK0JKAeMu_IZxjppLtfXdp6Jx7liQSP98hkPYmbI72V2OtD_2lHrO7q3fMaXXeDVvf_A/exec",
+  googleDriveFolder:
+  "https://drive.google.com/drive/folders/10mLwcHSG_zEArnxtQBhg-XItQ29d73fE?usp=sharing",
+  appsScriptUrl:   "https://script.google.com/macros/s/AKfycbyKepxZ7SSl1FiDBj-CsqelLWFR5G4sYX5X-rstedYzU8H5zKb52vYPNfJJYSPmMV0N0A/exec",
   spotifyEmbedSrc: "https://open.spotify.com/embed/playlist/37i9dQZF1DX2sUQwD7tbmL?utm_source=generator&theme=0",
 
   heroVideo:    "/boda.mp4" as string,
@@ -99,19 +137,110 @@ export const THEME: ThemeName = "gold-wine";
 
 // ── Agenda ────────────────────────────────────────────────────
 export const AGENDA = [
-  { time:"18:00", title:"Ceremonia",   desc:"Basílica de la Inmaculada",        icon:"⛪" },
-  { time:"19:00", title:"Fotos",       desc:"Jardines de la estancia",           icon:"📸" },
-  { time:"20:00", title:"Cocktail",    desc:"Espumante, canapés y música",       icon:"🥂" },
-  { time:"20:30", title:"Cena",        desc:"Menú de 4 pasos · opciones veggie", icon:"🍽️" },
-  { time:"22:30", title:"Fiesta",      desc:"DJ · cumbia, pop, electrónica",     icon:"🎶" },
-  { time:"00:00", title:"Barra libre", desc:"Brindis, torta y sorpresas ✨",      icon:"🍾" },
+  {
+    time: "21:30",
+    title: "Recepción",
+    desc: "Llegada de invitados, música y primeros brindis",
+    icon: "🥂",
+  },
+  {
+    time: "22:00",
+    title: "Entrada de los novios",
+    desc: "El momento más esperado de la noche",
+    icon: "💍",
+  },
+  {
+    time: "22:30",
+    title: "Cena",
+    desc: "Compartimos la mesa, charlas y muchas risas",
+    icon: "🍽️",
+  },
+  {
+    time: "23:45",
+    title: "Brindis y torta",
+    desc: "Palabras, copas arriba y algo dulce para celebrar",
+    icon: "🍰",
+  },
+  {
+  time: "00:15",
+  title: "JODAAAAAA",
+  desc: "Se termina la formalidad y empiezan los prohibidos 💃🕺",
+  icon: "🔥",
+  },
+  {
+    time: "00:30",
+    title: "Pista explotada",
+    desc: "Se afloja la corbata, salen los prohibidos y no responde nadie 😎",
+    icon: "🎉",
+  },
+  {
+    time: "02:00",
+    title: "Un respiro... ponele",
+    desc: "Algo dulce y de vuelta a la pista porque esto sigue 💃💃💃",
+    icon: "🍰",
+  },
+  {
+    time: "02:30",
+    title: "Arranca el descontrol",
+    desc: "Cumbia, cachengue, cuarteto y temazos que cantamos todos",
+    icon: "🎶",
+  },
 ] as const;
 
 export const STORY = [
-  { year:"2018", title:"Un encuentro inesperado", text:"Una noche de verano en una reunión de amigos. Nadie lo planeó, pero el destino tenía sus propios planes.", emoji:"☕", side:"left"  as const },
-  { year:"2020", title:"Nuestro primer viaje",    text:"Patagonia. Cerro Torre. Mates al amanecer y ese frío que hace que te abraces más fuerte.",               emoji:"✈️", side:"right" as const },
-  { year:"2023", title:"La propuesta",            text:"Él tenía el anillo escondido desde hacía tres meses. Ella dijo que sí antes de que terminara la pregunta.", emoji:"💍", side:"left" as const },
-  { year:"2026", title:"El gran día",             text:"Rodeados de las personas que más queremos, comenzamos el capítulo más hermoso de nuestra historia.",       emoji:"🌹", side:"right" as const },
+  {
+    year: "2015",
+    title: "Una historia inesperada",
+    text:
+      "Todo empezó en la escuela. Leo esperaba a la profesora de química como cualquier otro día, hasta que apareció Pao. Entre pasillos y miradas, algo empezó sin que ninguno se diera cuenta.",
+    emoji: "📚",
+    side: "left" as const,
+  },
+
+  {
+    year: "2019",
+    title: "La primera salida",
+    text:
+      "Después de años cruzándose, llegó la primera cena. Nervios, charla y un beso que cambió todo.",
+    emoji: "🍷",
+    side: "right" as const,
+  },
+
+  {
+    year: "2019",
+    title: "El comienzo oficial",
+    text:
+      "El 21 de diciembre de 2019, Pao le preguntó a Leo si quería ser su novio. Desde ese día, no se soltaron más.",
+    emoji: "💞",
+    side: "left" as const,
+  },
+
+  {
+    year: "2020",
+    title: "Compañeros de vida",
+    text:
+      "Entre mates, viajes, noches largas hablando y miles de momentos, fueron construyendo algo mucho más grande que una historia de amor.",
+    emoji: "🧉",
+    side: "right" as const,
+  },
+
+  {
+    year: "2026",
+    title: "La propuesta",
+    text:
+      "El 14 de febrero, Leo hizo la gran pregunta. Hubo lágrimas, abrazos y un “sí” que selló para siempre esta historia.",
+    emoji: "💍",
+    side: "left" as const,
+  },
+
+  {
+    year: "2026",
+    title: "Nuestro gran día",
+    text:
+      "Hoy, rodeados de nuestra familia y amigos, celebramos el comienzo de una nueva etapa. Gracias por estar acá acompañándonos en uno de los días más importantes de nuestra vida.",
+    emoji: "🌹",
+    side: "right" as const,
+  },
 ] as const;
 
 export const PHOTOS = [
@@ -143,3 +272,4 @@ export const SUGGESTED_SONGS = [
   { title:"Can't Help Falling",artist:"Elvis Presley",   emoji:"🎸" },
   { title:"Bésame Mucho",      artist:"Tradicional",     emoji:"🌹" },
 ] as const;
+

@@ -4,17 +4,7 @@ import { motion, useInView } from "framer-motion";
 
 const CARDS = [
   { icon:"👔", title:"Caballeros", text:"Traje oscuro o esmoquin. Corbata o moño. Zapatos de cuero." },
-  { icon:"👗", title:"Damas",      text:"Vestido largo o de cóctel. Tacones o sandalias elegantes." },
-  { icon:"🎨", title:"Paleta",     text:"Tierras, vino, verde oliva, dorado, nude, azul medianoche." },
-];
-
-const SWATCHES = [
-  { hex:"#F5EFE4", name:"Marfil"   },
-  { hex:"#B5894E", name:"Dorado"   },
-  { hex:"#6B2635", name:"Vino"     },
-  { hex:"#4A2C1C", name:"Caoba"    },
-  { hex:"#7D8C6E", name:"Salvia"   },
-  { hex:"#C8B49A", name:"Nude"     },
+  { icon:"👗", title:"Damas",      text:"Vestido largo o de cóctel. Tacones o zapatos elegantes." },
 ];
 
 export default function DressCode() {
@@ -32,7 +22,7 @@ export default function DressCode() {
         <motion.div className="g-line" initial={{ scaleX:0 }} animate={v?{scaleX:1}:{}} transition={{ delay:0.15, duration:0.7 }} />
         <motion.p initial={{ opacity:0 }} animate={v?{opacity:1}:{}} transition={{ delay:0.22 }}
           className="t-body mb-10 max-w-prose" style={{ color:"var(--c-text-2)" }}>
-          Formal elegante. El evento será al aire libre y en salón. Te recomendamos vestimenta acorde al clima de octubre en Buenos Aires.
+          Formal elegante. El evento será al aire libre y en salón. Te recomendamos vestimenta acorde al clima de octubre.
         </motion.p>
 
         <div className="grid sm:grid-cols-3 gap-4 mb-10">
@@ -46,19 +36,6 @@ export default function DressCode() {
             </motion.div>
           ))}
         </div>
-
-        {/* Swatches */}
-        <motion.div initial={{ opacity:0 }} animate={v?{opacity:1}:{}} transition={{ delay:0.45 }}>
-          <p className="t-label mb-4" style={{ color:"var(--c-text-3)", fontSize:"0.58rem" }}>Colores sugeridos</p>
-          <div className="flex gap-4 flex-wrap">
-            {SWATCHES.map((s,i) => (
-              <div key={i} className="flex flex-col items-center gap-1.5">
-                <div className="w-9 h-9 rounded-full" style={{ background:s.hex, border:"1px solid rgba(0,0,0,0.08)", boxShadow:"0 2px 8px rgba(0,0,0,0.1)" }} />
-                <span className="t-label" style={{ color:"var(--c-text-3)", fontSize:"0.56rem" }}>{s.name}</span>
-              </div>
-            ))}
-          </div>
-        </motion.div>
 
         {/* Note */}
         <motion.div initial={{ opacity:0 }} animate={v?{opacity:1}:{}} transition={{ delay:0.55 }}

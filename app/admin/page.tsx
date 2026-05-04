@@ -7,12 +7,20 @@ type Tab = "stats" | "mesas" | "export";
 
 interface Guest {
   nombre: string;
+  apellido: string;
+
+  nombre2?: string;
+  apellido2?: string;
+
   acompanantes: number;
   restricciones: string;
+
   slug: string;
   mesa: string;
-}
 
+  pago?: boolean;
+  confirmado?: boolean;
+}
 interface Summary {
   total: number; si: number; no: number;
   totalPersonas: number; shuttle: number;
@@ -214,6 +222,35 @@ function PinScreen({ pin, setPin, onCheck, error }: {
       </motion.div>
     </div>
   );
+}
+
+function getGuestDisplayName(guest: Guest) {
+  const main = `${guest.nombre} ${guest.apellido}`.trim();
+
+  if (guest.nombre2 || guest.apellido2) {
+    const second = `${guest.nombre2 ?? ""} ${guest.apellido2 ?? ""}`.trim();
+    return `${main} & ${second}`;
+  }
+
+  return main;
+}
+
+function getInvitationUrl(guest: Guest) {
+  const params = new URLSearchParams({
+    slug: guest.slug,
+    nombre: guest.nombre,
+    apellido: guest.apellido,
+  });
+
+  if (guest.nombre2) {
+    params.append("nombre2", guest.nombre2);
+  }
+
+  if (guest.apellido2) {
+    params.append("apellido2", guest.apellido2);
+  }
+
+  return `/print?${params.toString()}`;
 }
 
 // ── Dashboard ─────────────────────────────────────────────────
@@ -609,6 +646,64 @@ function MesasTab() {
     }
   }
 
+  async function deleteGuest(slug: string) {
+  const ok = confirm("¿Eliminar invitado?");
+
+  if (!ok) return;
+
+  try {
+    const res = await fetch("/api/mesas", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        action: "deleteGuest",
+        slug,
+      }),
+    });
+
+    const data = await res.json();
+
+    if (data.status === "ok") {
+      setGuests(prev => prev.filter(g => g.slug !== slug));
+    }
+  } catch {
+    setError("No se pudo eliminar");
+  }
+}
+
+async function toggleFlag(
+  guest: Guest,
+  field: "pago" | "confirmado"
+) {
+  const value = !guest[field];
+
+  setGuests(prev =>
+    prev.map(g =>
+      g.slug === guest.slug
+        ? { ...g, [field]: value }
+        : g
+    )
+  );
+
+  try {
+    await fetch("/api/mesas", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        action: "updateFlags",
+        slug: guest.slug,
+        [field]: value,
+      }),
+    });
+  } catch {
+    setError("No se pudo actualizar");
+  }
+}
+
   async function saveAll() {
     const unsaved = guests.filter(g => (edits[g.slug] ?? "").trim() !== g.mesa);
     for (const g of unsaved) await saveMesa(g.slug);
@@ -617,7 +712,7 @@ function MesasTab() {
   const filtered = guests.filter(g => {
     const q = search.toLowerCase();
     const matchSearch = !q ||
-      g.nombre.toLowerCase().includes(q) ||
+      getGuestDisplayName(g).toLowerCase().includes(q) ||
       g.mesa.toLowerCase().includes(q) ||
       (edits[g.slug] || "").toLowerCase().includes(q);
     const matchFilter =
@@ -753,7 +848,7 @@ function MesasTab() {
                   textOverflow: "ellipsis",
                   whiteSpace: "nowrap",
                 }}>
-                  {guest.nombre}
+                  {getGuestDisplayName(guest)}
                   {guest.acompanantes > 0 && (
                     <span style={{ fontSize: "0.65rem", color: "rgba(181,137,78,0.4)", marginLeft: "0.4rem" }}>
                       +{guest.acompanantes}
@@ -766,6 +861,31 @@ function MesasTab() {
                   </p>
                 )}
               </div>
+
+              <div style={{
+                  display: "flex",
+                  gap: "0.6rem",
+                  marginTop: "0.3rem",
+                  color: draft ? "var(--c-gold-lt)" : "rgba(154,128,104,0.38)",
+                }}>
+                  <label style={{ fontSize: "0.6rem"}}>
+                    <input
+                      type="checkbox"
+                      checked={guest.confirmado}
+                      onChange={() => toggleFlag(guest, "confirmado")}
+                    />
+                    Confirmó
+                  </label>
+
+                  <label style={{ fontSize: "0.6rem" }}>
+                    <input
+                      type="checkbox"
+                      checked={guest.pago}
+                      onChange={() => toggleFlag(guest, "pago")}
+                    />
+                    Pagó
+                  </label>
+                </div>
 
               {/* Mesa input */}
               <input
@@ -786,6 +906,37 @@ function MesasTab() {
                   transition: "border-color 0.2s, color 0.2s",
                 }}
               />
+              <a
+                href={getInvitationUrl(guest)}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  fontSize: "0.7rem",
+                  color: "var(--c-gold-lt)",
+                  textDecoration: "none",
+                  border: "1px solid rgba(181,137,78,0.2)",
+                  padding: "0.35rem 0.55rem",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                🖨 Ver
+              </a>
+
+              <button
+                onClick={() => deleteGuest(guest.slug)}
+                style={{
+                  width: 30,
+                  height: 30,
+                  background: "rgba(200,50,50,0.1)",
+                  border: "1px solid rgba(200,50,50,0.3)",
+                  color: "#ef9a9a",
+                  cursor: "pointer",
+                  borderRadius: 2,
+                  flexShrink: 0,
+                }}
+              >
+                🗑
+              </button>
 
               {/* Save button */}
               <button
@@ -863,7 +1014,7 @@ function ExportTab() {
   function exportCSV() {
     const header = "Nombre,Acompañantes,Mesa,Restricciones";
     const rows = guests.map(g =>
-      `"${g.nombre}",${g.acompanantes},"${g.mesa || "—"}","${g.restricciones || ""}"`
+      `""${getGuestDisplayName(g)}"",${g.acompanantes},"${g.mesa || "—"}","${g.restricciones || ""}"`
     );
     const csv = [header, ...rows].join("\n");
     const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
@@ -874,7 +1025,7 @@ function ExportTab() {
   }
 
   function copyList() {
-    const text = guests.map(g => `${g.nombre}${g.acompanantes > 0 ? ` +${g.acompanantes}` : ""} — ${g.mesa || "sin mesa"}`).join("\n");
+    const text = guests.map(g => `${getGuestDisplayName(g)}${g.acompanantes > 0 ? ` +${g.acompanantes}` : ""} — ${g.mesa || "sin mesa"}`).join("\n");
     navigator.clipboard.writeText(text).then(() => {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
@@ -962,7 +1113,7 @@ function ExportTab() {
                   background: i % 2 === 0 ? "transparent" : "rgba(255,255,255,0.01)",
                 }}>
                   <span style={{ fontSize: "0.84rem", color: "rgba(196,168,130,0.75)" }}>
-                    {g.nombre}
+                    {getGuestDisplayName(g)}
                     {g.acompanantes > 0 && (
                       <span style={{ fontSize: "0.65rem", color: "rgba(181,137,78,0.35)", marginLeft: "0.35rem" }}>
                         +{g.acompanantes}

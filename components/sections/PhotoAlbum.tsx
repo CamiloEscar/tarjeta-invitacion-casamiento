@@ -126,7 +126,7 @@ export default function PhotoAlbum() {
                 )}
 
                 <div className="flex items-center gap-2.5 mt-5 pt-4" style={{ borderTop:"1px solid var(--c-border)" }}>
-                  <div className="flex gap-1">{["🔵","🍎","📦"].map((e,i) => <span key={i} style={{ fontSize:"0.9rem" }}>{e}</span>)}</div>
+                  {/* <div className="flex gap-1">{["🔵","🍎","📦"].map((e,i) => <span key={i} style={{ fontSize:"0.9rem" }}>{e}</span>)}</div> */}
                   <p className="t-body" style={{ color:"var(--c-text-3)", fontSize:"0.7rem" }}>Google Photos · iCloud · Dropbox · cualquier link</p>
                 </div>
               </div>
@@ -153,7 +153,7 @@ export default function PhotoAlbum() {
                   </motion.div>
                 ))}
               </div>
-              <motion.div initial={{ opacity:0 }} animate={v?{opacity:1}:{}} transition={{ delay:0.75 }}
+              {/* <motion.div initial={{ opacity:0 }} animate={v?{opacity:1}:{}} transition={{ delay:0.75 }}
                 className="mt-5 p-4" style={{ background:"rgba(181,137,78,0.05)", border:"1px solid var(--c-border)" }}>
                 <p className="t-label mb-3" style={{ color:"var(--c-gold)", fontSize:"0.58rem" }}>¿Desde dónde puedo subir?</p>
                 <div className="flex flex-wrap gap-2">
@@ -164,7 +164,7 @@ export default function PhotoAlbum() {
                     </span>
                   ))}
                 </div>
-              </motion.div>
+              </motion.div> */}
             </motion.div>
           </div>
         </div>

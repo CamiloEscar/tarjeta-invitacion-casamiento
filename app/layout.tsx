@@ -23,6 +23,9 @@ export const metadata: Metadata = {
     statusBarStyle:    "black-translucent",
     title:             `${W.bride} & ${W.groom}`,
   },
+  other: {
+    "mobile-web-app-capable": "yes",
+  },
   openGraph: {
     title:       `${W.bride} & ${W.groom} — Nos casamos`,
     description: `El gran día es el ${W.weddingDateLabel}. ¡Estás invitado!`,
@@ -44,7 +47,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       className={`${playfair.variable} ${cormorant.variable} ${jost.variable}`}
       {...(dataTheme ? { "data-theme": dataTheme } : {})}
     >
-      <body>{children}</body>
+      <body style={{ position: "relative" }}>{children}</body>
     </html>
   );
 }

@@ -48,27 +48,27 @@ export default function Page() {
 
         {/* Map (linen) → Logistics (warm) */}
         <MapSection />
-        <Sep from="linen" to="warm" />
+        {/* <Sep from="linen" to="warm" /> */}
 
         {/* Logistics (warm) → RSVP (dark) */}
-        <Logistics />
-        <Sep from="warm" to="dark" />
+        {/* <Logistics /> */}
+        {/* <Sep from="warm" to="dark" /> */}
 
         {/* RSVP (dark) → Music (linen) */}
-        <RSVP />
-        <Sep from="dark" to="linen" />
+        {/* <RSVP /> */}
+        {/* <Sep from="dark" to="linen" /> */}
 
         {/* Music (linen) → PhotoCarousel (dark) */}
-        <MusicRequest />
+        {/* <MusicRequest /> */}
         <Sep from="linen" to="dark" />
 
         {/* PhotoCarousel (dark) → Trivia (dark-2) */}
         <PhotoCarousel />
-        <Sep from="dark" to="dark-2" />
+        {/* <Sep from="dark" to="dark-2" /> */}
 
         {/* Trivia (dark-2) → PhotoAlbum (sand) */}
-        <Trivia />
-        <Sep from="dark-2" to="sand" />
+        {/* <Trivia /> */}
+        {/* <Sep from="dark-2" to="sand" /> */}
 
         {/* PhotoAlbum (sand) → Gifts (dark-2) */}
         <PhotoAlbum />

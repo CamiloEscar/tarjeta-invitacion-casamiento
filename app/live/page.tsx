@@ -10,8 +10,8 @@ import { W, PHOTOS, AGENDA } from "@/lib/config";
 // ─────────────────────────────────────────────────────────────
 
 const SLIDE_MS = 9000;
-type SlideName = "welcome" | "event" | "agenda" | "dresscode" | "album" | "love-quote";
-const SLIDES: SlideName[] = ["welcome", "love-quote", "event", "agenda", "dresscode", "album"];
+type SlideName = "welcome" | "event-agenda" | "photos" | "love-quote" | "album" | "comments";
+const SLIDES: SlideName[] = ["welcome", "love-quote", "event-agenda", "comments", "photos", "album"];
 
 // ── Photo background with Ken Burns effect ────────────────────
 function PhotoBg({ dimmed }: { dimmed: boolean }) {
@@ -49,6 +49,85 @@ function PhotoBg({ dimmed }: { dimmed: boolean }) {
       {/* Layered gradient overlay */}
       <div style={{ position:"absolute", inset:0, background:"radial-gradient(ellipse at center, rgba(20,10,5,0.1) 0%, rgba(20,10,5,0.55) 100%)", pointerEvents:"none" }} />
       <div style={{ position:"absolute", inset:0, background:"linear-gradient(to bottom, rgba(20,10,5,0.5) 0%, transparent 25%, transparent 70%, rgba(20,10,5,0.7) 100%)", pointerEvents:"none" }} />
+    </div>
+  );
+}
+
+function SlideEventAgenda() {
+  return (
+    <div style={{ display:"flex", flexDirection:"column", height:"100%", padding:"2rem 4rem", userSelect:"none", justifyContent:"center", gap:"2rem" }}>
+      
+      {/* Evento row */}
+      <div style={{ display:"flex", gap:"clamp(2rem,6vw,6rem)", alignItems:"stretch", justifyContent:"center" }}>
+        {[
+          { type:"Ceremonia", name:W.ceremony.name, time:W.ceremony.time, addr:W.ceremony.address },
+          { type:"Recepción", name:W.reception.name, time:W.reception.time, addr:W.reception.address },
+        ].map((ev, i) => (
+          <motion.div key={i} initial={{ opacity:0, y:24 }} animate={{ opacity:1, y:0 }} transition={{ delay:0.1+i*0.15, duration:0.8, ease:[0.16,1,0.3,1] }}
+            style={{ flex:1, textAlign:"center", maxWidth:320, display:"flex", flexDirection:"column", gap:"0.4rem" }}>
+            <p style={{ fontFamily:"var(--font-jost)", fontSize:"clamp(0.45rem,0.9vw,0.6rem)", letterSpacing:"0.32em", textTransform:"uppercase", color:"rgba(181,137,78,0.45)" }}>{ev.type}</p>
+            <div style={{ width:24, height:1, background:"rgba(181,137,78,0.4)", margin:"0 auto" }} />
+            <p style={{ fontFamily:"var(--font-playfair)", fontStyle:"italic", fontSize:"clamp(1.2rem,2.8vw,2.1rem)", color:"var(--c-text-inv)", lineHeight:1.15 }}>{ev.name}</p>
+            <p style={{ fontFamily:"var(--font-cormorant)", fontStyle:"italic", fontSize:"clamp(1rem,2.4vw,1.8rem)", color:"var(--c-gold-lt)" }}>{ev.time}</p>
+            <p style={{ fontFamily:"var(--font-jost)", fontSize:"clamp(0.55rem,1.1vw,0.72rem)", color:"rgba(154,128,104,0.5)", fontWeight:300, lineHeight:1.5 }}>{ev.addr}</p>
+          </motion.div>
+        ))}
+      </div>
+
+      {/* Divider */}
+      <motion.div initial={{ scaleX:0 }} animate={{ scaleX:1 }} transition={{ delay:0.4, duration:0.9 }}
+        style={{ width:"min(400px,60%)", height:1, background:"linear-gradient(to right, transparent, rgba(181,137,78,0.25), transparent)", margin:"0 auto" }} />
+
+      {/* Agenda compacta */}
+      <div style={{ width:"100%", maxWidth:640, margin:"0 auto" }}>
+        {AGENDA.map((a, i) => (
+          <motion.div key={i} initial={{ opacity:0, x:-16 }} animate={{ opacity:1, x:0 }} transition={{ delay:0.2+i*0.08, duration:0.6, ease:[0.22,1,0.36,1] }}
+            style={{ display:"flex", alignItems:"center", gap:"clamp(0.6rem,2vw,1.5rem)", padding:"0.55rem 0", borderBottom:i<AGENDA.length-1?"1px solid rgba(181,137,78,0.08)":"none" }}>
+            <span style={{ fontSize:"clamp(0.9rem,2vw,1.3rem)", minWidth:"1.8rem", textAlign:"center" }}>{a.icon}</span>
+            <span style={{ fontFamily:"var(--font-cormorant)", fontStyle:"italic", color:"var(--c-gold-lt)", fontSize:"clamp(0.85rem,2vw,1.35rem)", minWidth:"3.8rem" }}>{a.time}</span>
+            <div>
+              <p style={{ fontFamily:"var(--font-playfair)", fontSize:"clamp(0.75rem,1.6vw,1.1rem)", color:"var(--c-text-inv)", fontWeight:400 }}>{a.title}</p>
+              <p style={{ fontFamily:"var(--font-jost)", fontWeight:300, fontSize:"clamp(0.55rem,1.1vw,0.72rem)", color:"rgba(154,128,104,0.45)" }}>{a.desc}</p>
+            </div>
+          </motion.div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function SlidePhotos() {
+  const [cur, setCur] = useState(0);
+  const [loaded, setLoaded] = useState<boolean[]>(Array(PHOTOS.length).fill(false));
+
+  useEffect(() => {
+    const id = setInterval(() => setCur(c => (c + 1) % PHOTOS.length), 4500);
+    return () => clearInterval(id);
+  }, []);
+
+  return (
+    <div style={{ position:"absolute", inset:0 }}>
+      {PHOTOS.map((p, i) => (
+        <img key={p.src} src={p.src} alt=""
+          onLoad={() => setLoaded(prev => { const n=[...prev]; n[i]=true; return n; })}
+          style={{
+            position:"absolute", inset:0, width:"100%", height:"100%",
+            objectFit:"cover",
+            filter:"brightness(0.72) saturate(0.85)",
+            opacity: i === cur && loaded[i] ? 1 : 0,
+            transition:"opacity 1.8s ease",
+            transform: i === cur ? "scale(1.04)" : "scale(1)",
+          }}
+        />
+      ))}
+      {/* Overlay suave con nombres */}
+      <div style={{ position:"absolute", inset:0, background:"linear-gradient(to top, rgba(12,6,3,0.6) 0%, transparent 40%)", pointerEvents:"none" }} />
+      <motion.div initial={{ opacity:0, y:10 }} animate={{ opacity:1, y:0 }} transition={{ delay:0.5, duration:1 }}
+        style={{ position:"absolute", bottom:"3.5rem", left:0, right:0, textAlign:"center", pointerEvents:"none" }}>
+        <p style={{ fontFamily:"var(--font-playfair)", fontStyle:"italic", fontWeight:400, fontSize:"clamp(2rem,5vw,4rem)", color:"rgba(240,232,218,0.55)", letterSpacing:"0.04em" }}>
+          {W.bride} &amp; {W.groom}
+        </p>
+      </motion.div>
     </div>
   );
 }
@@ -94,10 +173,11 @@ function SlideWelcome() {
 // ── Slide: Love Quote ──────────────────────────────────────────
 function SlideLoveQuote() {
   const quotes = [
-    { text: "Ser profundamente amado por alguien te da fuerza, mientras que amar profundamente a alguien te da coraje.", author: "Lao Tse" },
-    { text: "El amor no consiste en mirarse el uno al otro, sino en mirar juntos en la misma dirección.", author: "Antoine de Saint-Exupéry" },
-    { text: "En ti encontré mi lugar favorito del mundo entero.", author: `${W.bride} & ${W.groom}` },
-  ];
+  { text: "Al final del día, lo único que importa es que encontré a alguien con quien quejarme de todo.", author: `${W.bride} & ${W.groom}` },
+  { text: "Dicen que detrás de un gran hombre hay una gran mujer. Nosotros preferimos ir de la mano.", author: `${W.bride} & ${W.groom}` },
+  { text: "Te elegí a vos. Y si hubiera que volver a elegir, te elegiría de nuevo. Aunque a veces me saques.", author: `${W.bride} & ${W.groom}` },
+  { text: "No sé si creer en el destino, pero algo me dice que no fue casualidad que nos pusieran en el mismo lugar.", author: `${W.bride} & ${W.groom}` },
+];
   const [idx] = useState(() => Math.floor(Math.random() * quotes.length));
   const q = quotes[idx];
 
@@ -205,6 +285,117 @@ function SlideDresscode() {
           </motion.div>
         ))}
       </div>
+    </div>
+  );
+}
+
+function SlideComments({
+  comments,
+}: {
+  comments: { name: string; message: string }[];
+}) {
+  const [idx, setIdx] = useState(0);
+
+  useEffect(() => {
+    if (!comments.length) return;
+
+    const id = setInterval(() => {
+      setIdx(i => (i + 1) % comments.length);
+    }, 7000);
+
+    return () => clearInterval(id);
+  }, [comments]);
+
+  if (!comments.length) return null;
+
+  const current = comments[idx];
+
+  return (
+    <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        height: "100%",
+        padding: "4rem",
+        textAlign: "center",
+        userSelect: "none",
+      }}
+    >
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={idx}
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -40 }}
+          transition={{
+            duration: 0.9,
+            ease: [0.22, 1, 0.36, 1],
+          }}
+          style={{
+            maxWidth: "900px",
+          }}
+        >
+          <p
+            style={{
+              fontFamily: "var(--font-jost)",
+              fontSize: "clamp(0.5rem,1.1vw,0.68rem)",
+              letterSpacing: "0.35em",
+              textTransform: "uppercase",
+              color: "rgba(181,137,78,0.45)",
+              marginBottom: "2rem",
+            }}
+          >
+            MENSAJES DE NUESTROS INVITADOS
+          </p>
+
+          <div
+            style={{
+              fontSize: "clamp(4rem,10vw,8rem)",
+              color: "rgba(181,137,78,0.15)",
+              lineHeight: 0.6,
+              marginBottom: "-1rem",
+              fontFamily: "Georgia, serif",
+            }}
+          >
+            "
+          </div>
+
+          <p
+            style={{
+              fontFamily: "var(--font-cormorant)",
+              fontStyle: "italic",
+              fontSize: "clamp(1.4rem,3vw,2.8rem)",
+              lineHeight: 1.6,
+              color: "rgba(240,232,218,0.92)",
+              marginBottom: "2rem",
+            }}
+          >
+            {current.message}
+          </p>
+
+          <div
+            style={{
+              width: 40,
+              height: 1,
+              background: "rgba(181,137,78,0.35)",
+              margin: "0 auto 1rem",
+            }}
+          />
+
+          <p
+            style={{
+              fontFamily: "var(--font-jost)",
+              fontSize: "clamp(0.6rem,1.2vw,0.8rem)",
+              letterSpacing: "0.2em",
+              textTransform: "uppercase",
+              color: "rgba(181,137,78,0.55)",
+            }}
+          >
+            {current.name}
+          </p>
+        </motion.div>
+      </AnimatePresence>
     </div>
   );
 }
@@ -420,6 +611,9 @@ export default function LivePage() {
   const [camStream,   setCamStream]   = useState<MediaStream | null>(null);
   const camVideoRef   = useRef<HTMLVideoElement>(null);
   const [albumQrSrc,  setAlbumQrSrc]  = useState("");
+  const [comments, setComments] = useState<
+  { name: string; message: string }[]
+>([]);
 
   const current = SLIDES[slideIdx];
 
@@ -428,6 +622,24 @@ export default function LivePage() {
     const albumUrl = W.photoAlbumUrl || `${origin}/#album`;
     setAlbumQrSrc(`https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(albumUrl)}&color=F5EFE4&bgcolor=2C1A10&margin=14`);
   }, []);
+
+  useEffect(() => {
+  async function loadComments() {
+    try {
+      const res = await fetch(
+        `${W.appsScriptUrl}?action=getComments`
+      );
+
+      const data = await res.json();
+
+      setComments(data.comments || []);
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  loadComments();
+}, []);
 
   // Attach camera stream
   useEffect(() => {
@@ -455,17 +667,18 @@ export default function LivePage() {
   }, []);
 
   const slideMap: Record<SlideName, React.ReactNode> = {
-    welcome:     <SlideWelcome />,
-    "love-quote":<SlideLoveQuote />,
-    event:       <SlideEvent />,
-    agenda:      <SlideAgenda />,
-    dresscode:   <SlideDresscode />,
-    album:       <SlideAlbum qrSrc={albumQrSrc} />,
-  };
+  welcome:       <SlideWelcome />,
+  "love-quote":  <SlideLoveQuote />,
+  "event-agenda":<SlideEventAgenda />,
+  photos:        <SlidePhotos />,
+  comments:      <SlideComments comments={comments} />,
+  album:         <SlideAlbum qrSrc={albumQrSrc} />,
+};
 
-  const LABELS: Record<SlideName, string> = {
-    welcome:"Bienvenida", "love-quote":"Frase", event:"Evento", agenda:"Agenda", dresscode:"Vestimenta", album:"Álbum",
-  };
+const LABELS: Record<SlideName, string> = {
+  welcome:"Bienvenida", "love-quote":"Frases", "event-agenda":"Programa",
+  photos:"Fotos", comments:"Mensajes", album:"Álbum",
+};
 
   return (
     <div style={{ width:"100vw", height:"100dvh", overflow:"hidden", position:"relative", background:"var(--c-dark)" }}>

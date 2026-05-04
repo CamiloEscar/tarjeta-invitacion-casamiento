@@ -56,27 +56,7 @@ export default function GiftsPage() {
           </p>
         </motion.div>
 
-        {/* Transfer card */}
-        <motion.div initial={{ opacity:0, y:16 }} animate={{ opacity:1, y:0 }} transition={{ delay:0.1, duration:0.7 }}
-          style={{ marginBottom:"1rem", position:"relative", overflow:"hidden" }}>
-          <div style={{ height:2, background:"linear-gradient(to right, var(--c-wine), var(--c-gold), transparent)" }} />
-          <div style={{ padding:"1.5rem 1.5rem 1.25rem", background:"rgba(255,255,255,0.04)", border:"1px solid rgba(181,137,78,0.18)", borderTop:"none" }}>
-            <div style={{ display:"flex", alignItems:"center", gap:"0.85rem", marginBottom:"1.25rem" }}>
-              <span style={{ fontSize:"1.4rem" }}>🏦</span>
-              <div>
-                <h3 style={{ fontFamily:"var(--font-playfair)", fontStyle:"italic", fontSize:"1.1rem", color:"var(--c-text-inv)", marginBottom:"0.15rem" }}>
-                  Transferencia bancaria
-                </h3>
-                <p style={{ fontFamily:"var(--font-jost)", fontSize:"0.7rem", color:"rgba(154,128,104,0.45)", fontWeight:300 }}>{W.gifts.bank}</p>
-              </div>
-            </div>
-            <div style={{ display:"flex", flexDirection:"column", gap:"0.75rem" }}>
-              <CopyButton label="Alias" value={W.gifts.alias} />
-              <CopyButton label="CBU"   value={W.gifts.cbu}   />
-              {hasCVU && <CopyButton label="CVU (Mercado Pago)" value={W.gifts.cvu} />}
-            </div>
-          </div>
-        </motion.div>
+       
 
         {/* App deep links */}
         {(hasMp || hasModo) && (
@@ -98,6 +78,137 @@ export default function GiftsPage() {
                   <span style={{ fontFamily:"var(--font-jost)", fontSize:"0.68rem", letterSpacing:"0.1em", color:"var(--c-text-inv)" }}>MODO</span>
                 </a>
               )}
+            </div>
+          </motion.div>
+        )}
+
+        {/* Gift list */}
+        {W.giftList?.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.28 }}
+            style={{
+              marginTop: "2rem",
+              marginBottom: "1rem",
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "0.7rem",
+                marginBottom: "1rem",
+              }}
+            >
+              <span style={{ fontSize: "1.2rem" }}>🎁</span>
+
+              <div>
+                <h3
+                  style={{
+                    fontFamily: "var(--font-playfair)",
+                    fontStyle: "italic",
+                    fontSize: "1.15rem",
+                    color: "var(--c-text-inv)",
+                    marginBottom: "0.15rem",
+                  }}
+                >
+                  Lista de regalos
+                </h3>
+
+                <p
+                  style={{
+                    fontFamily: "var(--font-jost)",
+                    fontSize: "0.7rem",
+                    color: "rgba(154,128,104,0.45)",
+                  }}
+                >
+                  Algunas ideas para ayudarnos a comenzar nuestro hogar
+                </p>
+              </div>
+            </div>
+
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: "0.7rem",
+              }}
+            >
+              {W.giftList.map((gift, index) => (
+                <motion.div
+                  key={gift.name}
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.32 + index * 0.04 }}
+                  style={{
+                    padding: "1rem",
+                    background: "rgba(255,255,255,0.035)",
+                    border: "1px solid rgba(181,137,78,0.14)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    gap: "1rem",
+                  }}
+                >
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "0.8rem",
+                    }}
+                  >
+                    <span style={{ fontSize: "1.2rem" }}>
+                      {gift.emoji}
+                    </span>
+
+                    <div>
+                      <p
+                        style={{
+                          fontFamily: "var(--font-jost)",
+                          fontSize: "0.86rem",
+                          color: "var(--c-text-inv)",
+                          marginBottom: "0.2rem",
+                        }}
+                      >
+                        {gift.name}
+                      </p>
+
+                      <p
+                        style={{
+                          fontFamily: "var(--font-jost)",
+                          fontSize: "0.72rem",
+                          color: "rgba(196,168,130,0.55)",
+                        }}
+                      >
+                        {gift.price}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div
+                    style={{
+                      padding: "0.35rem 0.55rem",
+                      background: gift.reserved
+                        ? "rgba(107,38,53,0.22)"
+                        : "rgba(181,137,78,0.08)",
+                      border: gift.reserved
+                        ? "1px solid rgba(107,38,53,0.4)"
+                        : "1px solid rgba(181,137,78,0.16)",
+                      fontFamily: "var(--font-jost)",
+                      fontSize: "0.56rem",
+                      letterSpacing: "0.12em",
+                      textTransform: "uppercase",
+                      color: gift.reserved
+                        ? "rgba(255,210,210,0.75)"
+                        : "var(--c-gold-lt)",
+                      flexShrink: 0,
+                    }}
+                  >
+                    {gift.reserved ? "Reservado" : "Disponible"}
+                  </div>
+                </motion.div>
+              ))}
             </div>
           </motion.div>
         )}

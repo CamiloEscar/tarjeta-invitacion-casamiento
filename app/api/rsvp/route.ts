@@ -1,32 +1,65 @@
 import { NextRequest, NextResponse } from "next/server";
 import { W } from "@/lib/config";
 
+export async function GET(req: Request) {
+  const { searchParams } = new URL(req.url);
+
+  const action = searchParams.get("action");
+  const slug = searchParams.get("slug");
+
+  if (action === "status") {
+
+  if (!slug) {
+    return NextResponse.json(
+      { error: "Slug requerido" },
+      { status: 400 }
+    );
+  }
+
+  const url =
+    `${W.appsScriptUrl}?action=status&slug=${encodeURIComponent(slug)}`;
+
+  const res = await fetch(url);
+
+  if (!res.ok) {
+    return NextResponse.json(
+      { error: "Error consultando estado" },
+      { status: 500 }
+    );
+  }
+
+  const data = await res.json();
+
+  return NextResponse.json(data);
+}
+}
+
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    if (!body.nombre || !body.email || !body.asistencia)
-      return NextResponse.json({ error: "Faltan campos" }, { status: 400 });
 
-    // Format companions as readable string
-    const companionsText = Array.isArray(body.companions) && body.companions.length > 0
-      ? body.companions
-          .map((c: { name: string; dietary: string }, i: number) =>
-            `${i+1}. ${c.name || "Sin nombre"}${c.dietary ? ` (${c.dietary})` : ""}`
-          )
-          .join(" | ")
-      : "Ninguno";
+    // Validación mínima
+    if (!body.nombre || !body.apellido || !body.asistencia)
+      return NextResponse.json({ error: "Faltan campos requeridos" }, { status: 400 });
+
+    const adultos       = Number(body.adultos)       || (body.nombre2 ? 2 : 1);
+    const hijos         = Number(body.hijos)         || 0;
+    const totalPersonas = body.asistencia === "Si" ? adultos + hijos : 0;
 
     const payload = {
+      action:        "rsvp",
       nombre:        body.nombre,
-      apellido:      body.apellido      || "",
-      email:         body.email,
-      telefono:      body.telefono      || "",
+      apellido:      body.apellido,
+      nombre2:       body.nombre2       ?? "",
+      apellido2:     body.apellido2     ?? "",
+      email:         body.email         ?? "",
+      telefono:      body.telefono      ?? "",
       asistencia:    body.asistencia,
-      acompanantes:  body.acompanantes  || "0",
-      acompanantes_detalle: companionsText,
-      restricciones: body.restricciones || "",
-      mensaje:       body.mensaje       || "",
-      fecha: new Date().toLocaleString("es-AR", { timeZone: "America/Argentina/Buenos_Aires" }),
+      adultos,
+      hijos,
+      totalPersonas,
+      restricciones: body.restricciones ?? "",
+      mensaje:       body.mensaje       ?? "",
     };
 
     const res = await fetch(W.appsScriptUrl, {
@@ -35,10 +68,10 @@ export async function POST(req: NextRequest) {
       body:    JSON.stringify(payload),
     });
 
-    if (!res.ok) throw new Error(`Apps Script ${res.status}`);
+    if (!res.ok) throw new Error(`Apps Script respondió ${res.status}`);
     return NextResponse.json({ success: true });
   } catch (e) {
-    console.error(e);
+    console.error("[rsvp]", e);
     return NextResponse.json({ error: "Error al guardar" }, { status: 500 });
   }
 }

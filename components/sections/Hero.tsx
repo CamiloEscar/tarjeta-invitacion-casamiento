@@ -732,15 +732,15 @@ export default function Hero() {
             transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
             style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "0.3rem" }}
           >
-            <div style={{ width: 1, height: 26, background: "linear-gradient(to bottom, rgba(181,137,78,0.4), transparent)" }} />
+            <div style={{ width: 1, height: 26, background: "linear-gradient(to bottom, rgba(196,168,130,0.55), transparent)" }} />
             <span style={{
               fontFamily: "var(--font-jost)",
-              fontSize: "0.36rem",
+              fontSize: "0.64rem",
               letterSpacing: "0.22em",
               textTransform: "uppercase",
-              color: "rgba(154,128,104,0.38)",
+              color: "rgba(196,168,130,0.55)",
             }}>
-              Scroll
+              Desliza
             </span>
           </motion.div>
         </div>

@@ -7,7 +7,7 @@ import { W } from "@/lib/config";
 const LINKS: Array<{href:string;label:string;external?:boolean}> = [
   { href: "#story",   label: "Historia" },
   { href: "#event",   label: "Evento"   },
-  { href: "#rsvp",    label: "Confirmar"},
+  { href: "#map",    label: "Ubicación"},
   { href: "#album",   label: "Álbum"    },
   { href: "#gifts",   label: "Regalos"  },
   // { href: "/live",    label: "🖥 Pantalla", external: true },
@@ -98,7 +98,21 @@ export default function Navbar() {
               <motion.a
                 key={l.href}
                 href={l.href}
-                onClick={() => setOpen(false)}
+                onClick={(e) => {
+                  if (!l.external && l.href.startsWith("#")) {
+                    e.preventDefault();
+
+                    const el = document.querySelector(l.href);
+                    setOpen(false);
+
+                    // esperar a que cierre el menú
+                    setTimeout(() => {
+                      el?.scrollIntoView({ behavior: "smooth", block: "start" });
+                    }, 350);
+                  } else {
+                    setOpen(false);
+                  }
+                }}
                 initial={{ opacity: 0, x: -16 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: i * 0.04 }}

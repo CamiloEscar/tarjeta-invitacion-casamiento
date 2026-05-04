@@ -23,13 +23,13 @@ export default function Story() {
             Nuestra historia
           </motion.p>
           <motion.h2 className="t-title" style={{ color: "var(--c-text-1)" }} variants={fadeUp} initial="hidden" animate={hdr.inView ? "show" : "hidden"} transition={{ delay: 0.08 }}>
-            Cómo llegamos <em style={{ fontStyle: "italic", color: "var(--c-wine)" }}>hasta aquí</em>
+            Cómo llegamos <em style={{ fontStyle: "italic", color: "var(--c-wine)" }}>hasta aca</em>
           </motion.h2>
           <motion.div className="g-line" variants={fadeUp} initial="hidden" animate={hdr.inView ? "show" : "hidden"} transition={{ delay: 0.15 }} />
         </div>
 
         {/* Polaroids */}
-        <div className="grid grid-cols-3 gap-5 md:gap-8 mb-20 mt-4 px-2 md:px-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5 md:gap-8 mb-16 md:mb-20 mt-4 px-2 md:px-6">
           {POLAROIDS.map((p, i) => <PolaroidCard key={i} photo={p} index={i} />)}
         </div>
 
@@ -71,32 +71,63 @@ function StoryItem({ item, index }: { item: typeof STORY[number]; index: number 
   const isLeft = item.side === "left";
 
   return (
-    <div ref={ref} className="grid grid-cols-[1fr_48px_1fr] gap-x-6 mb-14 items-start">
-      {/* Left */}
-      <motion.div variants={isLeft ? slideLeft : fadeUp} initial="hidden" animate={inView ? "show" : "hidden"}
-        className={isLeft ? "text-right pr-2" : "opacity-0 pointer-events-none"}>
-        {isLeft && <TLContent item={item} />}
-      </motion.div>
+  <div
+    ref={ref}
+    className="
+      grid 
+      grid-cols-1 
+      sm:grid-cols-[1fr_48px_1fr] 
+      gap-y-6 sm:gap-x-6 
+      mb-10 sm:mb-14 
+      items-start
+    "
+  >
+    {/* Left */}
+    <motion.div
+      variants={isLeft ? slideLeft : fadeUp}
+      initial="hidden"
+      animate={inView ? "show" : "hidden"}
+      className={`
+        order-2
+        sm:order-none
+        ${isLeft ? "sm:text-right sm:pr-2" : ""}
+      `}
+    >
+      {isLeft && <TLContent item={item} />}
+    </motion.div>
 
-      {/* Dot */}
-      <div className="flex justify-center pt-1">
-        <motion.div
-          initial={{ scale: 0, opacity: 0 }} animate={inView ? { scale: 1, opacity: 1 } : {}}
-          transition={{ duration: 0.5, delay: 0.18 }}
-          className="w-12 h-12 rounded-full flex items-center justify-center text-lg z-10 relative"
-          style={{ background: "var(--c-linen)", border: "1.5px solid var(--c-gold)", boxShadow: "0 0 0 4px rgba(181,137,78,0.1)" }}
-        >
-          {item.emoji}
-        </motion.div>
-      </div>
-
-      {/* Right */}
-      <motion.div variants={!isLeft ? slideRight : fadeUp} initial="hidden" animate={inView ? "show" : "hidden"}
-        className={!isLeft ? "pl-2" : "opacity-0 pointer-events-none"}>
-        {!isLeft && <TLContent item={item} />}
+    {/* Dot */}
+    <div className="flex justify-center pt-1 order-1 sm:order-none">
+      <motion.div
+        initial={{ scale: 0, opacity: 0 }}
+        animate={inView ? { scale: 1, opacity: 1 } : {}}
+        transition={{ duration: 0.5, delay: 0.18 }}
+        className="w-12 h-12 rounded-full flex items-center justify-center text-lg z-10 relative"
+        style={{
+          background: "var(--c-linen)",
+          border: "1.5px solid var(--c-gold)",
+          boxShadow: "0 0 0 4px rgba(181,137,78,0.1)",
+        }}
+      >
+        {item.emoji}
       </motion.div>
     </div>
-  );
+
+    {/* Right */}
+    <motion.div
+      variants={!isLeft ? slideRight : fadeUp}
+      initial="hidden"
+      animate={inView ? "show" : "hidden"}
+      className={`
+        order-2
+        sm:order-none
+        ${!isLeft ? "sm:pl-2" : ""}
+      `}
+    >
+      {!isLeft && <TLContent item={item} />}
+    </motion.div>
+  </div>
+);
 }
 
 function TLContent({ item }: { item: typeof STORY[number] }) {
