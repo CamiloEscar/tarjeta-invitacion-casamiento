@@ -59,9 +59,9 @@ export default function EventInfo() {
 
         <div className="grid md:grid-cols-2 gap-px mt-6" style={{ background: "var(--c-border)" }}>
           <Card type="Ceremonia" title={W.ceremony.name} time={W.ceremony.time} note={W.ceremony.note}
-            address={W.ceremony.address} extra="Ceremonia religiosa · 60 min aprox." url={W.ceremony.mapsUrl} delay={0} />
+            address={W.ceremony.address} extra="Ceremonia civil · duración breve" url={W.ceremony.mapsUrl} delay={0} />
           <Card type="Recepción & Fiesta" title={W.reception.name} time={W.reception.time} note={W.reception.cocktail}
-            address={W.reception.address} extra={`Dress code: ${W.reception.dresscode}`} url={W.reception.mapsUrl} delay={0.1} />
+            address={W.reception.address} extra="Ingreso puntual · la fiesta comienza a horario" url={W.reception.mapsUrl} delay={0.1} />
         </div>
       </div>
     </section>
