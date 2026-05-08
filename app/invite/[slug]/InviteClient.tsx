@@ -983,9 +983,9 @@ export default function InviteClient({ guest, slug }: Props) {
 
               {/* Mensaje */}
               <div>
-                <p style={{ fontFamily: "var(--font-jost)", fontSize: "0.58rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "rgba(181,137,78,0.45)", marginBottom: "0.4rem" }}>Un mensaje (opcional)</p>
+                <p style={{ fontFamily: "var(--font-jost)", fontSize: "0.58rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "rgba(181,137,78,0.45)", marginBottom: "0.4rem" }}>Un mensaje (es opcional: va a aparecer en la pantalla junto a otros mensajes)</p>
                 <textarea value={form.mensaje} onChange={e => setF("mensaje", e.target.value)}
-                  placeholder="Un deseo, un recuerdo…"
+                  placeholder="Un saludo, un deseo, un recuerdo…"
                   rows={3}
                   style={{ width: "100%", background: "rgba(255,255,255,0.04)", border: "none", borderBottom: "1px solid rgba(181,137,78,0.22)", padding: "0.7rem 0.25rem", fontFamily: "var(--font-jost)", fontSize: "0.88rem", color: "var(--c-text-inv)", outline: "none", resize: "none" }} />
               </div>

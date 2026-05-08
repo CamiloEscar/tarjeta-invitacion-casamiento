@@ -12,7 +12,10 @@ interface Guest {
   nombre2?: string;
   apellido2?: string;
 
-  acompanantes: number;
+  adultos: number;
+  hijos: number;
+  totalPersonas: number;
+
   restricciones: string;
 
   slug: string;
@@ -22,10 +25,26 @@ interface Guest {
   confirmado?: boolean;
 }
 interface Summary {
-  total: number; si: number; no: number;
-  totalPersonas: number; shuttle: number;
+  totalInvitaciones: number;
+
+  invitacionesSi: number;
+  invitacionesNo: number;
+
+  totalPersonas: number;
+
+  personasSi: number;
+  personasNo: number;
+
+  totalHijos: number;
+
+  personasPagadas: number;
+
   sinMesa: number;
-  porDia: { fecha: string; count: number }[];
+
+  porDia: {
+    fecha: string;
+    count: number;
+  }[];
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -472,7 +491,7 @@ function StatsTab() {
                 lineHeight: 1,
               }}
             >
-              {summary.totalPersonas}
+              {summary.personasSi}
             </motion.p>
             <p style={{
               fontFamily: "var(--font-jost)",
@@ -481,20 +500,21 @@ function StatsTab() {
               fontWeight: 300,
               marginTop: "0.4rem",
             }}>
-              personas en total
+              personas confirmadas
             </p>
           </div>
 
           {/* Stats grid */}
           <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "0.5rem" }}>
-            <StatCard emoji="✅" label="Asisten"        value={summary.si}           color="#81c784" />
-            <StatCard emoji="❌" label="No asisten"     value={summary.no}           color="#ef9a9a" />
-            <StatCard emoji="🚌" label="Necesitan auto" value={summary.shuttle}      color="var(--c-gold-lt)" />
-            <StatCard emoji="🪑" label="Sin mesa aún"   value={summary.sinMesa ?? 0} color="rgba(207,168,112,0.55)" />
+            <StatCard emoji="✅" label="Asisten"        value={summary.personasSi}           color="#81c784" />
+            <StatCard emoji="❌" label="No asisten"     value={summary.personasNo}           color="#ef9a9a" />
+            <StatCard emoji="👶" label="Niños"          value={summary.totalHijos}           color="var(--c-gold-lt)" />
+            <StatCard emoji="💳" label="Pagaron (estan incluidos niños)"        value={summary.personasPagadas}      color="#81c784" />
+            <StatCard emoji="🪑" label="Sin mesa aún (invitacion confirmada)"   value={summary.sinMesa ?? 0}         color="rgba(207,168,112,0.55)" />
           </div>
 
           {/* Donut-ish progress: % asistencia */}
-          {summary.total > 0 && (
+          {summary.totalInvitaciones > 0 && (
             <div style={{
               padding: "1.25rem 1.5rem",
               background: "rgba(255,255,255,0.02)",
@@ -505,13 +525,19 @@ function StatsTab() {
                   Tasa de confirmación
                 </p>
                 <p style={{ fontFamily: "var(--font-playfair)", fontSize: "1.1rem", color: "var(--c-gold-lt)" }}>
-                  {Math.round((summary.si / summary.total) * 100)}%
+                  {Math.round(
+                    (summary.invitacionesSi / summary.totalInvitaciones) * 100
+                  )}%
                 </p>
               </div>
               <div style={{ height: 6, background: "rgba(181,137,78,0.08)", overflow: "hidden", borderRadius: 3 }}>
                 <motion.div
                   initial={{ width: 0 }}
-                  animate={{ width: `${(summary.si / summary.total) * 100}%` }}
+                  animate={{
+                    width: `${
+                      (summary.invitacionesSi / summary.totalInvitaciones) * 100
+                    }%`,
+                  }}
                   transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
                   style={{
                     height: "100%",
@@ -522,7 +548,7 @@ function StatsTab() {
               </div>
               <div style={{ display: "flex", justifyContent: "space-between", marginTop: "0.4rem" }}>
                 <span style={{ fontSize: "0.6rem", color: "rgba(154,128,104,0.3)" }}>0</span>
-                <span style={{ fontSize: "0.6rem", color: "rgba(154,128,104,0.3)" }}>{summary.total} enviadas</span>
+                <span style={{ fontSize: "0.6rem", color: "rgba(154,128,104,0.3)" }}>{summary.totalInvitaciones} enviadas</span>
               </div>
             </div>
           )}
@@ -722,7 +748,7 @@ async function toggleFlag(
     return matchSearch && matchFilter;
   });
 
-  const totalPersonas = guests.reduce((s, g) => s + 1 + g.acompanantes, 0);
+  const totalPersonas = guests.reduce((s, g) => s + (g.totalPersonas || 0), 0);
   const sinMesa = guests.filter(g => !g.mesa).length;
   const dirty   = guests.filter(g => String(edits[g.slug] ?? "").trim() !== String(g.mesa ?? "")).length;
 
@@ -732,7 +758,7 @@ async function toggleFlag(
     <div>
       <SectionHeader
         title="Asignación de mesas"
-        subtitle={`${guests.length} invitados · ${totalPersonas} personas · ${sinMesa} sin mesa`}
+        subtitle={`${guests.length} invitaciones · ${totalPersonas} personas · ${sinMesa} sin mesa`}
         action={
           <div style={{ display: "flex", gap: "0.4rem", alignItems: "center" }}>
             {dirty > 0 && (
@@ -849,11 +875,17 @@ async function toggleFlag(
                   whiteSpace: "nowrap",
                 }}>
                   {getGuestDisplayName(guest)}
-                  {guest.acompanantes > 0 && (
-                    <span style={{ fontSize: "0.65rem", color: "rgba(181,137,78,0.4)", marginLeft: "0.4rem" }}>
-                      +{guest.acompanantes}
-                    </span>
-                  )}
+                  {guest.hijos > 0 && (
+                  <span
+                    style={{
+                      fontSize: "0.65rem",
+                      color: "rgba(181,137,78,0.4)",
+                      marginLeft: "0.4rem",
+                    }}
+                  >
+                    👶 {guest.hijos}
+                  </span>
+                )}
                 </p>
                 {guest.restricciones && (
                   <p style={{ fontSize: "0.6rem", color: "rgba(239,154,154,0.5)", fontWeight: 300, marginTop: "0.1rem", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
@@ -1012,9 +1044,9 @@ function ExportTab() {
   }, []);
 
   function exportCSV() {
-    const header = "Nombre,Acompañantes,Mesa,Restricciones";
+    const header = "Nombre,Adultos,Niños,Total,Mesa,Pagó,Restricciones";
     const rows = guests.map(g =>
-      `""${getGuestDisplayName(g)}"",${g.acompanantes},"${g.mesa || "—"}","${g.restricciones || ""}"`
+      `"${getGuestDisplayName(g)}",${g.adultos},${g.hijos},${g.totalPersonas},"${g.mesa || "—"}","${g.pago ? "Si" : "No"}","${g.restricciones || ""}"`
     );
     const csv = [header, ...rows].join("\n");
     const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
@@ -1025,7 +1057,7 @@ function ExportTab() {
   }
 
   function copyList() {
-    const text = guests.map(g => `${getGuestDisplayName(g)}${g.acompanantes > 0 ? ` +${g.acompanantes}` : ""} — ${g.mesa || "sin mesa"}`).join("\n");
+    const text = guests.map(g => `${getGuestDisplayName(g)}${g.hijos > 0 ? ` 👶 ${g.hijos}` : ""} — ${g.mesa || "sin mesa"}`).join("\n");
     navigator.clipboard.writeText(text).then(() => {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
@@ -1051,7 +1083,7 @@ function ExportTab() {
     <div>
       <SectionHeader
         title="Lista completa"
-        subtitle={`${guests.length} invitados · ${mesaKeys.length} mesas`}
+        subtitle={`${guests.length} invitaciones · ${mesaKeys.length} mesas`}
         action={
           <div style={{ display: "flex", gap: "0.4rem" }}>
             <button onClick={copyList} style={exportBtnStyle(copied ? "green" : "gold")}>
@@ -1069,59 +1101,198 @@ function ExportTab() {
       <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
         {mesaKeys.map(mesa => {
           const list = byMesa[mesa];
-          const totalPersonas = list.reduce((s, g) => s + 1 + g.acompanantes, 0);
+
+          const totalPersonas = list.reduce(
+            (s, g) => s + (g.totalPersonas || 0),
+            0
+          );
+
+          const totalHijos = list.reduce(
+            (s, g) => s + (g.hijos || 0),
+            0
+          );
+
+          const pagados = list.filter(g => g.pago).length;
+
           const isSin = mesa === "Sin mesa asignada";
 
           return (
-            <div key={mesa} style={{
-              border: `1px solid ${isSin ? "rgba(200,80,80,0.15)" : "rgba(181,137,78,0.12)"}`,
-              overflow: "hidden",
-            }}>
+            <div
+              key={mesa}
+              style={{
+                border: `1px solid ${
+                  isSin
+                    ? "rgba(200,80,80,0.15)"
+                    : "rgba(181,137,78,0.12)"
+                }`,
+                overflow: "hidden",
+              }}
+            >
               {/* Mesa header */}
-              <div style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-                padding: "0.7rem 1rem",
-                background: isSin ? "rgba(200,80,80,0.05)" : "rgba(181,137,78,0.06)",
-                borderBottom: `1px solid ${isSin ? "rgba(200,80,80,0.1)" : "rgba(181,137,78,0.1)"}`,
-              }}>
-                <div style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}>
-                  <span style={{ fontSize: "0.9rem" }}>{isSin ? "⚠️" : "🪑"}</span>
-                  <span style={{
-                    fontFamily: "var(--font-playfair)",
-                    fontStyle: "italic",
-                    fontSize: "0.95rem",
-                    color: isSin ? "rgba(239,154,154,0.7)" : "var(--c-gold-lt)",
-                  }}>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  padding: "0.7rem 1rem",
+                  background: isSin
+                    ? "rgba(200,80,80,0.05)"
+                    : "rgba(181,137,78,0.06)",
+                  borderBottom: `1px solid ${
+                    isSin
+                      ? "rgba(200,80,80,0.1)"
+                      : "rgba(181,137,78,0.1)"
+                  }`,
+                }}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "0.6rem",
+                  }}
+                >
+                  <span style={{ fontSize: "0.9rem" }}>
+                    {isSin ? "⚠️" : "🪑"}
+                  </span>
+
+                  <span
+                    style={{
+                      fontFamily: "var(--font-playfair)",
+                      fontStyle: "italic",
+                      fontSize: "0.95rem",
+                      color: isSin
+                        ? "rgba(239,154,154,0.7)"
+                        : "var(--c-gold-lt)",
+                    }}
+                  >
                     {mesa}
                   </span>
                 </div>
-                <span style={{ fontSize: "0.56rem", color: "rgba(154,128,104,0.4)", letterSpacing: "0.1em" }}>
-                  {totalPersonas} personas
-                </span>
+
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "0.8rem",
+                    flexWrap: "wrap",
+                    justifyContent: "flex-end",
+                  }}
+                >
+                  <span
+                    style={{
+                      fontSize: "0.56rem",
+                      color: "rgba(154,128,104,0.4)",
+                      letterSpacing: "0.1em",
+                    }}
+                  >
+                    👥 {totalPersonas}
+                  </span>
+
+                  {totalHijos > 0 && (
+                    <span
+                      style={{
+                        fontSize: "0.56rem",
+                        color: "rgba(154,128,104,0.4)",
+                        letterSpacing: "0.1em",
+                      }}
+                    >
+                      👶 {totalHijos}
+                    </span>
+                  )}
+
+                  <span
+                    style={{
+                      fontSize: "0.56rem",
+                      color: "#81c784",
+                      letterSpacing: "0.1em",
+                    }}
+                  >
+                    💳 {pagados}
+                  </span>
+                </div>
               </div>
 
               {/* Guests */}
               {list.map((g, i) => (
-                <div key={g.slug} style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  padding: "0.5rem 1rem",
-                  borderBottom: i < list.length - 1 ? "1px solid rgba(181,137,78,0.05)" : "none",
-                  background: i % 2 === 0 ? "transparent" : "rgba(255,255,255,0.01)",
-                }}>
-                  <span style={{ fontSize: "0.84rem", color: "rgba(196,168,130,0.75)" }}>
-                    {getGuestDisplayName(g)}
-                    {g.acompanantes > 0 && (
-                      <span style={{ fontSize: "0.65rem", color: "rgba(181,137,78,0.35)", marginLeft: "0.35rem" }}>
-                        +{g.acompanantes}
+                <div
+                  key={g.slug}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    gap: "1rem",
+                    padding: "0.65rem 1rem",
+                    borderBottom:
+                      i < list.length - 1
+                        ? "1px solid rgba(181,137,78,0.05)"
+                        : "none",
+                    background:
+                      i % 2 === 0
+                        ? "transparent"
+                        : "rgba(255,255,255,0.01)",
+                  }}
+                >
+                  <div style={{ minWidth: 0 }}>
+                    <span
+                      style={{
+                        fontSize: "0.84rem",
+                        color: "rgba(196,168,130,0.75)",
+                      }}
+                    >
+                      {getGuestDisplayName(g)}
+                    </span>
+
+                    <div
+                      style={{
+                        display: "flex",
+                        gap: "0.6rem",
+                        flexWrap: "wrap",
+                        marginTop: "0.2rem",
+                      }}
+                    >
+                      <span
+                        style={{
+                          fontSize: "0.62rem",
+                          color: "rgba(181,137,78,0.35)",
+                        }}
+                      >
+                        👥 {g.totalPersonas}
                       </span>
-                    )}
-                  </span>
+
+                      {g.hijos > 0 && (
+                        <span
+                          style={{
+                            fontSize: "0.62rem",
+                            color: "rgba(181,137,78,0.35)",
+                          }}
+                        >
+                          👶 {g.hijos}
+                        </span>
+                      )}
+
+                      {g.pago && (
+                        <span
+                          style={{
+                            fontSize: "0.62rem",
+                            color: "#81c784",
+                          }}
+                        >
+                          💳 Pagó
+                        </span>
+                      )}
+                    </div>
+                  </div>
+
                   {g.restricciones && (
-                    <span style={{ fontSize: "0.58rem", color: "rgba(239,154,154,0.45)" }}>
+                    <span
+                      style={{
+                        fontSize: "0.58rem",
+                        color: "rgba(239,154,154,0.45)",
+                        textAlign: "right",
+                        maxWidth: "180px",
+                      }}
+                    >
                       ⚠ {g.restricciones}
                     </span>
                   )}

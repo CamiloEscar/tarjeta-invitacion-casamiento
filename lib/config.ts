@@ -3,7 +3,7 @@
 // ═══════════════════════════════════════════════════
 
 export const W = {
-  bride:           "Paola",
+  bride:           "Pao",
   groom:           "Leo",
   weddingDate:     "2026-10-17T18:00:00-03:00",
   weddingDateLabel:"17 de Octubre, 2026",
@@ -41,10 +41,10 @@ gifts: {
     cvu:      "ABC",          // CVU de Mercado Pago si tienen
     mpLink:   "CDA",          // Link de cobro Mercado Pago: https://mpago.la/...
     modoLink: "ASDF",          // Link de MODO: https://transferencias.modo.com.ar/...
-    message:  "Si querés hacernos un regalo, la forma más fácil es una transferencia. ¡Con lo que puedas ya es más que suficiente para nosotros!",
+    message: "Tu presencia es el mejor regalo para nosotros 💛. Si aun así querés hacernos un regalo, te dejamos algunas opciones: podés hacer una transferencia o elegir algo de nuestra lista de regalos.",
     extra: {
       icon: "🎁",
-      title: "Regalo especial",
+      title: "Regalos",
       description: "Si querés hacernos un regalo adicional, podés verlo acá.",
       buttonText: "Ver regalo",
       url: "/gifts",
@@ -123,7 +123,7 @@ gifts: {
   photoAlbumUrl:   "https://photos.app.goo.gl/sS3YiuNvKkYFiAdB8",
   googleDriveFolder:
   "https://drive.google.com/drive/folders/10mLwcHSG_zEArnxtQBhg-XItQ29d73fE?usp=sharing",
-  appsScriptUrl:   "https://script.google.com/macros/s/AKfycbyKepxZ7SSl1FiDBj-CsqelLWFR5G4sYX5X-rstedYzU8H5zKb52vYPNfJJYSPmMV0N0A/exec",
+  appsScriptUrl:   "https://script.google.com/macros/s/AKfycbyS15ITkCllfiorfeLwC7RYMREMbqy4FgrIO9bQZK6nbP6laIwkgWkYRYyvLkxW2elVEQ/exec",
   spotifyEmbedSrc: "https://open.spotify.com/embed/playlist/37i9dQZF1DX2sUQwD7tbmL?utm_source=generator&theme=0",
 
   heroVideo:    "/boda.mp4" as string,
