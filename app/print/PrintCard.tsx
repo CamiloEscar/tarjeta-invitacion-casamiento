@@ -123,55 +123,193 @@ export default function PrintCard({ slug, guest }: Props) {
     <div style={{ minHeight: "100dvh", background: "#EDE4D6", fontFamily: "var(--font-jost)" }}>
 
       {/* ── Toolbar ── */}
-      <div className="no-print" style={{
-        position: "sticky", top: 0, zIndex: 20,
+      {/* ── Toolbar ── */}
+    <div
+      className="no-print"
+      style={{
+        position: "sticky",
+        top: 0,
+        zIndex: 20,
         background: "var(--c-base)",
         borderBottom: "1px solid var(--c-border)",
-        padding: "0.75rem 1.25rem",
-        display: "flex", alignItems: "center", justifyContent: "space-between", gap: "0.5rem",
-      }}>
-        <Link href="/" style={{
-          fontFamily: "var(--font-jost)", fontSize: "0.58rem",
-          letterSpacing: "0.2em", textTransform: "uppercase",
-          color: "var(--c-text-3)", flexShrink: 0,
-        }}>
-          ← Volver
-        </Link>
+        padding: "0.75rem 1rem",
+      }}
+    >
+      <div
+        style={{
+          display: "flex",
+          flexWrap: "wrap",
+          alignItems: "center",
+          justifyContent: "space-between",
+          gap: "0.75rem",
+          maxWidth: 1200,
+          margin: "0 auto",
+        }}
+      >
+        {/* Si viene desde invitación generada */}
+        {slug ? (
+          <>
+            <Link
+              href={`/invite/${slug}`}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                padding: "0.55rem 1rem",
+                background: "transparent",
+                border: "1px solid var(--c-border)",
+                textDecoration: "none",
+                fontFamily: "var(--font-jost)",
+                fontSize: "0.58rem",
+                letterSpacing: "0.14em",
+                textTransform: "uppercase",
+                color: "var(--c-text-3)",
+                width: "100%",
+                maxWidth: 260,
+                margin: "0 auto",
+              }}
+            >
+              ✨ Ver invitación completa
+            </Link>
+          </>
+        ) : (
+          <>
+            {/* Left */}
+            <Link
+              href="/"
+              style={{
+                fontFamily: "var(--font-jost)",
+                fontSize: "0.58rem",
+                letterSpacing: "0.2em",
+                textTransform: "uppercase",
+                color: "var(--c-text-3)",
+                flexShrink: 0,
+                textDecoration: "none",
+              }}
+            >
+              ← Volver
+            </Link>
 
-        {/* Nombre en toolbar — usa fullName tipado */}
-        <p style={{
-          fontFamily: "var(--font-playfair)", fontStyle: "italic",
-          fontSize: "0.95rem", color: "var(--c-text-1)", opacity: 0.8,
-          whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis",
-        }}>
-          {fullName}
-        </p>
+            {/* Nombre */}
+            <p
+              style={{
+                fontFamily: "var(--font-playfair)",
+                fontStyle: "italic",
+                fontSize: "0.95rem",
+                color: "var(--c-text-1)",
+                opacity: 0.8,
+                flex: 1,
+                minWidth: 180,
+                textAlign: "center",
+                whiteSpace: "nowrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+              }}
+            >
+              {fullName}
+            </p>
 
-        <div style={{ display: "flex", gap: "0.4rem", flexShrink: 0, flexWrap: "wrap", justifyContent: "flex-end" }}>
-          <button onClick={copyLink}
-            style={{ display: "flex", alignItems: "center", gap: "0.35rem", padding: "0.45rem 0.8rem", background: "transparent", border: "1px solid var(--c-border)", cursor: "pointer", fontFamily: "var(--font-jost)", fontSize: "0.58rem", letterSpacing: "0.14em", textTransform: "uppercase", color: copied ? "var(--c-gold)" : "var(--c-text-3)", transition: "all 0.2s" }}>
-            {copied ? "✓ Copiado" : "🔗 Link"}
-          </button>
+            {/* Botones */}
+            <div
+              style={{
+                display: "flex",
+                gap: "0.4rem",
+                flexWrap: "wrap",
+                justifyContent: "flex-end",
+              }}
+            >
+              <button
+                onClick={copyLink}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "0.35rem",
+                  padding: "0.45rem 0.8rem",
+                  background: "transparent",
+                  border: "1px solid var(--c-border)",
+                  cursor: "pointer",
+                  fontFamily: "var(--font-jost)",
+                  fontSize: "0.58rem",
+                  letterSpacing: "0.14em",
+                  textTransform: "uppercase",
+                  color: copied ? "var(--c-gold)" : "var(--c-text-3)",
+                  transition: "all 0.2s",
+                }}
+              >
+                {copied ? "✓ Copiado" : "🔗 Link"}
+              </button>
 
-          <button onClick={downloadImage} disabled={!h2cLoaded || sharing}
-            style={{ display: "flex", alignItems: "center", gap: "0.35rem", padding: "0.45rem 0.8rem", background: "transparent", border: "1px solid var(--c-border)", cursor: h2cLoaded && !sharing ? "pointer" : "not-allowed", fontFamily: "var(--font-jost)", fontSize: "0.58rem", letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--c-text-3)", opacity: h2cLoaded ? 1 : 0.45, transition: "all 0.2s" }}>
-            🖼 Imagen
-          </button>
+              <button
+                onClick={downloadImage}
+                disabled={!h2cLoaded || sharing}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "0.35rem",
+                  padding: "0.45rem 0.8rem",
+                  background: "transparent",
+                  border: "1px solid var(--c-border)",
+                  cursor:
+                    h2cLoaded && !sharing ? "pointer" : "not-allowed",
+                  fontFamily: "var(--font-jost)",
+                  fontSize: "0.58rem",
+                  letterSpacing: "0.14em",
+                  textTransform: "uppercase",
+                  color: "var(--c-text-3)",
+                  opacity: h2cLoaded ? 1 : 0.45,
+                  transition: "all 0.2s",
+                }}
+              >
+                🖼 Imagen
+              </button>
 
-          <button onClick={shareWhatsApp} disabled={sharing}
-            style={{ display: "flex", alignItems: "center", gap: "0.35rem", padding: "0.45rem 0.8rem", background: "#25D366", border: "none", cursor: sharing ? "wait" : "pointer", fontFamily: "var(--font-jost)", fontSize: "0.58rem", letterSpacing: "0.14em", textTransform: "uppercase", color: "white", opacity: sharing ? 0.6 : 1, transition: "all 0.2s" }}>
-            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347zM12 0C5.373 0 0 5.373 0 12c0 2.117.554 4.103 1.524 5.825L.057 23.852a.5.5 0 0 0 .606.638l6.264-1.638A11.94 11.94 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0z" />
-            </svg>
-            WhatsApp
-          </button>
+              <button
+                onClick={shareWhatsApp}
+                disabled={sharing}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "0.35rem",
+                  padding: "0.45rem 0.8rem",
+                  background: "#25D366",
+                  border: "none",
+                  cursor: sharing ? "wait" : "pointer",
+                  fontFamily: "var(--font-jost)",
+                  fontSize: "0.58rem",
+                  letterSpacing: "0.14em",
+                  textTransform: "uppercase",
+                  color: "white",
+                  opacity: sharing ? 0.6 : 1,
+                  transition: "all 0.2s",
+                }}
+              >
+                WhatsApp
+              </button>
 
-          <button onClick={printCard}
-            style={{ display: "flex", alignItems: "center", gap: "0.35rem", padding: "0.45rem 0.8rem", background: "var(--c-wine)", border: "none", cursor: "pointer", fontFamily: "var(--font-jost)", fontSize: "0.58rem", letterSpacing: "0.14em", textTransform: "uppercase", color: "white" }}>
-            🖨️ Imprimir / PDF
-          </button>
-        </div>
+              <button
+                onClick={printCard}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "0.35rem",
+                  padding: "0.45rem 0.8rem",
+                  background: "var(--c-wine)",
+                  border: "none",
+                  cursor: "pointer",
+                  fontFamily: "var(--font-jost)",
+                  fontSize: "0.58rem",
+                  letterSpacing: "0.14em",
+                  textTransform: "uppercase",
+                  color: "white",
+                }}
+              >
+                🖨️ Imprimir / PDF
+              </button>
+            </div>
+          </>
+        )}
       </div>
+    </div>
 
       {/* Status message */}
       <AnimatePresence>
@@ -212,38 +350,105 @@ export default function PrintCard({ slug, guest }: Props) {
           <div style={{ padding: "2.5rem 2.5rem 2rem" }}>
 
             {/* Header */}
-            <div style={{ textAlign: "center", marginBottom: "2rem" }}>
-              <div style={{
-                width: 64, height: 64, borderRadius: "50%",
-                background: "radial-gradient(circle at 36% 30%, var(--c-wine-lt), var(--c-wine) 52%, var(--c-wine-dk))",
-                display: "flex", alignItems: "center", justifyContent: "center",
-                margin: "0 auto 1.25rem", fontSize: "1.6rem",
-                boxShadow: "0 4px 20px rgba(107,38,53,0.35)",
-              }}>♡</div>
+            <div style={{ textAlign: "center", marginBottom: "2.4rem", position: "relative" }}>
 
-              <p style={{ fontFamily: "var(--font-jost)", fontSize: "0.56rem", letterSpacing: "0.3em", textTransform: "uppercase", color: "var(--c-text-3)", marginBottom: "0.6rem" }}>
-                Invitación personal para
+              {/* Initials background */}
+              <div style={{
+                position: "absolute",
+                inset: 0,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                pointerEvents: "none",
+                opacity: 0.035,
+                fontFamily: "var(--font-playfair)",
+                fontSize: "7rem",
+                fontStyle: "italic",
+                color: "var(--c-wine)",
+                lineHeight: 1,
+                transform: "translateY(-10px)"
+              }}>
+                {W.bride.charAt(0)}&{W.groom.charAt(0)}
+              </div>
+
+              <p
+                style={{
+                  fontFamily: "var(--font-cormorant)",
+                  fontStyle: "italic",
+                  fontSize: "1.7rem",
+                  color: "var(--c-text-2)",
+                  marginBottom: "0.5rem",
+                  position: "relative"
+                }}
+              >
+                {W.bride} &amp; {W.groom}
               </p>
 
-              {/* Nombre — par o individual */}
+              <div style={{
+                width: 60,
+                height: 1,
+                background: "linear-gradient(to right, transparent, var(--c-gold), transparent)",
+                margin: "0 auto 1rem"
+              }} />
+
+              <p style={{
+                fontFamily: "var(--font-jost)",
+                fontSize: "0.56rem",
+                letterSpacing: "0.3em",
+                textTransform: "uppercase",
+                color: "var(--c-text-3)",
+                marginBottom: "0.8rem",
+                position: "relative"
+              }}>
+                Invitación para
+              </p>
+
               {guest.nombre2 ? (
-                <h2 style={{ fontFamily: "var(--font-playfair)", fontStyle: "italic", fontWeight: 400, fontSize: "clamp(1.3rem, 4vw, 1.8rem)", color: "var(--c-text-1)", lineHeight: 1.15, marginBottom: "0.4rem" }}>
+                <h2 style={{
+                  fontFamily: "var(--font-playfair)",
+                  fontStyle: "italic",
+                  fontWeight: 400,
+                  fontSize: "clamp(1.3rem, 4vw, 1.8rem)",
+                  color: "var(--c-text-1)",
+                  lineHeight: 1.2,
+                  marginBottom: "0.7rem",
+                  position: "relative"
+                }}>
                   {guest.nombre} {guest.apellido}
                   <br />
-                  <span style={{ fontSize: "0.65em", color: "rgba(181,137,78,0.5)" }}>&amp;</span>
+                  <span style={{
+                    fontSize: "0.65em",
+                    color: "rgba(181,137,78,0.55)"
+                  }}>
+                    &
+                  </span>
                   <br />
                   {guest.nombre2} {guest.apellido2 ?? ""}
                 </h2>
               ) : (
-                <h2 style={{ fontFamily: "var(--font-playfair)", fontStyle: "italic", fontWeight: 400, fontSize: "clamp(1.6rem, 5vw, 2.2rem)", color: "var(--c-text-1)", lineHeight: 1.05, marginBottom: "0.4rem" }}>
+                <h2 style={{
+                  fontFamily: "var(--font-playfair)",
+                  fontStyle: "italic",
+                  fontWeight: 400,
+                  fontSize: "clamp(1.6rem, 5vw, 2.2rem)",
+                  color: "var(--c-text-1)",
+                  lineHeight: 1.05,
+                  marginBottom: "0.7rem",
+                  position: "relative"
+                }}>
                   {fullName}
                 </h2>
               )}
 
-              <div style={{ width: 48, height: 1, background: "linear-gradient(to right, transparent, var(--c-gold), transparent)", margin: "0.9rem auto" }} />
-
-              <p style={{ fontFamily: "var(--font-cormorant)", fontStyle: "italic", fontSize: "1.25rem", color: "var(--c-text-2)" }}>
-                {W.bride} &amp; {W.groom}
+              <p style={{
+                fontFamily: "var(--font-cormorant)",
+                fontStyle: "italic",
+                fontSize: "1rem",
+                color: "var(--c-text-3)",
+                opacity: 0.9,
+                position: "relative"
+              }}>
+                Nos encantaría compartir este día con ustedes
               </p>
             </div>
 
@@ -277,7 +482,7 @@ export default function PrintCard({ slug, guest }: Props) {
                   }
                 </div>
                 <p style={{ fontFamily: "var(--font-jost)", fontSize: "0.48rem", letterSpacing: "0.16em", textTransform: "uppercase", color: "var(--c-text-3)", textAlign: "center", marginTop: "0.4rem" }}>
-                  Escaneá para abrir
+                  Escaneá para abrir 
                 </p>
               </div>
 
@@ -299,10 +504,10 @@ export default function PrintCard({ slug, guest }: Props) {
 
             {/* Dress code + RSVP deadline */}
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", textAlign: "center", marginBottom: "1.5rem" }}>
-              <div style={{ flex: 1 }}>
+              {/* <div style={{ flex: 1 }}>
                 <p style={{ fontFamily: "var(--font-jost)", fontSize: "0.52rem", letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--c-text-3)", marginBottom: "0.3rem" }}>VALOR TARJETA POR PERSONA</p>
                 <p style={{ fontFamily: "var(--font-jost)", fontSize: "0.78rem", color: "var(--c-text-2)", fontWeight: 300 }}>{W.reception.dresscode}</p>
-              </div>
+              </div> */}
               <div style={{ width: 1, height: 32, background: "var(--c-border)", margin: "0 1rem", flexShrink: 0 }} />
               <div style={{ flex: 1 }}>
                 <p style={{ fontFamily: "var(--font-jost)", fontSize: "0.52rem", letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--c-text-3)", marginBottom: "0.3rem" }}>Confirmar antes del</p>
@@ -313,7 +518,7 @@ export default function PrintCard({ slug, guest }: Props) {
             {/* Footer phrase */}
             <div style={{ textAlign: "center", borderTop: "1px solid var(--c-border)", paddingTop: "1.25rem" }}>
               <p style={{ fontFamily: "var(--font-cormorant)", fontStyle: "italic", fontSize: "0.95rem", color: "var(--c-text-3)", lineHeight: 1.65 }}>
-                "Tu presencia hará de este día algo único e irrepetible"
+                "Acompañanos en una noche inolvidable"
               </p>
             </div>
           </div>

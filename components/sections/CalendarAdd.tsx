@@ -4,19 +4,22 @@ import { motion, useInView } from "framer-motion";
 import { W } from "@/lib/config";
 
 const ICS = [
-  "BEGIN:VCALENDAR","VERSION:2.0",
+  "BEGIN:VCALENDAR",
+  "VERSION:2.0",
   "BEGIN:VEVENT",
-  "DTSTART:20261012T180000Z","DTEND:20261013T040000Z",
+  "DTSTART:20261017T003000Z",
+  "DTEND:20261018T090000Z",
   `SUMMARY:Casamiento ${W.bride} & ${W.groom}`,
-  `DESCRIPTION:Ceremonia 18hs · Fiesta 20:30hs`,
+  `DESCRIPTION:Fiesta 21:30hs`,
   `LOCATION:${W.location}`,
-  "END:VEVENT","END:VCALENDAR",
+  "END:VEVENT",
+  "END:VCALENDAR",
 ].join("\n");
 
 const BTNS = [
   {
     label:"Google Calendar", icon:"📅",
-    href: `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(`Casamiento ${W.bride} & ${W.groom}`)}&dates=20261012T180000Z/20261013T040000Z&location=${encodeURIComponent(W.location)}&details=${encodeURIComponent("Ceremonia 18hs · Fiesta 20:30hs")}`,
+    href: `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(`Casamiento ${W.bride} & ${W.groom}`)}&dates=20261018T003000Z/20261018T090000Z&location=${encodeURIComponent(W.location)}&details=${encodeURIComponent("Ceremonia 18hs · Fiesta 20:30hs")}`,
     download: undefined,
   },
   {
@@ -26,7 +29,7 @@ const BTNS = [
   },
   {
     label:"Outlook", icon:"🗓️",
-    href: `https://outlook.live.com/calendar/0/deeplink/compose?subject=${encodeURIComponent(`Casamiento ${W.bride} & ${W.groom}`)}&startdt=2026-10-12T18:00:00&enddt=2026-10-13T04:00:00&location=${encodeURIComponent(W.location)}`,
+    href: `https://outlook.live.com/calendar/0/deeplink/compose?subject=${encodeURIComponent(`Casamiento ${W.bride} & ${W.groom}`)}&startdt=2026-10-17T21:30:00&enddt=2026-10-18T06:00:00&location=${encodeURIComponent(W.location)}`,
     download: undefined,
   },
 ];
