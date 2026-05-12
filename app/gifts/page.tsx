@@ -1,22 +1,87 @@
 "use client";
+
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import {
+  motion,
+  AnimatePresence,
+} from "framer-motion";
 import Link from "next/link";
 import { W } from "@/lib/config";
 
-function CopyButton({ label, value }: { label: string; value: string }) {
+function CopyButton({
+  label,
+  value,
+}: {
+  label: string;
+  value: string;
+}) {
   const [copied, setCopied] = useState(false);
+
+  function copy() {
+    navigator.clipboard.writeText(value).then(() => {
+      setCopied(true);
+
+      setTimeout(() => {
+        setCopied(false);
+      }, 2200);
+    });
+  }
+
   return (
     <div>
-      <p style={{ fontFamily:"var(--font-jost)", fontSize:"0.52rem", letterSpacing:"0.2em", textTransform:"uppercase", color:"var(--c-text-3)", marginBottom:"0.35rem" }}>{label}</p>
+      <p
+        style={{
+          fontFamily: "var(--font-jost)",
+          fontSize: "0.52rem",
+          letterSpacing: "0.22em",
+          textTransform: "uppercase",
+          color: "rgba(181,137,78,0.38)",
+          marginBottom: "0.4rem",
+        }}
+      >
+        {label}
+      </p>
+
       <button
-        onClick={() => { navigator.clipboard.writeText(value).then(() => { setCopied(true); setTimeout(() => setCopied(false), 2500); }); }}
-        className="w-full flex items-center justify-between gap-3 px-4 py-3 text-left transition-all duration-200"
-        style={{ background:"rgba(181,137,78,0.07)", border:"1px solid rgba(181,137,78,0.22)", color:"var(--c-gold-lt)" }}>
-        <span style={{ fontFamily:"monospace", fontSize:"clamp(0.82rem,2.5vw,1rem)", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{value}</span>
+        onClick={copy}
+        className="w-full flex items-center justify-between gap-3 px-4 py-3 transition-all duration-200 text-left"
+        style={{
+          background: "rgba(181,137,78,0.06)",
+          border:
+            "1px solid rgba(181,137,78,0.16)",
+          color: "var(--c-gold-lt)",
+        }}
+      >
+        <span
+          style={{
+            fontFamily: "monospace",
+            fontSize: "0.84rem",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            whiteSpace: "nowrap",
+          }}
+        >
+          {value}
+        </span>
+
         <AnimatePresence mode="wait">
-          <motion.span key={String(copied)} initial={{ opacity:0, y:4 }} animate={{ opacity:1, y:0 }} exit={{ opacity:0, y:-4 }}
-            style={{ fontFamily:"var(--font-jost)", fontSize:"0.58rem", letterSpacing:"0.14em", textTransform:"uppercase", flexShrink:0, color:copied?"var(--c-gold-lt)":"rgba(154,128,104,0.4)", transition:"color 0.2s" }}>
+          <motion.span
+            key={copied ? "copied" : "copy"}
+            initial={{ opacity: 0, y: 4 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -4 }}
+            transition={{ duration: 0.18 }}
+            style={{
+              fontFamily: "var(--font-jost)",
+              fontSize: "0.56rem",
+              letterSpacing: "0.14em",
+              textTransform: "uppercase",
+              flexShrink: 0,
+              color: copied
+                ? "var(--c-gold-lt)"
+                : "rgba(154,128,104,0.45)",
+            }}
+          >
             {copied ? "✓ Copiado" : "Copiar"}
           </motion.span>
         </AnimatePresence>
@@ -26,125 +91,169 @@ function CopyButton({ label, value }: { label: string; value: string }) {
 }
 
 export default function GiftsPage() {
-  const hasMp   = Boolean(W.gifts.mpLink);
+  const hasMp = Boolean(W.gifts.mpLink);
   const hasModo = Boolean(W.gifts.modoLink);
-  const hasCVU  = Boolean(W.gifts.cvu);
 
   return (
-    <div style={{ minHeight:"100dvh", background:"var(--c-dark)", fontFamily:"var(--font-jost)" }}>
+    <div
+      style={{
+        minHeight: "100dvh",
+        background: "var(--c-dark)",
+        position: "relative",
+        overflow: "hidden",
+      }}
+    >
+      {/* Glow */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background:
+            "radial-gradient(circle at 50% 20%, rgba(181,137,78,0.06), transparent 40%)",
+        }}
+      />
 
       {/* Header */}
-      <div style={{ position:"sticky", top:0, zIndex:10, background:"var(--c-dark-2)", borderBottom:"1px solid rgba(181,137,78,0.1)", padding:"1rem 1.5rem", display:"flex", alignItems:"center", justifyContent:"space-between" }}>
-        <Link href="/" style={{ fontSize:"0.58rem", letterSpacing:"0.2em", textTransform:"uppercase", color:"rgba(181,137,78,0.4)" }}>← Inicio</Link>
-        <p style={{ fontFamily:"var(--font-playfair)", fontStyle:"italic", fontSize:"0.95rem", color:"var(--c-text-inv)", opacity:0.7 }}>
-          {W.bride} &amp; {W.groom}
-        </p>
-        <div style={{ width:"3rem" }} />
+      <div
+        style={{
+          position: "sticky",
+          top: 0,
+          zIndex: 20,
+          backdropFilter: "blur(12px)",
+          background: "rgba(15,15,15,0.75)",
+          borderBottom:
+            "1px solid rgba(181,137,78,0.08)",
+        }}
+      >
+        <div
+          style={{
+            maxWidth: 1100,
+            margin: "0 auto",
+            padding: "1rem 1.4rem",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
+        >
+          <Link
+            href="/"
+            style={{
+              fontFamily: "var(--font-jost)",
+              fontSize: "0.58rem",
+              letterSpacing: "0.22em",
+              textTransform: "uppercase",
+              color: "rgba(181,137,78,0.45)",
+              textDecoration: "none",
+            }}
+          >
+            ← Inicio
+          </Link>
+
+          <p
+            style={{
+              fontFamily: "var(--font-playfair)",
+              fontStyle: "italic",
+              fontSize: "1rem",
+              color: "var(--c-text-inv)",
+              opacity: 0.75,
+            }}
+          >
+            {W.bride} &amp; {W.groom}
+          </p>
+
+          <div style={{ width: 52 }} />
+        </div>
       </div>
 
-      <div style={{ maxWidth:520, margin:"0 auto", padding:"3rem 1.5rem 5rem" }}>
+      <div
+        style={{
+          maxWidth: 760,
+          margin: "0 auto",
+          padding: "4rem 1.5rem 6rem",
+        }}
+      >
 
-        {/* Title */}
-        <motion.div initial={{ opacity:0, y:20 }} animate={{ opacity:1, y:0 }} transition={{ duration:0.7 }} className="text-center mb-10">
-          <p style={{ fontFamily:"var(--font-jost)", fontSize:"0.58rem", letterSpacing:"0.3em", textTransform:"uppercase", color:"rgba(181,137,78,0.45)", marginBottom:"1rem" }}>Regalos</p>
-          <h1 style={{ fontFamily:"var(--font-playfair)", fontStyle:"italic", fontWeight:400, fontSize:"clamp(2rem,6vw,2.8rem)", color:"var(--c-text-inv)", lineHeight:1.1, marginBottom:"0.75rem" }}>
-            Si querés <span style={{ color:"var(--c-gold-lt)" }}>hacernos un regalo</span>
-          </h1>
-          <div style={{ width:44, height:1, background:"linear-gradient(to right, transparent, var(--c-gold), transparent)", margin:"1.25rem auto 1.5rem" }} />
-          <p style={{ fontFamily:"var(--font-cormorant)", fontStyle:"italic", fontSize:"clamp(1rem,2.5vw,1.25rem)", color:"rgba(196,168,130,0.55)", lineHeight:1.75, maxWidth:"34ch", margin:"0 auto" }}>
-            {W.gifts.message}
-          </p>
-        </motion.div>
-
-       
-
-        {/* App deep links */}
-        {(hasMp || hasModo) && (
-          <motion.div initial={{ opacity:0, y:12 }} animate={{ opacity:1, y:0 }} transition={{ delay:0.2 }}
-            style={{ marginBottom:"1rem" }}>
-            <p style={{ fontFamily:"var(--font-jost)", fontSize:"0.56rem", letterSpacing:"0.2em", textTransform:"uppercase", color:"rgba(181,137,78,0.38)", marginBottom:"0.6rem" }}>
-              O abrí la app directo
-            </p>
-            <div style={{ display:"flex", gap:"0.5rem", flexWrap:"wrap" }}>
-              {hasMp && (
-                <a href={W.gifts.mpLink} target="_blank" rel="noopener noreferrer"
-                  style={{ flex:1, minWidth:140, display:"flex", alignItems:"center", justifyContent:"center", gap:"0.5rem", padding:"0.9rem 1rem", background:"#009ee3", textDecoration:"none" }}>
-                  <span style={{ fontFamily:"var(--font-jost)", fontSize:"0.68rem", letterSpacing:"0.1em", fontWeight:500, color:"white" }}>Mercado Pago</span>
-                </a>
-              )}
-              {hasModo && (
-                <a href={W.gifts.modoLink} target="_blank" rel="noopener noreferrer"
-                  style={{ flex:1, minWidth:140, display:"flex", alignItems:"center", justifyContent:"center", gap:"0.5rem", padding:"0.9rem 1rem", background:"rgba(255,255,255,0.06)", border:"1px solid rgba(255,255,255,0.12)", textDecoration:"none" }}>
-                  <span style={{ fontFamily:"var(--font-jost)", fontSize:"0.68rem", letterSpacing:"0.1em", color:"var(--c-text-inv)" }}>MODO</span>
-                </a>
-              )}
-            </div>
-          </motion.div>
-        )}
-
-        {/* Gift list */}
+        {/* Gift List */}
         {W.giftList?.length > 0 && (
           <motion.div
-            initial={{ opacity: 0, y: 12 }}
+            initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.28 }}
+            transition={{
+              delay: 0.15,
+              duration: 0.7,
+            }}
             style={{
-              marginTop: "2rem",
-              marginBottom: "1rem",
+              marginTop: "4rem",
+              marginBottom: "3rem",
             }}
           >
             <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "0.7rem",
-                marginBottom: "1rem",
-              }}
+              className="flex items-center gap-4 mb-7"
             >
-              <span style={{ fontSize: "1.2rem" }}>🎁</span>
+              <div
+                className="flex items-center justify-center"
+                style={{
+                  width: 52,
+                  height: 52,
+                  borderRadius: "999px",
+                  background:
+                    "rgba(181,137,78,0.06)",
+                  border:
+                    "1px solid rgba(181,137,78,0.14)",
+                  fontSize: "1.2rem",
+                }}
+              >
+                🎁
+              </div>
 
               <div>
-                <h3
+                <h2
                   style={{
-                    fontFamily: "var(--font-playfair)",
+                    fontFamily:
+                      "var(--font-playfair)",
                     fontStyle: "italic",
-                    fontSize: "1.15rem",
+                    fontSize: "1.5rem",
                     color: "var(--c-text-inv)",
                     marginBottom: "0.15rem",
                   }}
                 >
                   Lista de regalos
-                </h3>
+                </h2>
 
                 <p
                   style={{
                     fontFamily: "var(--font-jost)",
-                    fontSize: "0.7rem",
-                    color: "rgba(154,128,104,0.45)",
+                    fontSize: "0.72rem",
+                    color:
+                      "rgba(154,128,104,0.45)",
                   }}
                 >
-                  Algunas ideas para ayudarnos a comenzar nuestro hogar
+                  Algunas ideas para acompañarnos en
+                  esta nueva etapa
                 </p>
               </div>
             </div>
 
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                gap: "0.7rem",
-              }}
-            >
+            <div className="flex flex-col gap-3">
               {W.giftList.map((gift, index) => (
                 <motion.div
                   key={gift.name}
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.32 + index * 0.04 }}
+                  initial={{
+                    opacity: 0,
+                    y: 10,
+                  }}
+                  animate={{
+                    opacity: 1,
+                    y: 0,
+                  }}
+                  transition={{
+                    delay: 0.2 + index * 0.04,
+                  }}
                   style={{
-                    padding: "1rem",
-                    background: "rgba(255,255,255,0.035)",
-                    border: "1px solid rgba(181,137,78,0.14)",
+                    padding: "1rem 1.1rem",
+                    background:
+                      "rgba(255,255,255,0.03)",
+                    border:
+                      "1px solid rgba(181,137,78,0.12)",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "space-between",
@@ -152,23 +261,34 @@ export default function GiftsPage() {
                   }}
                 >
                   <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "0.8rem",
-                    }}
+                    className="flex items-center gap-4"
                   >
-                    <span style={{ fontSize: "1.2rem" }}>
+                    <div
+                      className="flex items-center justify-center"
+                      style={{
+                        width: 46,
+                        height: 46,
+                        borderRadius: "999px",
+                        background:
+                          "rgba(181,137,78,0.05)",
+                        border:
+                          "1px solid rgba(181,137,78,0.1)",
+                        fontSize: "1.1rem",
+                        flexShrink: 0,
+                      }}
+                    >
                       {gift.emoji}
-                    </span>
+                    </div>
 
                     <div>
                       <p
                         style={{
-                          fontFamily: "var(--font-jost)",
-                          fontSize: "0.86rem",
-                          color: "var(--c-text-inv)",
-                          marginBottom: "0.2rem",
+                          fontFamily:
+                            "var(--font-jost)",
+                          fontSize: "0.9rem",
+                          color:
+                            "var(--c-text-inv)",
+                          marginBottom: "0.18rem",
                         }}
                       >
                         {gift.name}
@@ -176,9 +296,11 @@ export default function GiftsPage() {
 
                       <p
                         style={{
-                          fontFamily: "var(--font-jost)",
+                          fontFamily:
+                            "var(--font-jost)",
                           fontSize: "0.72rem",
-                          color: "rgba(196,168,130,0.55)",
+                          color:
+                            "rgba(196,168,130,0.52)",
                         }}
                       >
                         {gift.price}
@@ -188,24 +310,28 @@ export default function GiftsPage() {
 
                   <div
                     style={{
-                      padding: "0.35rem 0.55rem",
+                      padding:
+                        "0.38rem 0.65rem",
                       background: gift.reserved
-                        ? "rgba(107,38,53,0.22)"
+                        ? "rgba(107,38,53,0.2)"
                         : "rgba(181,137,78,0.08)",
                       border: gift.reserved
-                        ? "1px solid rgba(107,38,53,0.4)"
-                        : "1px solid rgba(181,137,78,0.16)",
-                      fontFamily: "var(--font-jost)",
-                      fontSize: "0.56rem",
-                      letterSpacing: "0.12em",
+                        ? "1px solid rgba(107,38,53,0.35)"
+                        : "1px solid rgba(181,137,78,0.14)",
+                      fontFamily:
+                        "var(--font-jost)",
+                      fontSize: "0.54rem",
+                      letterSpacing: "0.14em",
                       textTransform: "uppercase",
                       color: gift.reserved
-                        ? "rgba(255,210,210,0.75)"
+                        ? "rgba(255,220,220,0.72)"
                         : "var(--c-gold-lt)",
                       flexShrink: 0,
                     }}
                   >
-                    {gift.reserved ? "Reservado" : "Disponible"}
+                    {gift.reserved
+                      ? "Reservado"
+                      : "Disponible"}
                   </div>
                 </motion.div>
               ))}
@@ -213,10 +339,223 @@ export default function GiftsPage() {
           </motion.div>
         )}
 
-        {/* Gratitude */}
-        <motion.p initial={{ opacity:0 }} animate={{ opacity:1 }} transition={{ delay:0.35 }}
-          style={{ fontFamily:"var(--font-cormorant)", fontStyle:"italic", fontSize:"clamp(0.95rem,2.5vw,1.1rem)", color:"rgba(154,128,104,0.32)", textAlign:"center", marginTop:"2rem", lineHeight:1.75 }}>
-          "Cualquier detalle que venga del corazón<br/>ya es más que suficiente para nosotros"
+        {/* Gift methods */}
+        <motion.div
+          initial={{ opacity: 0, y: 14 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{
+            delay: 0.28,
+            duration: 0.7,
+          }}
+          style={{
+            background: "rgba(255,255,255,0.03)",
+            border:
+              "1px solid rgba(181,137,78,0.12)",
+            padding: "2rem",
+          }}
+        >
+          <div className="text-center mb-8">
+            <p
+              style={{
+                fontFamily: "var(--font-jost)",
+                fontSize: "0.56rem",
+                letterSpacing: "0.24em",
+                textTransform: "uppercase",
+                color: "rgba(181,137,78,0.38)",
+                marginBottom: "0.8rem",
+              }}
+            >
+              También pueden hacerlo mediante alias
+            </p>
+
+            <h3
+              style={{
+                fontFamily: "var(--font-playfair)",
+                fontStyle: "italic",
+                fontSize: "1.5rem",
+                color: "var(--c-text-inv)",
+                marginBottom: "0.7rem",
+              }}
+            >
+              Un pequeño detalle
+            </h3>
+
+            <p
+              style={{
+                fontFamily: "var(--font-jost)",
+                color: "var(--c-text-inv2)",
+                fontSize: "0.8rem",
+                lineHeight: 1.8,
+                maxWidth: "34ch",
+                margin: "0 auto",
+              }}
+            >
+              Si prefieren acompañarnos de esta manera,
+              pueden utilizar los siguientes datos.
+            </p>
+          </div>
+
+          <div className="space-y-3">
+            <CopyButton
+              label="Alias"
+              value={W.gifts.alias}
+            />
+
+            <CopyButton
+              label="CBU"
+              value={W.gifts.cbu}
+            />
+
+            {W.gifts.cvu && (
+              <CopyButton
+                label="CVU"
+                value={W.gifts.cvu}
+              />
+            )}
+          </div>
+
+          <p
+            className="text-center mt-5"
+            style={{
+              fontFamily: "var(--font-jost)",
+              color: "rgba(154,128,104,0.42)",
+              fontSize: "0.7rem",
+              letterSpacing: "0.08em",
+            }}
+          >
+            {W.gifts.bank}
+          </p>
+
+          {/* Apps */}
+          {(hasMp || hasModo) && (
+            <div
+              style={{
+                marginTop: "1.8rem",
+              }}
+            >
+              <div
+                style={{
+                  width: "100%",
+                  height: 1,
+                  background:
+                    "linear-gradient(to right, transparent, rgba(181,137,78,0.16), transparent)",
+                  marginBottom: "1.5rem",
+                }}
+              />
+
+              <p
+                style={{
+                  fontFamily: "var(--font-jost)",
+                  fontSize: "0.56rem",
+                  letterSpacing: "0.2em",
+                  textTransform: "uppercase",
+                  color: "rgba(181,137,78,0.35)",
+                  marginBottom: "0.8rem",
+                  textAlign: "center",
+                }}
+              >
+                O desde la app
+              </p>
+
+              <div
+                style={{
+                  display: "flex",
+                  gap: "0.7rem",
+                  flexWrap: "wrap",
+                }}
+              >
+                {hasMp && (
+                  <a
+                    href={W.gifts.mpLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      flex: 1,
+                      minWidth: 160,
+                      padding:
+                        "0.95rem 1rem",
+                      background: "#009ee3",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      textDecoration: "none",
+                    }}
+                  >
+                    <span
+                      style={{
+                        fontFamily:
+                          "var(--font-jost)",
+                        fontSize: "0.68rem",
+                        letterSpacing: "0.1em",
+                        color: "white",
+                        textTransform:
+                          "uppercase",
+                      }}
+                    >
+                      Mercado Pago
+                    </span>
+                  </a>
+                )}
+
+                {hasModo && (
+                  <a
+                    href={W.gifts.modoLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      flex: 1,
+                      minWidth: 160,
+                      padding:
+                        "0.95rem 1rem",
+                      background:
+                        "rgba(255,255,255,0.04)",
+                      border:
+                        "1px solid rgba(255,255,255,0.08)",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      textDecoration: "none",
+                    }}
+                  >
+                    <span
+                      style={{
+                        fontFamily:
+                          "var(--font-jost)",
+                        fontSize: "0.68rem",
+                        letterSpacing: "0.1em",
+                        color:
+                          "var(--c-text-inv)",
+                        textTransform:
+                          "uppercase",
+                      }}
+                    >
+                      MODO
+                    </span>
+                  </a>
+                )}
+              </div>
+            </div>
+          )}
+        </motion.div>
+
+        {/* Footer quote */}
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.45 }}
+          style={{
+            fontFamily: "var(--font-cormorant)",
+            fontStyle: "italic",
+            fontSize: "clamp(1rem,2.5vw,1.15rem)",
+            color: "rgba(154,128,104,0.32)",
+            textAlign: "center",
+            marginTop: "3rem",
+            lineHeight: 1.8,
+          }}
+        >
+          “Todo lo que compartamos en este día
+          <br />
+          quedará para siempre en nuestro corazón”
         </motion.p>
       </div>
     </div>

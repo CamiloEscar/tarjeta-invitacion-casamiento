@@ -1,10 +1,20 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { motion, useInView, AnimatePresence } from "framer-motion";
+import {
+  motion,
+  useInView,
+  AnimatePresence,
+} from "framer-motion";
 import { W } from "@/lib/config";
 
-function CopyRow({ label, value }: { label: string; value: string }) {
+function CopyRow({
+  label,
+  value,
+}: {
+  label: string;
+  value: string;
+}) {
   const [copied, setCopied] = useState(false);
 
   function copy() {
@@ -22,8 +32,8 @@ function CopyRow({ label, value }: { label: string; value: string }) {
           fontSize: "0.56rem",
           letterSpacing: "0.2em",
           textTransform: "uppercase",
-          color: "rgba(196,168,130,0.45)",
-          marginBottom: "0.3rem",
+          color: "rgba(196,168,130,0.42)",
+          marginBottom: "0.35rem",
         }}
       >
         {label}
@@ -31,17 +41,17 @@ function CopyRow({ label, value }: { label: string; value: string }) {
 
       <button
         onClick={copy}
-        className="w-full flex items-center justify-between gap-3 px-3.5 py-2.5 transition-all duration-200 text-left group"
+        className="w-full flex items-center justify-between gap-3 px-4 py-3 text-left transition-all duration-200"
         style={{
-          background: "rgba(181,137,78,0.06)",
-          border: "1px solid rgba(181,137,78,0.18)",
+          background: "rgba(181,137,78,0.05)",
+          border: "1px solid rgba(181,137,78,0.14)",
           color: "var(--c-gold-lt)",
         }}
       >
         <span
           style={{
             fontFamily: "monospace",
-            fontSize: "0.85rem",
+            fontSize: "0.84rem",
             overflow: "hidden",
             textOverflow: "ellipsis",
             whiteSpace: "nowrap",
@@ -59,13 +69,13 @@ function CopyRow({ label, value }: { label: string; value: string }) {
             transition={{ duration: 0.18 }}
             style={{
               fontFamily: "var(--font-jost)",
-              fontSize: "0.58rem",
-              letterSpacing: "0.15em",
+              fontSize: "0.56rem",
+              letterSpacing: "0.14em",
               textTransform: "uppercase",
               flexShrink: 0,
               color: copied
                 ? "var(--c-gold-lt)"
-                : "rgba(154,128,104,0.5)",
+                : "rgba(154,128,104,0.45)",
             }}
           >
             {copied ? "✓ Copiado" : "Copiar"}
@@ -89,111 +99,222 @@ export default function Gifts() {
       id="gifts"
       className="s-pad surf-dark-2 relative overflow-hidden"
     >
+      {/* Glow */}
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
           background:
-            "radial-gradient(ellipse 55% 50% at 75% 50%, rgba(181,137,78,0.05) 0%, transparent 65%)",
+            "radial-gradient(ellipse 55% 50% at 70% 50%, rgba(181,137,78,0.05) 0%, transparent 70%)",
         }}
       />
 
-      <div className="w-content px-6" ref={ref}>
+      <div
+        ref={ref}
+        className="w-content px-6"
+      >
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           animate={v ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.8 }}
+          className="text-center max-w-2xl mx-auto"
         >
-          <p className="t-eye mb-3">Regalos</p>
+          <p className="t-eye mb-3">
+            Regalos
+          </p>
 
           <h2
             style={{
               fontFamily: "var(--font-playfair)",
               fontStyle: "italic",
               fontWeight: 400,
-              fontSize: "clamp(2rem,5vw,3rem)",
+              fontSize: "clamp(2rem,5vw,3.1rem)",
               color: "var(--c-text-inv)",
               lineHeight: 1.1,
-              marginBottom: "0.25rem",
+              marginBottom: "0.6rem",
             }}
           >
-            Lista de{" "}
-            <span style={{ color: "var(--c-gold-lt)" }}>
-              regalos
+            Para nuestro próximo{" "}
+            <span
+              style={{
+                color: "var(--c-gold-lt)",
+              }}
+            >
+              capítulo
             </span>
           </h2>
 
-          <div className="g-line" />
+          <div className="g-line mx-auto" />
 
           <p
-            className="t-body mb-10 max-w-prose"
+            className="t-body"
             style={{
               color: "var(--c-text-inv2)",
-              fontSize: "0.88rem",
+              fontSize: "0.92rem",
+              lineHeight: 1.9,
+              maxWidth: "42ch",
+              margin: "0 auto",
             }}
           >
-            {W.gifts.message}
+            Su presencia en este día tan importante ya es
+            el mejor regalo para nosotros.
+            <br />
+            <br />
+            Pero si además desean acompañarnos con un
+            detalle para esta nueva etapa, preparamos una
+            pequeña lista de regalos y también la
+            posibilidad de hacerlo mediante alias.
           </p>
         </motion.div>
 
-        {/* Layout */}
-        <div className="grid md:grid-cols-5 gap-4">
-          {/* Transferencia */}
-          <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            animate={v ? { opacity: 1, y: 0 } : {}}
-            transition={{ delay: 0.12, duration: 0.75 }}
-            className="md:col-span-3 relative overflow-hidden"
+        {/* Main card */}
+        <motion.div
+          initial={{ opacity: 0, y: 26 }}
+          animate={v ? { opacity: 1, y: 0 } : {}}
+          transition={{
+            delay: 0.12,
+            duration: 0.8,
+          }}
+          className="max-w-3xl mx-auto mt-12 relative overflow-hidden"
+          style={{
+            background: "rgba(255,255,255,0.035)",
+            border:
+              "1px solid rgba(181,137,78,0.14)",
+            backdropFilter: "blur(4px)",
+          }}
+        >
+          {/* Top line */}
+          <div
             style={{
-              background: "rgba(255,255,255,0.04)",
-              border: "1px solid rgba(181,137,78,0.18)",
+              height: 2,
+              background:
+                "linear-gradient(to right, transparent, var(--c-gold), transparent)",
             }}
-          >
+          />
+
+          <div className="p-7 md:p-10">
+            {/* Icon */}
+            <div className="flex justify-center mb-7">
+              <div
+                className="flex items-center justify-center"
+                style={{
+                  width: 68,
+                  height: 68,
+                  borderRadius: "999px",
+                  background:
+                    "rgba(181,137,78,0.08)",
+                  border:
+                    "1px solid rgba(181,137,78,0.16)",
+                  fontSize: "1.6rem",
+                }}
+              >
+                ✨
+              </div>
+            </div>
+
+            {/* Wishlist CTA */}
+            <div className="text-center mb-10">
+              <h3
+                style={{
+                  fontFamily:
+                    "var(--font-playfair)",
+                  fontStyle: "italic",
+                  fontSize: "1.7rem",
+                  color: "var(--c-text-inv)",
+                  marginBottom: "0.7rem",
+                }}
+              >
+                Lista de regalos
+              </h3>
+
+              <p
+                style={{
+                  fontFamily: "var(--font-jost)",
+                  color: "var(--c-text-inv2)",
+                  fontSize: "0.82rem",
+                  lineHeight: 1.8,
+                  maxWidth: "36ch",
+                  margin: "0 auto 1.6rem",
+                }}
+              >
+                Algunas ideas y pequeños detalles para
+                acompañarnos en esta nueva etapa.
+              </p>
+
+              <a
+                href="/gifts"
+                className="inline-flex items-center gap-3 px-6 py-3 transition-all duration-300"
+                style={{
+                  background:
+                    "rgba(181,137,78,0.08)",
+                  border:
+                    "1px solid rgba(181,137,78,0.18)",
+                  textDecoration: "none",
+                }}
+              >
+                <span
+                  style={{
+                    fontSize: "1rem",
+                  }}
+                >
+                  🎁
+                </span>
+
+                <span
+                  style={{
+                    fontFamily: "var(--font-jost)",
+                    fontSize: "0.72rem",
+                    letterSpacing: "0.16em",
+                    textTransform: "uppercase",
+                    color: "var(--c-text-inv)",
+                  }}
+                >
+                  Ver lista de regalos
+                </span>
+              </a>
+            </div>
+
+            {/* Divider */}
             <div
               style={{
-                height: 2,
+                width: "100%",
+                height: 1,
                 background:
-                  "linear-gradient(to right, var(--c-wine), var(--c-gold), transparent)",
+                  "linear-gradient(to right, transparent, rgba(181,137,78,0.16), transparent)",
+                marginBottom: "2rem",
               }}
             />
 
-            <div className="p-7">
-              <div className="flex items-start gap-4 mb-6">
-                <div
-                  className="w-12 h-12 flex items-center justify-center flex-shrink-0"
+            {/* Alias section */}
+            <div className="max-w-xl mx-auto">
+              <div className="text-center mb-6">
+                <p
                   style={{
-                    background: "rgba(107,38,53,0.35)",
-                    border: "1px solid rgba(107,38,53,0.5)",
+                    fontFamily: "var(--font-jost)",
+                    fontSize: "0.58rem",
+                    letterSpacing: "0.24em",
+                    textTransform: "uppercase",
+                    color: "rgba(181,137,78,0.42)",
+                    marginBottom: "0.8rem",
                   }}
                 >
-                  <span style={{ fontSize: "1.4rem" }}>
-                    🏦
-                  </span>
-                </div>
+                  También pueden hacerlo mediante alias
+                </p>
 
-                <div>
-                  <h3
-                    style={{
-                      fontFamily: "var(--font-playfair)",
-                      fontStyle: "italic",
-                      fontSize: "1.25rem",
-                      color: "var(--c-text-inv)",
-                      marginBottom: "0.25rem",
-                    }}
-                  >
-                    Transferencia bancaria
-                  </h3>
-
-                  <p
-                    className="t-body"
-                    style={{
-                      color: "var(--c-text-inv2)",
-                      fontSize: "0.78rem",
-                    }}
-                  >
-                    La forma más directa de hacernos un regalo
-                  </p>
-                </div>
+                <p
+                  style={{
+                    fontFamily:
+                      "var(--font-cormorant)",
+                    fontStyle: "italic",
+                    color:
+                      "rgba(196,168,130,0.62)",
+                    fontSize: "1rem",
+                    lineHeight: 1.7,
+                  }}
+                >
+                  Cualquier detalle que venga del corazón
+                  ya es más que suficiente para nosotros
+                </p>
               </div>
 
               <div className="space-y-3">
@@ -216,184 +337,20 @@ export default function Gifts() {
               </div>
 
               <p
-                className="t-body mt-4"
+                className="text-center mt-5"
                 style={{
-                  color: "rgba(154,128,104,0.45)",
-                  fontSize: "0.72rem",
+                  fontFamily: "var(--font-jost)",
+                  color:
+                    "rgba(154,128,104,0.42)",
+                  fontSize: "0.7rem",
+                  letterSpacing: "0.08em",
                 }}
               >
                 {W.gifts.bank}
               </p>
-
-              {/* Botones */}
-              <div className="flex flex-wrap gap-3 mt-6">
-                <a href={W.gifts.mpLink} target="_blank" rel="noopener noreferrer"
-                  className="flex items-center gap-2.5 flex-1 min-w-[140px] justify-center"
-                  style={{ padding:"0.85rem 1rem", background:"#009ee3", border:"none", cursor:"pointer" }}>
-                  {/* Mercado Pago logo simplified */}
-                  <svg width="20" height="20" viewBox="0 0 40 40" fill="none">
-                    <circle cx="20" cy="20" r="20" fill="white" opacity="0.15"/>
-                    <text x="50%" y="54%" dominantBaseline="middle" textAnchor="middle" fill="white" fontSize="11" fontWeight="bold" fontFamily="sans-serif">MP</text>
-                  </svg>
-                  <span style={{ fontFamily:"var(--font-jost)", fontSize:"0.7rem", letterSpacing:"0.1em", fontWeight:500, color:"white" }}>Mercado Pago</span>
-                </a>
-
-                <a href={W.gifts.modoLink} target="_blank" rel="noopener noreferrer"
-                  className="flex items-center gap-2.5 flex-1 min-w-[140px] justify-center"
-                  style={{ padding:"0.85rem 1rem", background:"rgba(255,255,255,0.06)", border:"1px solid rgba(255,255,255,0.15)", cursor:"pointer" }}>
-                  <svg width="20" height="20" viewBox="0 0 40 40" fill="none">
-                    <circle cx="20" cy="20" r="20" fill="white" opacity="0.1"/>
-                    <text x="50%" y="54%" dominantBaseline="middle" textAnchor="middle" fill="white" fontSize="9" fontWeight="bold" fontFamily="sans-serif">MODO</text>
-                  </svg>
-                  <span style={{ fontFamily:"var(--font-jost)", fontSize:"0.7rem", letterSpacing:"0.1em", fontWeight:400, color:"var(--c-text-inv)" }}>MODO</span>
-                </a>
-              </div>
             </div>
-          </motion.div>
-
-          {/* Right column */}
-          {/* Right column */}
-            <div className="md:col-span-2 flex flex-col gap-4">
-
-              {/* Gift options */}
-              <motion.div
-                initial={{ opacity: 0, x: 20 }}
-                animate={v ? { opacity: 1, x: 0 } : {}}
-                transition={{ delay: 0.22, duration: 0.75 }}
-                className="p-6"
-                style={{
-                  background: "rgba(255,255,255,0.03)",
-                  border: "1px solid rgba(181,137,78,0.13)",
-                }}
-              >
-                <div className="text-2xl mb-3">🎁</div>
-
-                <h3
-                  style={{
-                    fontFamily: "var(--font-playfair)",
-                    fontStyle: "italic",
-                    fontSize: "1.15rem",
-                    color: "var(--c-text-inv)",
-                    marginBottom: "0.6rem",
-                  }}
-                >
-                  Opciones de regalos
-                </h3>
-
-                <p
-                  className="t-body mb-5"
-                  style={{
-                    color: "var(--c-text-inv2)",
-                    fontSize: "0.78rem",
-                    lineHeight: 1.7,
-                  }}
-                >
-                  Podés ver nuestra lista de regalos, elegir un regalo especial
-                  o enviarnos un obsequio mediante transferencia, Mercado Pago o MODO.
-                </p>
-
-                <div className="flex flex-col gap-3">
-
-                  {/* Lista */}
-                  <a
-                    href="/gifts"
-                    className="group flex items-center justify-between px-4 py-3 transition-all duration-200"
-                    style={{
-                      background: "rgba(181,137,78,0.06)",
-                      border: "1px solid rgba(181,137,78,0.16)",
-                      textDecoration: "none",
-                    }}
-                  >
-                    <div className="flex items-center gap-3">
-                      <span style={{ fontSize: "1.05rem" }}>📦</span>
-
-                      <div>
-                        <p
-                          style={{
-                            fontFamily: "var(--font-jost)",
-                            fontSize: "0.78rem",
-                            color: "var(--c-text-inv)",
-                            marginBottom: "0.1rem",
-                          }}
-                        >
-                          Lista de regalos
-                        </p>
-
-                        <p
-                          style={{
-                            fontFamily: "var(--font-jost)",
-                            fontSize: "0.64rem",
-                            color: "rgba(154,128,104,0.5)",
-                          }}
-                        >
-                          Ver regalos sugeridos
-                        </p>
-                      </div>
-                    </div>
-
-                    <span
-                      style={{
-                        color: "var(--c-gold-lt)",
-                        fontSize: "0.8rem",
-                      }}
-                    >
-                      →
-                    </span>
-                  </a>
-
-                  {/* Especial */}
-                  {/* <a
-                    href={W.gifts.extra.url}
-                    className="group flex items-center justify-between px-4 py-3 transition-all duration-200"
-                    style={{
-                      background: "rgba(181,137,78,0.06)",
-                      border: "1px solid rgba(181,137,78,0.16)",
-                      textDecoration: "none",
-                    }}
-                  >
-                    <div className="flex items-center gap-3">
-                      <span style={{ fontSize: "1.05rem" }}>
-                        {W.gifts.extra.icon}
-                      </span>
-
-                      <div>
-                        <p
-                          style={{
-                            fontFamily: "var(--font-jost)",
-                            fontSize: "0.78rem",
-                            color: "var(--c-text-inv)",
-                            marginBottom: "0.1rem",
-                          }}
-                        >
-                          {W.gifts.extra.title}
-                        </p>
-
-                        <p
-                          style={{
-                            fontFamily: "var(--font-jost)",
-                            fontSize: "0.64rem",
-                            color: "rgba(154,128,104,0.5)",
-                          }}
-                        >
-                          {W.gifts.extra.description}
-                        </p>
-                      </div>
-                    </div>
-
-                    <span
-                      style={{
-                        color: "var(--c-gold-lt)",
-                        fontSize: "0.8rem",
-                      }}
-                    >
-                      →
-                    </span>
-                  </a> */}
-
-                </div>
-              </motion.div>
-            </div>
-        </div>
+          </div>
+        </motion.div>
       </div>
     </section>
   );
