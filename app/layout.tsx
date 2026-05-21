@@ -33,8 +33,8 @@ export const metadata: Metadata = {
     images:      [{ url:`${W.baseUrl}/og-invite.jpg`, width:1200, height:630 }],
   },
   icons: {
-    icon:   [{ url:"/1.jpeg", sizes:"192x192", type:"image/png" }],
-    apple:  [{ url:"/2.jpeg", sizes:"512x512", type:"image/png" }],
+    icon:   [{ url:"/1.png", sizes:"192x192", type:"image/png" }],
+    apple:  [{ url:"/2.png", sizes:"512x512", type:"image/png" }],
   },
 };
 

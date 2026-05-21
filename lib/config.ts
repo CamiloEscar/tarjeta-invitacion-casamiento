@@ -10,7 +10,7 @@ export const W = {
   rsvpDeadline:    "17 de septiembre de 2026",
   heroPhrase:      "Dos almas que se encuentran y deciden no separarse jamás",
   introText:       "Con inmensa alegría queremos invitarte a celebrar nuestro matrimonio",
-  footerMessage:   "Gracias por acompañarnos en uno de los días más importantes de nuestra vida. Su presencia llena de amor cada momento de este día que tanto esperamos.",
+  footerMessage:   "Gracias por acompañarnos en uno de los días más importantes de nuestra vida. Su presencia hace aún más especial este momento que soñamos y esperamos con tanto amor.",
   location:        "Concepción del Uruguay, Entre Ríos",
   baseUrl:         "https://leo-paola.vercel.app", // ← cambiá por tu dominio real
 
@@ -41,7 +41,7 @@ gifts: {
     cvu:      "ABC",          // CVU de Mercado Pago si tienen
     mpLink:   "CDA",          // Link de cobro Mercado Pago: https://mpago.la/...
     modoLink: "ASDF",          // Link de MODO: https://transferencias.modo.com.ar/...
-    message: "Tu presencia es el mejor regalo para nosotros 💛. Si aun así querés hacernos un regalo, te dejamos algunas opciones: podés hacer una transferencia o elegir algo de nuestra lista de regalos.",
+    message: "Tu presencia es el mejor regalo para nosotros 💛. Pero, si además querés hacernos un obsequio, te dejamos algunas opciones: podés realizar una transferencia o elegir algo de nuestra lista de regalos.",
     extra: {
       icon: "🎁",
       title: "Regalos",
@@ -192,7 +192,7 @@ export const STORY = [
     year: "2015",
     title: "Una historia inesperada",
     text:
-      "Todo empezó en la escuela. Leo esperaba a la profesora de química como cualquier otro día, hasta que apareció Pao. Entre pasillos y miradas, algo empezó sin que ninguno se diera cuenta.",
+      "Leo esperaba a la profesora de química como cualquier otro día… hasta que apareció Pao. Entre pasillos, miradas y casualidades, comenzó algo sin que ninguno lo imaginara.",
     emoji: "📚",
     side: "left" as const,
   },
@@ -201,7 +201,7 @@ export const STORY = [
     year: "2019",
     title: "La primera salida",
     text:
-      "Después de años cruzándose, llegó la primera cena. Nervios, charla y un beso que cambió todo.",
+      "Después de años cruzándose, llegó la primera cena. Nervios, risas y un beso que cambió todo para siempre.",
     emoji: "🍷",
     side: "right" as const,
   },
@@ -210,7 +210,7 @@ export const STORY = [
     year: "2019",
     title: "El comienzo oficial",
     text:
-      "El 21 de diciembre de 2019, Pao le preguntó a Leo si quería ser su novio. Desde ese día, no se soltaron más.",
+      "El 21 de diciembre de 2019, Pao le preguntó a Leo si quería ser su novio. Desde ese momento, nunca más se soltaron de la mano.",
     emoji: "💞",
     side: "left" as const,
   },
@@ -219,7 +219,7 @@ export const STORY = [
     year: "2020",
     title: "Compañeros de vida",
     text:
-      "Entre mates, viajes, noches largas hablando y miles de momentos, fueron construyendo algo mucho más grande que una historia de amor.",
+      "Entre mates, viajes, charlas interminables y miles de momentos compartidos, fueron construyendo algo mucho más grande que una historia de amor: un hogar.",
     emoji: "🧉",
     side: "right" as const,
   },
@@ -228,7 +228,7 @@ export const STORY = [
     year: "2026",
     title: "La propuesta",
     text:
-      "El 14 de febrero, Leo hizo la gran pregunta. Hubo lágrimas, abrazos y un “sí” que selló para siempre esta historia.",
+      "El 14 de febrero, Leo hizo la gran pregunta. Hubo lágrimas, abrazos y un “sí” que selló esta historia para siempre.",
     emoji: "💍",
     side: "left" as const,
   },
@@ -237,25 +237,38 @@ export const STORY = [
     year: "2026",
     title: "Nuestro gran día",
     text:
-      "Hoy, rodeados de nuestra familia y amigos, celebramos el comienzo de una nueva etapa. Gracias por estar acá acompañándonos en uno de los días más importantes de nuestra vida.",
+      "Hoy, rodeados de nuestra familia y amigos, celebramos el comienzo de una nueva etapa. Gracias por acompañarnos en uno de los días más importantes de nuestra vida.",
     emoji: "🌹",
     side: "right" as const,
   },
 ] as const;
 
 export const PHOTOS = [
-  { src:"/1.jpeg", alt:"Leo & Paola",      wide:true  },
-  { src:"/2.jpeg",  alt:"Retrato",          wide:false },
+  { src:"/1.png", alt:"Leo & Paola",      wide:true  },
+  { src:"/2.png",  alt:"Retrato",          wide:false },
   { src:"/3.jpeg",  alt:"Momento especial", wide:false },
-  { src:"/4.jpeg",  alt:"Celebración",      wide:false },
-  { src:"/1.jpeg",  alt:"Detalles",         wide:false },
-  { src:"/2.jpeg",  alt:"Primer baile",     wide:false },
+  { src:"/4.png",  alt:"Celebración",      wide:false },
+  { src:"/viaje.png",  alt:"Detalles",         wide:false },
+  { src:"/juntos.png",  alt:"TITULO",     wide:false },
+  { src:"/juntos2.png",  alt:"TITULO",     wide:false },
+  { src:"/juntos3.png",  alt:"TITULO",     wide:false },
+  { src:"/juntos4.png",  alt:"TITULO",     wide:false },
+  { src:"/juntos5.png",  alt:"TITULO",     wide:false },
+  { src:"/juntos6.png",  alt:"TITULO",     wide:false },
+  { src:"/juntos7.png",  alt:"TITULO",     wide:false },
+  { src:"/moto1.png",  alt:"TITULO",     wide:false },
+  { src:"/moto2.png",  alt:"TITULO",     wide:false },
+  { src:"/moto3.png",  alt:"TITULO",     wide:false },
+  { src:"/moto4.png",  alt:"TITULO",     wide:false },
+  { src:"/playa.png",  alt:"TITULO",     wide:false },
+  { src:"/viaje2.png",  alt:"TITULO",     wide:false },
+  { src:"/viaje3.png",  alt:"TITULO",     wide:false },
 ] as const;
 
 export const POLAROIDS = [
-  { src:"/2.jpeg", caption:"Así nos conocimos", rot:-3.5 },
-  { src:"/3.jpeg", caption:"Primer viaje",       rot: 2.2 },
-  { src:"/4.jpeg", caption:"La propuesta 💍",   rot:-1.8 },
+  { src:"/conocimos.png", caption:"Así nos conocimos", rot:-3.5 },
+  { src:"/viaje.png", caption:"Primer viaje",       rot: 2.2 },
+  { src:"/4.png", caption:"La propuesta 💍",   rot:-1.8 },
 ] as const;
 
 export const TRIVIA = [

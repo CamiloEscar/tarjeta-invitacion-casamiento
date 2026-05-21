@@ -18,17 +18,17 @@ const ICS = [
 
 const BTNS = [
   {
-    label:"Google Calendar", icon:"📅",
+    label:"Google Calendar", icon:"",
     href: `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(`Casamiento ${W.bride} & ${W.groom}`)}&dates=20261018T003000Z/20261018T090000Z&location=${encodeURIComponent(W.location)}&details=${encodeURIComponent("Ceremonia 18hs · Fiesta 20:30hs")}`,
     download: undefined,
   },
   {
-    label:"Apple Calendar", icon:"🍎",
+    label:"Apple Calendar", icon:"",
     href: `data:text/calendar;charset=utf8,${encodeURIComponent(ICS)}`,
     download: `boda-${W.bride.toLowerCase()}-${W.groom.toLowerCase()}.ics`,
   },
   {
-    label:"Outlook", icon:"🗓️",
+    label:"Outlook", icon:"",
     href: `https://outlook.live.com/calendar/0/deeplink/compose?subject=${encodeURIComponent(`Casamiento ${W.bride} & ${W.groom}`)}&startdt=2026-10-17T21:30:00&enddt=2026-10-18T06:00:00&location=${encodeURIComponent(W.location)}`,
     download: undefined,
   },

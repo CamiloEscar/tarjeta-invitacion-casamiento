@@ -18,11 +18,11 @@ const DETAILS = [
   },
   {
     title: "Celebración",
-    text: "El evento será al aire libre y en salón, ideal para disfrutar cómodos toda la noche.",
+    text: "El evento contará con espacios al aire libre y en salón, pensados para disfrutar cómodamente durante toda la noche.",
   },
   {
     title: "Estilo",
-    text: "Tonos neutros, cálidos y sofisticados acompañarán la estética de la celebración.",
+    text: "Los tonos neutros, cálidos y sofisticados acompañarán la estética de la celebración.",
   },
 ];
 
