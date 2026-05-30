@@ -298,6 +298,8 @@ function VideoLoadBar({ progress }: { progress: number }) {
 export default function Hero() {
   const ref    = useRef<HTMLDivElement>(null);
   const vidRef = useRef<HTMLVideoElement>(null);
+  const videoReadyRef = useRef(false);
+  const playTimerRef  = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
   const bgY  = useTransform(scrollYProgress, [0, 1], ["0%", "28%"]);
@@ -372,39 +374,83 @@ export default function Hero() {
 
   const showTimer = setTimeout(() => setShowLoadBar(true), 500);
 
+  // Loading timeout: si después de 12s el video no cargó ni siquiera metadata,
+  // asumimos fallback. Vale readyState 0 (HAVE_NOTHING).
+  // En mobile el evento error no siempre es confiable, esto es el cinturón.
+  const loadingTimeout = setTimeout(() => {
+    const video = vidRef.current;
+    if (video && video.readyState === 0) {
+      setVideoError(true);
+      setShowLoadBar(false);
+    }
+  }, 12000);
+
   const updateProgress = () => {
     if (!v.duration || !v.buffered.length) return;
     const loaded = (v.buffered.end(v.buffered.length - 1) / v.duration) * 100;
     setLoadProgress(Math.min(Math.round(loaded), 100));
   };
 
-  const onCanPlay = () => {
+  const onLoadedData = () => {
+    // Primer frame cargado → progreso completo
     setLoadProgress(100);
-    v.muted = true;
-    v.play().catch(() => {});
+
+    // Fallback: si después de 3s de tener el video cargado no arrancó
+    // la reproducción (playing), asumimos autoplay bloqueado y ocultamos
+    // la barra. La imagen se queda visible — sin botón de play.
+    playTimerRef.current = setTimeout(() => {
+      if (!videoReadyRef.current) {
+        setShowLoadBar(false);
+      }
+    }, 3000);
+  };
+
+  const onCanPlay = () => {
+    v.play().catch(() => {
+      // Autoplay bloqueado en mobile — la imagen se queda visible,
+      // el video queda oculto atrás. Sin botón de play, sin estado colgado.
+      setShowLoadBar(false);
+    });
   };
 
   const onPlaying = () => {
+    // El video arrancó → limpiar timer, crossfade imagen→video
+    if (playTimerRef.current) {
+      clearTimeout(playTimerRef.current);
+      playTimerRef.current = null;
+    }
+    videoReadyRef.current = true;
     setVideoReady(true);
-    setTimeout(() => setShowLoadBar(false), 2000);
+    setShowLoadBar(false);
   };
 
   const onError = () => {
+    if (playTimerRef.current) {
+      clearTimeout(playTimerRef.current);
+      playTimerRef.current = null;
+    }
     setVideoError(true);
     setShowLoadBar(false);
   };
 
-  v.addEventListener("progress", updateProgress);
-  v.addEventListener("canplay",  onCanPlay);
-  v.addEventListener("playing",  onPlaying);
-  v.addEventListener("error",    onError);
+  v.addEventListener("progress",    updateProgress);
+  v.addEventListener("loadeddata",  onLoadedData);
+  v.addEventListener("canplay",     onCanPlay);
+  v.addEventListener("playing",     onPlaying);
+  v.addEventListener("error",       onError);
 
   return () => {
     clearTimeout(showTimer);
-    v.removeEventListener("progress", updateProgress);
-    v.removeEventListener("canplay",  onCanPlay);
-    v.removeEventListener("playing",  onPlaying);
-    v.removeEventListener("error",    onError);
+    clearTimeout(loadingTimeout);
+    if (playTimerRef.current) {
+      clearTimeout(playTimerRef.current);
+      playTimerRef.current = null;
+    }
+    v.removeEventListener("progress",    updateProgress);
+    v.removeEventListener("loadeddata",  onLoadedData);
+    v.removeEventListener("canplay",     onCanPlay);
+    v.removeEventListener("playing",     onPlaying);
+    v.removeEventListener("error",       onError);
   };
 }, [videoSrc]);
 
@@ -438,23 +484,9 @@ useEffect(() => {
         }}
         className="absolute left-0 right-0 top-0 -z-10"
       >
-        {/* Image background — always rendered underneath */}
-        <div
-          style={{
-            position: "absolute",
-            inset: 0,
-            backgroundImage: `url('${bgImage}')`,
-            backgroundSize: "cover",
-            backgroundPosition: "center 30%",
-            filter: filterPreset.filter,
-            transform: "scale(1.08)",
-            // Transition out when video takes over
-            opacity: videoReady ? 0 : 1,
-            transition: "opacity 1.2s ease",
-          }}
-        />
-
-        {/* Video background — crossfades in over image */}
+        {/* Video background — siempre visible (opacity 1), detrás de la imagen.
+            Si el autoplay es bloqueado en mobile, el video queda oculto atrás
+            sin mostrar botón de play nativo. */}
         {hasVideo && videoSrc && !videoError && (
           <video
             ref={vidRef}
@@ -464,6 +496,7 @@ useEffect(() => {
             muted
             playsInline
             preload="auto"
+            onError={() => { setVideoError(true); setShowLoadBar(false); }}
             style={{
               position: "absolute",
               inset: 0,
@@ -472,16 +505,32 @@ useEffect(() => {
               objectFit: "cover",
               objectPosition: "center 35%",
               filter: filterPreset.filter,
-              opacity: videoReady ? 1 : 0,
-              transition: "opacity 1.2s ease",
+              zIndex: 1,
             }}
           />
         )}
 
-        {/* Cinematic overlay */}
+        {/* Image — encima del video (zIndex 2), se desvanece cuando el video
+            arranca (videoReady=true). Mientras, el usuario ve la imagen fija. */}
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            backgroundImage: `url('${bgImage}')`,
+            backgroundSize: "cover",
+            backgroundPosition: "center 30%",
+            filter: filterPreset.filter,
+            transform: "scale(1.08)",
+            opacity: videoReady ? 0 : 1,
+            transition: "opacity 1.2s ease",
+            zIndex: 2,
+          }}
+        />
+
+        {/* Cinematic overlay — encima de todo */}
         <div
           className="absolute inset-0"
-          style={{ background: filterPreset.overlay }}
+          style={{ background: filterPreset.overlay, zIndex: 3 }}
         />
 
         {/* Grain texture */}
@@ -490,6 +539,7 @@ useEffect(() => {
           style={{
             backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E")`,
             opacity: 0.4,
+            zIndex: 4,
           }}
         />
       </motion.div>
