@@ -24,7 +24,7 @@ export async function GET(req: NextRequest) {
     if (action === "summary") {
       return NextResponse.json({ total:3, si:2, no:1, totalPersonas:5, shuttle:1, sinMesa:2, porDia:[] });
     }
-    return NextResponse.json({ mesa: null });
+    return NextResponse.json({ mesa: null, pago: false });
   }
 
   try {

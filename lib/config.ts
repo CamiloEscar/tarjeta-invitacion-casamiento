@@ -26,21 +26,21 @@ export const W = {
     address:  "Barrio hipodromo loteo cacho silva, E3260 Concepción del Uruguay, Entre Ríos",
     time:     "17/10/2026 21:30 hs",
     cocktail: "",
-    dresscode:"$45000",
+    dresscode:"$48000",
+    note:     "Menores de 8 años no abonan tarjeta",
+    cardAlias:"leitoreyes.21",
     mapsUrl:  "https://maps.app.goo.gl/i8FE4fa4iCsofHmr6",
   },
 
   mapEmbedSrc:     "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d4342.022412335781!2d-58.32569542335288!3d-32.50055614949931!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x95afd91f2444def5%3A0x9209bc52896b0637!2sil%20palatium!5e1!3m2!1ses!2sar!4v1777662359464!5m2!1ses!2sar",
   // ── Regalos (Argentina) ────────────────────────────────
 gifts: {
-    alias:        "LEO.PAOLA.BODA",
-    cbu:          "0000000000000000000000",
-    bank:         "Banco Galicia",
+    alias:        "Leo.pao.bna",
+    cbu:          "0110211830021119509201",
+    bank:         "Banco Nación",
     listUrl:      "#",
     honeymoonUrl: "#",
     cvu:      "ABC",          // CVU de Mercado Pago si tienen
-    mpLink:   "CDA",          // Link de cobro Mercado Pago: https://mpago.la/...
-    modoLink: "ASDF",          // Link de MODO: https://transferencias.modo.com.ar/...
     message: "Tu presencia es el mejor regalo para nosotros 💛. Pero, si además querés hacernos un obsequio, te dejamos algunas opciones: podés realizar una transferencia o elegir algo de nuestra lista de regalos.",
     extra: {
       icon: "🎁",
@@ -52,31 +52,105 @@ gifts: {
   },
 
   giftList: [
-  {
-    name: "Juego de vajilla",
-    price: "$85.000",
-    emoji: "🍽️",
-    reserved: false,
-  },
-  {
-    name: "Cafetera",
-    price: "$120.000",
-    emoji: "☕",
-    reserved: false,
-  },
-  {
-    name: "Juego de sábanas",
-    price: "$65.000",
-    emoji: "🛏️",
-    reserved: false,
-  },
-  {
-    name: "Freidora de aire",
-    price: "$140.000",
-    emoji: "🍟",
-    reserved: false,
-  },
-],
+    {
+      name: "Juego de vajilla 20 piezas",
+      price: "$124.000",
+      emoji: "🍽️",
+      reserved: false,
+      url: "https://listado.mercadolibre.com.ar/vajilla-oxford-unni-20-piezas",
+    },
+    {
+      name: "Juego de cubiertos 24 piezas",
+      price: "$30.500",
+      emoji: "🍴",
+      reserved: false,
+      url: "https://listado.mercadolibre.com.ar/cubiertos-tramontina-oslo-24-piezas",
+    },
+    {
+      name: "Juego de 6 copas de vidrio",
+      price: "$25.700",
+      emoji: "🥂",
+      reserved: false,
+      url: "https://listado.mercadolibre.com.ar/copa-vino-libia-cristal-x6",
+    },
+    {
+      name: "Vaso de vidrio 480ml x6",
+      price: "$11.000",
+      emoji: "🥤",
+      reserved: false,
+      url: "https://listado.mercadolibre.com.ar/vaso-dubai-nadir-480ml-x6",
+    },
+    {
+      name: "Set de ollas 4 piezas",
+      price: "$138.500",
+      emoji: "🥘",
+      reserved: false,
+      url: "https://listado.mercadolibre.com.ar/olla-tramontina-allegra-4-piezas",
+    },
+    {
+      name: "Fuente rectangular para horno",
+      price: "$18.800",
+      emoji: "🧑‍🍳",
+      reserved: false,
+      url: "https://listado.mercadolibre.com.ar/fuente-horno-borcam-pasabahce",
+    },
+    {
+      name: "Tabla de madera bambú 40x30cm",
+      price: "$20.900",
+      emoji: "🪵",
+      reserved: false,
+      url: "https://listado.mercadolibre.com.ar/tabla-picar-bambu-hudson-40x30",
+    },
+    {
+      name: "Set x9 cuchillas",
+      price: "$33.100",
+      emoji: "🔪",
+      reserved: false,
+      url: "https://listado.mercadolibre.com.ar/cuchillos-tramontina-plenus-9-piezas",
+    },
+    {
+      name: "Procesadora 750W",
+      price: "$172.500",
+      emoji: "⚡",
+      reserved: false,
+      url: "https://listado.mercadolibre.com.ar/procesadora-philips-hr7301-90",
+    },
+    {
+      name: "Batidora planetaria 5L",
+      price: "$122.800",
+      emoji: "🥣",
+      reserved: false,
+      url: "https://listado.mercadolibre.com.ar/batidora-planetaria-gadnic-b52-5l",
+    },
+    {
+      name: "Juego de sábanas 2 plazas",
+      price: "$22.000",
+      emoji: "🛏️",
+      reserved: false,
+      url: "https://listado.mercadolibre.com.ar/sabanas-2-plazas-200-hilos-cotton-touch",
+    },
+    {
+      name: "Cubrecama c/fundas",
+      price: "$35.300",
+      emoji: "🛋️",
+      reserved: false,
+      url: "https://listado.mercadolibre.com.ar/cubrecama-diamond-c-fundas",
+    },
+    {
+      name: "Juego de toalla y toallón",
+      price: "$23.000",
+      emoji: "🚿",
+      reserved: false,
+      url: "https://listado.mercadolibre.com.ar/toalla-fravega-home-500gr",
+    },
+    {
+      name: "Organizador de ducha colgante",
+      price: "$4.000",
+      emoji: "🧴",
+      reserved: false,
+      url: "https://listado.mercadolibre.com.ar/organizador-ducha-colgante-blanco",
+    },
+  ],
   
 
   // ── Logística ──────────────────────────────────────────
@@ -113,7 +187,7 @@ gifts: {
   // ── PIN admin (para /admin) ────────────────────────────
   // Cambiar por un número de 4+ dígitos. No es seguridad bancaria,
   // solo evita que un invitado entre sin querer.
-  adminPin: "1012",  // ← cambiar por mes+día de la boda u otro número fácil de recordar
+  adminPin: "1017",  // ← cambiar por mes+día de la boda u otro número fácil de recordar
 
   // ── WhatsApp y contacto ────────────────────────────────
   whatsapp:        "5493442000000",
@@ -123,10 +197,11 @@ gifts: {
   photoAlbumUrl:   "https://photos.app.goo.gl/sS3YiuNvKkYFiAdB8",
   googleDriveFolder:
   "https://drive.google.com/drive/folders/10mLwcHSG_zEArnxtQBhg-XItQ29d73fE?usp=sharing",
-  appsScriptUrl:   "https://script.google.com/macros/s/AKfycbyS15ITkCllfiorfeLwC7RYMREMbqy4FgrIO9bQZK6nbP6laIwkgWkYRYyvLkxW2elVEQ/exec",
+  appsScriptUrl:   "https://script.google.com/macros/s/AKfycbwWNZoFZ3P-3ICyGfOWtlpsqYyV-LxluZvtOqfGO_cjod5jiNyJTt4F1WN4vHlUFu9E/exec",
   spotifyEmbedSrc: "https://open.spotify.com/embed/playlist/37i9dQZF1DX2sUQwD7tbmL?utm_source=generator&theme=0",
 
-  heroVideo:    "/boda.mp4" as string,
+  heroVideo:         "/boda.mp4" as string,
+  heroVideoDesktop:  "/boda-desktop.mp4" as string,
   heroBgImage:  "" as string,
   heroFilter:   "romance" as "romance" | "cinema" | "soft" | "dark",
 } as const;
@@ -244,31 +319,26 @@ export const STORY = [
 ] as const;
 
 export const PHOTOS = [
-  { src:"/1.png", alt:"Leo & Paola",      wide:true  },
-  { src:"/2.png",  alt:"Retrato",          wide:false },
-  { src:"/3.jpeg",  alt:"Momento especial", wide:false },
-  { src:"/4.png",  alt:"Celebración",      wide:false },
-  { src:"/viaje.png",  alt:"Detalles",         wide:false },
-  { src:"/juntos.png",  alt:"TITULO",     wide:false },
-  { src:"/juntos2.png",  alt:"TITULO",     wide:false },
-  { src:"/juntos3.png",  alt:"TITULO",     wide:false },
-  { src:"/juntos4.png",  alt:"TITULO",     wide:false },
-  { src:"/juntos5.png",  alt:"TITULO",     wide:false },
-  { src:"/juntos6.png",  alt:"TITULO",     wide:false },
-  { src:"/juntos7.png",  alt:"TITULO",     wide:false },
-  { src:"/moto1.png",  alt:"TITULO",     wide:false },
-  { src:"/moto2.png",  alt:"TITULO",     wide:false },
-  { src:"/moto3.png",  alt:"TITULO",     wide:false },
-  { src:"/moto4.png",  alt:"TITULO",     wide:false },
-  { src:"/playa.png",  alt:"TITULO",     wide:false },
-  { src:"/viaje2.png",  alt:"TITULO",     wide:false },
-  { src:"/viaje3.png",  alt:"TITULO",     wide:false },
+  { src:"/1.jpg", alt:"Leo & Paola",      wide:true  },
+  { src:"/2.jpg",  alt:"Leito",          wide:false },
+  { src:"/3.jpeg",  alt:"Pao",           wide:false },
+  { src:"/juntos4.jpg",  alt:"Juntos",   wide:false },
+  { src:"/juntos5.jpg",  alt:"Juntos",   wide:false },
+  { src:"/juntos6.jpg",  alt:"Juntos",   wide:false },
+  { src:"/juntos7.jpg",  alt:"Juntos",   wide:false },
+  { src:"/moto1.jpg",  alt:"En la moto",    wide:false },
+  { src:"/moto2.jpg",  alt:"En la moto",    wide:false },
+  { src:"/moto3.jpg",  alt:"En la moto",    wide:false },
+  { src:"/moto4.jpg",  alt:"En la moto",    wide:false },
+  { src:"/playa.jpg",  alt:"Familia",     wide:false },
+  { src:"/viaje2.jpg",  alt:"De viaje",   wide:false },
+  { src:"/viaje3.jpg",  alt:"De viaje",   wide:false },
 ] as const;
 
 export const POLAROIDS = [
-  { src:"/conocimos.png", caption:"Así nos conocimos", rot:-3.5 },
-  { src:"/viaje.png", caption:"Primer viaje",       rot: 2.2 },
-  { src:"/4.png", caption:"La propuesta 💍",   rot:-1.8 },
+  { src:"/conocimos.jpg", caption:"Cuando nos conocimos 💏", rot:-3.5 },
+  { src:"/viaje.jpg", caption:"Disfrutando cada aventura ⛷️",       rot: 2.2 },
+  { src:"/4.jpg", caption:"Juntos en todo 🏍️",   rot:-1.8 },
 ] as const;
 
 export const TRIVIA = [

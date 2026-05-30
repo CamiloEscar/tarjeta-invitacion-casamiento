@@ -57,7 +57,8 @@ export default function PhotoCarousel() {
               >
                 <Image
                   src={PHOTOS[cur].src} alt={PHOTOS[cur].alt} fill
-                  className="object-cover" style={{ filter:"sepia(8%) contrast(0.97)" }}
+                  className={PHOTOS[cur].wide ? "object-cover" : "object-contain"}
+                  style={{ filter:"sepia(8%) contrast(0.97)", background:"#120d09" }}
                   sizes="(max-width:900px) 100vw, 900px"
                   priority={cur===0}
                 />

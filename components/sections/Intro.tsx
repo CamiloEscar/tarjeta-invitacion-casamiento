@@ -8,7 +8,12 @@ export default function Intro() {
   const inView = useInView(ref, { once: true, amount: 0.4 });
   const [text, setText]   = useState("");
   const [done, setDone]   = useState(false);
+  const [isMobile, setIsMobile] = useState(true);
   const full = W.introText;
+
+  useEffect(() => {
+    setIsMobile(window.innerWidth < 768);
+  }, []);
 
   useEffect(() => {
     if (!inView) return;
@@ -21,7 +26,7 @@ export default function Intro() {
   }, [inView]);
 
   return (
-    <section id="intro" className="s-pad-sm surf-dark relative overflow-hidden">
+    <section id="intro" className="s-pad relative overflow-hidden pt-32 md:pt-48" style={{ background: isMobile ? "var(--c-dark)" : "linear-gradient(to bottom, transparent 0%, rgba(44,26,16,0.08) 15%, rgba(44,26,16,0.25) 30%, rgba(44,26,16,0.55) 50%, rgba(44,26,16,0.8) 70%, var(--c-dark) 85%)" }}>
       {/* Ambient light */}
       <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse 70% 60% at 50% 100%, rgba(107,38,53,0.12) 0%, transparent 70%)" }} />
 

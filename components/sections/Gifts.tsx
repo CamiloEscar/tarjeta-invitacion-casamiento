@@ -328,12 +328,12 @@ export default function Gifts() {
                   value={W.gifts.cbu}
                 />
 
-                {W.gifts.cvu && (
+                {/* {W.gifts.cvu && (
                   <CopyRow
                     label="CVU"
                     value={W.gifts.cvu}
                   />
-                )}
+                )} */}
               </div>
 
               <p

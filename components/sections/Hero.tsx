@@ -310,6 +310,8 @@ export default function Hero() {
   const [videoError,    setVideoError]    = useState(false);
   const [loadProgress,  setLoadProgress]  = useState(0);   // 0–100
   const [showLoadBar,   setShowLoadBar]   = useState(false);
+  const [videoSrc, setVideoSrc] = useState<string | null>(null);
+  const [isDesktop, setIsDesktop] = useState(false);
 
   const hasVideo     = Boolean(W.heroVideo);
   const bgImage      = W.heroBgImage || DEFAULT_BG;
@@ -387,7 +389,10 @@ export default function Hero() {
     setTimeout(() => setShowLoadBar(false), 2000);
   };
 
-  const onError = () => setShowLoadBar(false);
+  const onError = () => {
+    setVideoError(true);
+    setShowLoadBar(false);
+  };
 
   v.addEventListener("progress", updateProgress);
   v.addEventListener("canplay",  onCanPlay);
@@ -401,6 +406,15 @@ export default function Hero() {
     v.removeEventListener("playing",  onPlaying);
     v.removeEventListener("error",    onError);
   };
+}, [videoSrc]);
+
+// Detect viewport and choose video source
+useEffect(() => {
+  if (!W.heroVideo) return;
+  const d = window.innerWidth >= 768;
+  setIsDesktop(d);
+  const src = d && W.heroVideoDesktop ? W.heroVideoDesktop : W.heroVideo;
+  setVideoSrc(src);
 }, []);
 
   return (
@@ -410,8 +424,6 @@ export default function Hero() {
       className="relative flex flex-col items-center justify-center text-center"
       style={{
         minHeight: "100svh",
-        // Fix mobile overflow — clip everything inside
-        overflow: "hidden",
         // Explicitly constrain width so nothing escapes
         maxWidth: "100vw",
         width: "100%",
@@ -419,10 +431,12 @@ export default function Hero() {
     >
       {/* ── Background Layer ───────────────────────────────── */}
       <motion.div
-        style={{ overflow: "hidden", y: bgY }}
-        className="absolute inset-0 -z-10"
-        // Extra overflow clip on the parallax element itself
-        // css={{ overflow: "hidden" }}
+        style={{
+          overflow: "hidden",
+          y: bgY,
+          ...(isDesktop ? { height: "150svh" } : { bottom: 0 }),
+        }}
+        className="absolute left-0 right-0 top-0 -z-10"
       >
         {/* Image background — always rendered underneath */}
         <div
@@ -441,10 +455,10 @@ export default function Hero() {
         />
 
         {/* Video background — crossfades in over image */}
-        {hasVideo && !videoError && (
+        {hasVideo && videoSrc && !videoError && (
           <video
             ref={vidRef}
-            src={W.heroVideo}
+            src={videoSrc}
             autoPlay
             loop
             muted
@@ -456,11 +470,10 @@ export default function Hero() {
               width: "100%",
               height: "100%",
               objectFit: "cover",
-              objectPosition: "center",
+              objectPosition: "center 35%",
               filter: filterPreset.filter,
               opacity: videoReady ? 1 : 0,
               transition: "opacity 1.2s ease",
-              transform: "scale(1.08)",
             }}
           />
         )}
@@ -716,7 +729,7 @@ export default function Hero() {
           right: 0,
           zIndex: 10,
           pointerEvents: "none",
-          background: "linear-gradient(to top, rgba(20,8,4,0.65) 0%, transparent 100%)",
+          background: "transparent",
         }}
       >
         {/* Scroll hint centrado */}
@@ -747,7 +760,7 @@ export default function Hero() {
 
         {/* Video load bar — solo visible cuando hay video cargando */}
         <AnimatePresence>
-          {showLoadBar && hasVideo && !videoError && (
+          {showLoadBar && hasVideo && videoSrc && !videoError && (
             <motion.div
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: "auto" }}

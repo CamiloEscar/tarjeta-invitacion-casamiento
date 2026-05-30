@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   motion,
   AnimatePresence,
@@ -90,9 +90,37 @@ function CopyButton({
   );
 }
 
+// ── Tipos ───────────────────────────────────────────────
+interface GiftItem {
+  name: string;
+  price: string;
+  emoji: string;
+  reserved: boolean;
+  url: string;
+}
+
 export default function GiftsPage() {
-  const hasMp = Boolean(W.gifts.mpLink);
-  const hasModo = Boolean(W.gifts.modoLink);
+  const [gifts, setGifts] = useState<GiftItem[]>(() =>
+    // Inicializar con static data del config (fallback si API falla)
+    W.giftList.map((g) => ({ ...g, reserved: false }))
+  );
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch("/api/gifts")
+      .then((res) => {
+        if (!res.ok) throw new Error("API error");
+        return res.json();
+      })
+      .then((data) => {
+        // La API ya mergea W.giftList + regalos custom + estado reserved
+        setGifts(data.items ?? []);
+      })
+      .catch(() => {
+        // Si falla, ya tenemos el fallback del useState inicial
+      })
+      .finally(() => setLoading(false));
+  }, []);
 
   return (
     <div
@@ -171,9 +199,26 @@ export default function GiftsPage() {
           padding: "4rem 1.5rem 6rem",
         }}
       >
+        {/* Loading skeleton */}
+        {loading && (
+          <div style={{ textAlign: "center", padding: "4rem 0" }}>
+            <div style={{
+              width: 24,
+              height: 24,
+              border: "2px solid rgba(181,137,78,0.15)",
+              borderTopColor: "var(--c-gold)",
+              borderRadius: "50%",
+              animation: "giftSpin 0.8s linear infinite",
+              margin: "0 auto 1rem",
+            }} />
+            <p style={{ fontSize: "0.65rem", color: "rgba(154,128,104,0.35)" }}>
+              Cargando regalos...
+            </p>
+          </div>
+        )}
 
         {/* Gift List */}
-        {W.giftList?.length > 0 && (
+        {!loading && gifts.length > 0 && (
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
@@ -234,106 +279,150 @@ export default function GiftsPage() {
             </div>
 
             <div className="flex flex-col gap-3">
-              {W.giftList.map((gift, index) => (
-                <motion.div
-                  key={gift.name}
-                  initial={{
-                    opacity: 0,
-                    y: 10,
-                  }}
-                  animate={{
-                    opacity: 1,
-                    y: 0,
-                  }}
-                  transition={{
-                    delay: 0.2 + index * 0.04,
-                  }}
-                  style={{
-                    padding: "1rem 1.1rem",
-                    background:
-                      "rgba(255,255,255,0.03)",
-                    border:
-                      "1px solid rgba(181,137,78,0.12)",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    gap: "1rem",
-                  }}
-                >
-                  <div
-                    className="flex items-center gap-4"
+              {gifts.map((gift, index) => (
+                  <motion.div
+                    key={gift.name}
+                    initial={{
+                      opacity: 0,
+                      y: 10,
+                    }}
+                    animate={{
+                      opacity: 1,
+                      y: 0,
+                    }}
+                    transition={{
+                      delay: 0.2 + index * 0.04,
+                    }}
+                    style={{
+                      padding: "1rem 1.1rem",
+                      background: gift.reserved
+                        ? "rgba(80,80,80,0.18)"
+                        : "rgba(255,255,255,0.03)",
+                      border: gift.reserved
+                        ? "1px solid rgba(120,120,120,0.25)"
+                        : "1px solid rgba(181,137,78,0.12)",
+                      filter: gift.reserved ? "grayscale(0.6)" : "none",
+                      pointerEvents: gift.reserved ? "none" : undefined,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      gap: "1rem",
+                    }}
                   >
+                      <div
+                        className="flex items-center gap-3"
+                      >
+                        <div
+                          className="flex items-center justify-center"
+                          style={{
+                            width: 46,
+                            height: 46,
+                            borderRadius: "999px",
+                            background: gift.reserved
+                              ? "rgba(120,120,120,0.15)"
+                              : "rgba(181,137,78,0.05)",
+                            border: gift.reserved
+                              ? "1px solid rgba(120,120,120,0.2)"
+                              : "1px solid rgba(181,137,78,0.1)",
+                            fontSize: "1.1rem",
+                            flexShrink: 0,
+                            filter: gift.reserved ? "grayscale(0.6)" : "none",
+                          }}
+                        >
+                          {gift.emoji}
+                        </div>
+
+                        <div>
+                          <p
+                            style={{
+                              fontFamily:
+                                "var(--font-jost)",
+                              fontSize: "0.9rem",
+                              color: gift.reserved
+                                ? "rgba(200,200,200,0.45)"
+                                : "var(--c-text-inv)",
+                              marginBottom:
+                                "0.12rem",
+                            }}
+                          >
+                            {gift.name}
+                          </p>
+                          {gift.url && !gift.reserved && (
+                            <a
+                              href={gift.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              style={{
+                                fontFamily:
+                                  "var(--font-jost)",
+                                fontSize: "0.55rem",
+                                letterSpacing:
+                                  "0.12em",
+                                textTransform:
+                                  "uppercase",
+                                color: "var(--c-gold-lt)",
+                                textDecoration:
+                                  "none",
+                                display:
+                                  "inline-flex",
+                                alignItems: "center",
+                                gap: "0.25rem",
+                                opacity: 0.7,
+                                transition:
+                                  "opacity 0.2s",
+                              }}
+                              onMouseEnter={(e) =>
+                                (e.currentTarget.style.opacity =
+                                  "1")
+                              }
+                              onMouseLeave={(e) =>
+                                (e.currentTarget.style.opacity =
+                                  "0.7")
+                              }
+                            >
+                              Ver producto →
+                            </a>
+                          )}
+                          {gift.reserved && (
+                            <p style={{
+                              fontFamily: "var(--font-cormorant)",
+                              fontStyle: "italic",
+                              fontSize: "0.7rem",
+                              color: "rgba(200,200,200,0.3)",
+                              marginTop: "0.1rem",
+                            }}>
+                              Ya tiene dueño 💕
+                            </p>
+                          )}
+                        </div>
+                      </div>
+
                     <div
-                      className="flex items-center justify-center"
                       style={{
-                        width: 46,
-                        height: 46,
-                        borderRadius: "999px",
-                        background:
-                          "rgba(181,137,78,0.05)",
-                        border:
-                          "1px solid rgba(181,137,78,0.1)",
-                        fontSize: "1.1rem",
+                        padding:
+                          "0.38rem 0.65rem",
+                        background: gift.reserved
+                          ? "rgba(120,120,120,0.2)"
+                          : "rgba(181,137,78,0.08)",
+                        border: gift.reserved
+                          ? "1px solid rgba(120,120,120,0.3)"
+                          : "1px solid rgba(181,137,78,0.14)",
+                        fontFamily:
+                          "var(--font-jost)",
+                        fontSize: "0.54rem",
+                        letterSpacing: "0.14em",
+                        textTransform: "uppercase",
+                        color: gift.reserved
+                          ? "rgba(200,200,200,0.5)"
+                          : "var(--c-gold-lt)",
                         flexShrink: 0,
                       }}
                     >
-                      {gift.emoji}
+                      {gift.reserved
+                        ? "Reservado"
+                        : "Disponible"}
                     </div>
-
-                    <div>
-                      <p
-                        style={{
-                          fontFamily:
-                            "var(--font-jost)",
-                          fontSize: "0.9rem",
-                          color:
-                            "var(--c-text-inv)",
-                          marginBottom: "0.18rem",
-                        }}
-                      >
-                        {gift.name}
-                      </p>
-
-                      <p
-                        style={{
-                          fontFamily:
-                            "var(--font-jost)",
-                          fontSize: "0.72rem",
-                          color:
-                            "rgba(196,168,130,0.52)",
-                        }}
-                      >
-                        {gift.price}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div
-                    style={{
-                      padding:
-                        "0.38rem 0.65rem",
-                      background: gift.reserved
-                        ? "rgba(107,38,53,0.2)"
-                        : "rgba(181,137,78,0.08)",
-                      border: gift.reserved
-                        ? "1px solid rgba(107,38,53,0.35)"
-                        : "1px solid rgba(181,137,78,0.14)",
-                      fontFamily:
-                        "var(--font-jost)",
-                      fontSize: "0.54rem",
-                      letterSpacing: "0.14em",
-                      textTransform: "uppercase",
-                      color: gift.reserved
-                        ? "rgba(255,220,220,0.72)"
-                        : "var(--c-gold-lt)",
-                      flexShrink: 0,
-                    }}
-                  >
-                    {gift.reserved
-                      ? "Reservado"
-                      : "Disponible"}
-                  </div>
-                </motion.div>
+                  </motion.div>
               ))}
             </div>
           </motion.div>
@@ -406,12 +495,12 @@ export default function GiftsPage() {
               value={W.gifts.cbu}
             />
 
-            {W.gifts.cvu && (
+            {/* {W.gifts.cvu && (
               <CopyButton
                 label="CVU"
                 value={W.gifts.cvu}
               />
-            )}
+            )} */}
           </div>
 
           <p
@@ -426,116 +515,7 @@ export default function GiftsPage() {
             {W.gifts.bank}
           </p>
 
-          {/* Apps */}
-          {(hasMp || hasModo) && (
-            <div
-              style={{
-                marginTop: "1.8rem",
-              }}
-            >
-              <div
-                style={{
-                  width: "100%",
-                  height: 1,
-                  background:
-                    "linear-gradient(to right, transparent, rgba(181,137,78,0.16), transparent)",
-                  marginBottom: "1.5rem",
-                }}
-              />
 
-              <p
-                style={{
-                  fontFamily: "var(--font-jost)",
-                  fontSize: "0.56rem",
-                  letterSpacing: "0.2em",
-                  textTransform: "uppercase",
-                  color: "rgba(181,137,78,0.35)",
-                  marginBottom: "0.8rem",
-                  textAlign: "center",
-                }}
-              >
-                O desde la app
-              </p>
-
-              <div
-                style={{
-                  display: "flex",
-                  gap: "0.7rem",
-                  flexWrap: "wrap",
-                }}
-              >
-                {hasMp && (
-                  <a
-                    href={W.gifts.mpLink}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{
-                      flex: 1,
-                      minWidth: 160,
-                      padding:
-                        "0.95rem 1rem",
-                      background: "#009ee3",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      textDecoration: "none",
-                    }}
-                  >
-                    <span
-                      style={{
-                        fontFamily:
-                          "var(--font-jost)",
-                        fontSize: "0.68rem",
-                        letterSpacing: "0.1em",
-                        color: "white",
-                        textTransform:
-                          "uppercase",
-                      }}
-                    >
-                      Mercado Pago
-                    </span>
-                  </a>
-                )}
-
-                {hasModo && (
-                  <a
-                    href={W.gifts.modoLink}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{
-                      flex: 1,
-                      minWidth: 160,
-                      padding:
-                        "0.95rem 1rem",
-                      background:
-                        "rgba(255,255,255,0.04)",
-                      border:
-                        "1px solid rgba(255,255,255,0.08)",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      textDecoration: "none",
-                    }}
-                  >
-                    <span
-                      style={{
-                        fontFamily:
-                          "var(--font-jost)",
-                        fontSize: "0.68rem",
-                        letterSpacing: "0.1em",
-                        color:
-                          "var(--c-text-inv)",
-                        textTransform:
-                          "uppercase",
-                      }}
-                    >
-                      MODO
-                    </span>
-                  </a>
-                )}
-              </div>
-            </div>
-          )}
         </motion.div>
 
         {/* Footer quote */}
@@ -558,6 +538,8 @@ export default function GiftsPage() {
           quedará para siempre en nuestro corazón”
         </motion.p>
       </div>
+
+      <style>{`@keyframes giftSpin { to { transform: rotate(360deg); } }`}</style>
     </div>
   );
 }

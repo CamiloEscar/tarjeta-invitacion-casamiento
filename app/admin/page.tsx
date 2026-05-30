@@ -3,7 +3,7 @@ import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { W } from "@/lib/config";
 
-type Tab = "stats" | "mesas" | "export";
+type Tab = "stats" | "mesas" | "export" | "regalos";
 
 interface Guest {
   nombre: string;
@@ -275,14 +275,16 @@ function getInvitationUrl(guest: Guest) {
 // ── Dashboard ─────────────────────────────────────────────────
 function Dashboard({ tab, setTab }: { tab: Tab; setTab: (t: Tab) => void }) {
   const tabs: { id: Tab; icon: string; label: string }[] = [
-    { id: "stats",  icon: "📊", label: "Stats"  },
-    { id: "mesas",  icon: "🪑", label: "Mesas"  },
-    { id: "export", icon: "📋", label: "Lista"  },
+    { id: "stats",   icon: "📊", label: "Stats"   },
+    { id: "mesas",   icon: "📋", label: "Lista"   },
+    { id: "regalos", icon: "🎁", label: "Regalos" },
+    { id: "export",  icon: "🪑", label: "Mesas"   },
   ];
 
   const externalLinks = [
     { href: "/live",  icon: "🖥",  label: "Pantalla"     },
     { href: "/print", icon: "🖨️", label: "Invitaciones" },
+    { href: "/album", icon: "📸", label: "Álbum QR"     },
   ];
 
   return (
@@ -292,11 +294,12 @@ function Dashboard({ tab, setTab }: { tab: Tab; setTab: (t: Tab) => void }) {
       <div style={{
         background: "var(--c-dark)",
         borderBottom: "1px solid rgba(181,137,78,0.08)",
-        padding: "0 1.25rem",
+        padding: "0.5rem 1.25rem",
         display: "flex",
         alignItems: "center",
-        height: 52,
-        gap: "1rem",
+        flexWrap: "wrap",
+        minHeight: 52,
+        gap: "0.5rem",
         position: "sticky",
         top: 0,
         zIndex: 50,
@@ -393,6 +396,11 @@ function Dashboard({ tab, setTab }: { tab: Tab; setTab: (t: Tab) => void }) {
           {tab === "mesas" && (
             <motion.div key="mesas" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.25 }}>
               <MesasTab />
+            </motion.div>
+          )}
+          {tab === "regalos" && (
+            <motion.div key="regalos" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.25 }}>
+              <GiftsTab />
             </motion.div>
           )}
           {tab === "export" && (
@@ -500,17 +508,21 @@ function StatsTab() {
               fontWeight: 300,
               marginTop: "0.4rem",
             }}>
-              personas confirmadas
+              de {summary.totalPersonas} invitados
             </p>
           </div>
 
-          {/* Stats grid */}
+          {/* Stats grid — cada fila es un par lógico */}
           <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "0.5rem" }}>
-            <StatCard emoji="✅" label="Asisten"        value={summary.personasSi}           color="#81c784" />
-            <StatCard emoji="❌" label="No asisten"     value={summary.personasNo}           color="#ef9a9a" />
-            <StatCard emoji="👶" label="Niños"          value={summary.totalHijos}           color="var(--c-gold-lt)" />
-            <StatCard emoji="💳" label="Pagaron (estan incluidos niños)"        value={summary.personasPagadas}      color="#81c784" />
-            <StatCard emoji="🪑" label="Sin mesa aún (invitacion confirmada)"   value={summary.sinMesa ?? 0}         color="rgba(207,168,112,0.55)" />
+            {/* Fila 1: Confirmación */}
+            <StatCard emoji="✅" label="Asisten"          value={summary.personasSi}                                           color="#81c784" />
+            <StatCard emoji="❌" label="No asisten"       value={summary.personasNo}                                           color="#ef9a9a" />
+            {/* Fila 2: Pago */}
+            <StatCard emoji="💳" label="Adultos que pagaron"  value={summary.personasPagadas}                                     color="#81c784" />
+            <StatCard emoji="⏳" label="Adultos sin pagar"    value={Math.max(0, (summary.personasSi - summary.totalHijos) - summary.personasPagadas)} color="#ef9a9a" />
+            {/* Fila 3: Logística */}
+            <StatCard emoji="👶" label="Niños"             value={summary.totalHijos}                                           color="var(--c-gold-lt)" />
+            <StatCard emoji="🪑" label="Sin mesa"           value={summary.sinMesa ?? 0}                                        color="rgba(207,168,112,0.55)" />
           </div>
 
           {/* Donut-ish progress: % asistencia */}
@@ -703,18 +715,19 @@ async function toggleFlag(
   guest: Guest,
   field: "pago" | "confirmado"
 ) {
-  const value = !guest[field];
+  const prevValue = guest[field];
+  const value = !prevValue;
 
-  setGuests(prev =>
-    prev.map(g =>
-      g.slug === guest.slug
-        ? { ...g, [field]: value }
-        : g
+  setGuests(g =>
+    g.map(item =>
+      item.slug === guest.slug
+        ? { ...item, [field]: value }
+        : item
     )
   );
 
   try {
-    await fetch("/api/mesas", {
+    const res = await fetch("/api/mesas", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -725,14 +738,23 @@ async function toggleFlag(
         [field]: value,
       }),
     });
+    if (!res.ok) throw new Error();
   } catch {
+    // Rollback on error
+    setGuests(g =>
+      g.map(item =>
+        item.slug === guest.slug
+          ? { ...item, [field]: prevValue }
+          : item
+      )
+    );
     setError("No se pudo actualizar");
   }
 }
 
   async function saveAll() {
     const unsaved = guests.filter(g => (edits[g.slug] ?? "").trim() !== g.mesa);
-    for (const g of unsaved) await saveMesa(g.slug);
+    await Promise.allSettled(unsaved.map(g => saveMesa(g.slug)));
   }
 
   const filtered = guests.filter(g => {
@@ -1026,6 +1048,514 @@ async function toggleFlag(
       )}
     </div>
   );
+}
+
+// ── Gifts Tab ─────────────────────────────────────────────────
+interface GiftAdminItem {
+  name: string;
+  price: string;
+  emoji: string;
+  url: string;
+  reserved: boolean;
+}
+
+function GiftsTab() {
+  const [gifts, setGifts] = useState<GiftAdminItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [saving, setSaving] = useState<string | null>(null);
+  const [showForm, setShowForm] = useState(false);
+  const [newGift, setNewGift] = useState({ name: "", emoji: "🎁", price: "", url: "" });
+  const [adding, setAdding] = useState(false);
+  const [editing, setEditing] = useState<string | null>(null);
+  const [deleting, setDeleting] = useState<string | null>(null);
+  const [editForm, setEditForm] = useState({ name: "", emoji: "", price: "", url: "" });
+
+  const load = useCallback(async () => {
+    setLoading(true);
+    setError("");
+    try {
+      const res = await fetch("/api/gifts");
+      const data = await res.json();
+      setGifts(data.items ?? []);
+    } catch {
+      setError("No se pudo cargar la lista de regalos.");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => { load(); }, [load]);
+
+  async function toggleGift(name: string, current: boolean) {
+    const next = !current;
+    setGifts((prev) => prev.map((g) => (g.name === name ? { ...g, reserved: next } : g)));
+    setSaving(name);
+    try {
+      const res = await fetch("/api/gifts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, reserved: next }),
+      });
+      if (!res.ok) throw new Error();
+    } catch {
+      setGifts((prev) => prev.map((g) => (g.name === name ? { ...g, reserved: current } : g)));
+      setError("Error al guardar. Revertido.");
+    } finally {
+      setSaving(null);
+    }
+  }
+
+  async function handleAdd() {
+    if (!newGift.name.trim()) return;
+    setAdding(true);
+    setError("");
+    try {
+      const payload = { ...newGift, price: formatPrice(newGift.price) };
+      const res = await fetch("/api/gifts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "addGift", ...payload }),
+      });
+      const data = await res.json();
+      if (data.status === "ok") {
+        setNewGift({ name: "", emoji: "🎁", price: "", url: "" });
+        setShowForm(false);
+        load();
+      } else {
+        setError(data.error || "Error al agregar");
+      }
+    } catch {
+      setError("Error al agregar el regalo");
+    } finally {
+      setAdding(false);
+    }
+  }
+
+  function startEdit(gift: GiftAdminItem) {
+    setEditing(gift.name);
+    setEditForm({ name: gift.name, emoji: gift.emoji, price: formatPrice(gift.price), url: gift.url });
+    setDeleting(null);
+  }
+
+  function cancelEdit() {
+    setEditing(null);
+    setEditForm({ name: "", emoji: "", price: "", url: "" });
+  }
+
+  async function handleEdit() {
+    const oldName = editing;
+    if (!oldName || !editForm.name.trim()) return;
+    setSaving(oldName);
+    setError("");
+    try {
+      const payload = { ...editForm, price: formatPrice(editForm.price) };
+      const res = await fetch("/api/gifts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "editGift", oldName, ...payload }),
+      });
+      const data = await res.json();
+      if (data.status === "ok") {
+        cancelEdit();
+        load();
+      } else {
+        setError(data.error || "Error al editar");
+      }
+    } catch {
+      setError("Error al editar el regalo");
+    } finally {
+      setSaving(null);
+    }
+  }
+
+  async function handleDelete(name: string) {
+    setSaving(name);
+    setError("");
+    try {
+      const res = await fetch("/api/gifts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "deleteGift", name }),
+      });
+      const data = await res.json();
+      if (data.status === "ok") {
+        setDeleting(null);
+        load();
+      } else {
+        setError(data.error || "Error al eliminar");
+      }
+    } catch {
+      setError("Error al eliminar el regalo");
+    } finally {
+      setSaving(null);
+    }
+  }
+
+  const reservados = gifts.filter((g) => g.reserved).length;
+  const disponibles = gifts.length - reservados;
+
+  if (loading) return <Spinner />;
+
+  return (
+    <div>
+      <SectionHeader
+        title="Regalos"
+        subtitle={`${gifts.length} regalos · ${reservados} reservados · ${disponibles} disponibles`}
+        action={
+          <div style={{ display: "flex", gap: "0.4rem", alignItems: "center" }}>
+            <button onClick={() => setShowForm(!showForm)} style={{
+              fontFamily: "var(--font-jost)",
+              fontSize: "0.52rem",
+              letterSpacing: "0.14em",
+              textTransform: "uppercase",
+              padding: "0.38rem 0.65rem",
+              background: "rgba(181,137,78,0.1)",
+              border: "1px solid rgba(181,137,78,0.3)",
+              color: "var(--c-gold-lt)",
+              cursor: "pointer",
+              transition: "all 0.2s",
+            }}>
+              {showForm ? "✕ Cerrar" : "+ Agregar"}
+            </button>
+            <RefreshButton onClick={load} />
+          </div>
+        }
+      />
+
+      {error && <ErrorBanner message={error} />}
+
+      {/* ── Add gift form ── */}
+      {showForm && (
+        <motion.div
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: "auto" }}
+          style={{
+            padding: "1.25rem",
+            background: "rgba(181,137,78,0.04)",
+            border: "1px solid rgba(181,137,78,0.15)",
+            marginBottom: "1rem",
+            overflow: "hidden",
+          }}
+        >
+          <p style={{
+            fontFamily: "var(--font-playfair)",
+            fontStyle: "italic",
+            fontSize: "0.95rem",
+            color: "var(--c-text-inv)",
+            marginBottom: "1rem",
+          }}>
+            Nuevo regalo
+          </p>
+          <div style={{ display: "flex", flexDirection: "column", gap: "0.6rem" }}>
+            <input value={newGift.name} onChange={e => setNewGift(g => ({ ...g, name: e.target.value }))}
+              placeholder="Nombre del regalo *"
+              style={inputStyle()} />
+            <div style={{ display: "grid", gridTemplateColumns: "80px 1fr", gap: "0.6rem" }}>
+              <input value={newGift.emoji} onChange={e => setNewGift(g => ({ ...g, emoji: e.target.value }))}
+                placeholder="🎁" style={inputStyle()} />
+              <input value={newGift.price} onChange={e => setNewGift(g => ({ ...g, price: e.target.value }))}
+                onBlur={() => setNewGift(g => ({ ...g, price: formatPrice(g.price) }))}
+                placeholder="Precio (ej: $25.000)" style={inputStyle()} />
+            </div>
+            <input value={newGift.url} onChange={e => setNewGift(g => ({ ...g, url: e.target.value }))}
+              placeholder="URL del producto (opcional)"
+              style={inputStyle()} />
+            <div style={{ display: "flex", gap: "0.5rem", justifyContent: "flex-end", marginTop: "0.4rem" }}>
+              <button onClick={() => setShowForm(false)} style={{
+                fontFamily: "var(--font-jost)", fontSize: "0.52rem", letterSpacing: "0.14em",
+                textTransform: "uppercase", padding: "0.45rem 0.85rem",
+                background: "transparent", border: "1px solid rgba(181,137,78,0.2)",
+                color: "rgba(154,128,104,0.5)", cursor: "pointer",
+              }}>
+                Cancelar
+              </button>
+              <button onClick={handleAdd} disabled={adding || !newGift.name.trim()} style={{
+                fontFamily: "var(--font-jost)", fontSize: "0.52rem", letterSpacing: "0.14em",
+                textTransform: "uppercase", padding: "0.45rem 0.85rem",
+                background: newGift.name.trim() ? "var(--c-wine)" : "rgba(181,137,78,0.06)",
+                border: newGift.name.trim() ? "1px solid var(--c-wine-lt)" : "1px solid rgba(181,137,78,0.1)",
+                color: newGift.name.trim() ? "white" : "rgba(181,137,78,0.2)",
+                cursor: newGift.name.trim() ? "pointer" : "not-allowed",
+              }}>
+                {adding ? "Agregando..." : "Agregar"}
+              </button>
+            </div>
+          </div>
+        </motion.div>
+      )}
+
+      {gifts.length === 0 && (
+        <p style={{ textAlign: "center", fontSize: "0.75rem", color: "rgba(154,128,104,0.3)", padding: "3rem" }}>
+          No hay regalos en la lista. Agregá el primero.
+        </p>
+      )}
+
+      <div style={{ display: "flex", flexDirection: "column", gap: "0.35rem" }}>
+        {gifts.map((gift, idx) => {
+          const isSaving = saving === gift.name;
+          const isCustom = !W.giftList.find(g => g.name === gift.name);
+          const isEditing = editing === gift.name;
+          return (
+            <motion.div
+              key={gift.name}
+              initial={{ opacity: 0, y: 4 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: idx * 0.02, duration: 0.25 }}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "0.6rem",
+                padding: "0.7rem 0.85rem",
+                background: isEditing
+                  ? "rgba(181,137,78,0.06)"
+                  : gift.reserved
+                  ? "rgba(107,38,53,0.08)"
+                  : "rgba(255,255,255,0.02)",
+                border: `1px solid ${
+                  isEditing
+                    ? "rgba(181,137,78,0.25)"
+                    : gift.reserved
+                    ? "rgba(107,38,53,0.25)"
+                    : "rgba(181,137,78,0.08)"
+                }`,
+                transition: "all 0.2s",
+                opacity: isSaving ? 0.6 : 1,
+              }}
+            >
+              {/* Index — always visible */}
+              <span style={{
+                fontFamily: "var(--font-jost)",
+                fontSize: "0.58rem",
+                color: "rgba(181,137,78,0.2)",
+                minWidth: "1.5rem",
+                textAlign: "right",
+                flexShrink: 0,
+                fontWeight: 300,
+              }}>
+                {String(idx + 1).padStart(2, "0")}
+              </span>
+
+              {isEditing ? (
+                <>
+                  <input
+                    value={editForm.emoji}
+                    onChange={e => setEditForm(f => ({ ...f, emoji: e.target.value }))}
+                    placeholder="🎁"
+                    style={{ ...inputStyle(), width: 60, textAlign: "center" }}
+                  />
+                  <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: "0.3rem" }}>
+                    <input
+                      value={editForm.name}
+                      onChange={e => setEditForm(f => ({ ...f, name: e.target.value }))}
+                      placeholder="Nombre del regalo *"
+                      style={inputStyle()}
+                    />
+                    <div style={{ display: "flex", gap: "0.3rem" }}>
+                      <input
+                        value={editForm.price}
+                        onChange={e => setEditForm(f => ({ ...f, price: e.target.value }))}
+                        onBlur={() => setEditForm(f => ({ ...f, price: formatPrice(f.price) }))}
+                        placeholder="Precio"
+                        style={{ ...inputStyle(), flex: 1 }}
+                      />
+                      <input
+                        value={editForm.url}
+                        onChange={e => setEditForm(f => ({ ...f, url: e.target.value }))}
+                        placeholder="URL del producto"
+                        style={{ ...inputStyle(), flex: 1.5 }}
+                      />
+                    </div>
+                  </div>
+                  <button
+                    onClick={handleEdit}
+                    disabled={isSaving || !editForm.name.trim()}
+                    style={{
+                      fontFamily: "var(--font-jost)",
+                      fontSize: "0.52rem",
+                      letterSpacing: "0.14em",
+                      textTransform: "uppercase",
+                      padding: "0.45rem 0.75rem",
+                      background: editForm.name.trim() ? "var(--c-wine)" : "rgba(181,137,78,0.06)",
+                      border: editForm.name.trim() ? "1px solid var(--c-wine-lt)" : "1px solid rgba(181,137,78,0.1)",
+                      color: editForm.name.trim() ? "white" : "rgba(181,137,78,0.2)",
+                      cursor: editForm.name.trim() ? "pointer" : "not-allowed",
+                      borderRadius: 2,
+                      flexShrink: 0,
+                    }}
+                  >
+                    {isSaving ? "..." : "Guardar"}
+                  </button>
+                  <button
+                    onClick={cancelEdit}
+                    style={{
+                      fontFamily: "var(--font-jost)",
+                      fontSize: "0.52rem",
+                      letterSpacing: "0.14em",
+                      textTransform: "uppercase",
+                      padding: "0.45rem 0.75rem",
+                      background: "transparent",
+                      border: "1px solid rgba(181,137,78,0.2)",
+                      color: "rgba(154,128,104,0.5)",
+                      cursor: "pointer",
+                      borderRadius: 2,
+                      flexShrink: 0,
+                    }}
+                  >
+                    Cancelar
+                  </button>
+                </>
+              ) : (
+                <>
+                  {/* Emoji */}
+                  <span style={{ fontSize: "1.2rem", flexShrink: 0, width: 32, textAlign: "center" }}>
+                    {gift.emoji || "🎁"}
+                  </span>
+
+                  {/* Name + price */}
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <p style={{
+                      fontSize: "0.82rem",
+                      color: "var(--c-text-inv)",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      whiteSpace: "nowrap",
+                    }}>
+                      {gift.name}
+                      {isCustom && (
+                        <span style={{ fontSize: "0.5rem", color: "rgba(181,137,78,0.35)", marginLeft: "0.4rem", fontWeight: 300 }}>
+                          (admin)
+                        </span>
+                      )}
+                    </p>
+                    <p style={{
+                      fontSize: "0.6rem",
+                      color: "rgba(154,128,104,0.35)",
+                      fontWeight: 300,
+                    }}>
+                      {gift.price || "—"}
+                    </p>
+                  </div>
+
+                  {/* Status toggle */}
+                  <button
+                    onClick={() => toggleGift(gift.name, gift.reserved)}
+                    disabled={isSaving}
+                    style={{
+                      fontFamily: "var(--font-jost)",
+                      fontSize: "0.52rem",
+                      letterSpacing: "0.1em",
+                      textTransform: "uppercase",
+                      padding: "0.35rem 0.65rem",
+                      background: gift.reserved
+                        ? "rgba(107,38,53,0.2)"
+                        : "rgba(76,175,80,0.08)",
+                      border: gift.reserved
+                        ? "1px solid rgba(107,38,53,0.4)"
+                        : "1px solid rgba(76,175,80,0.2)",
+                      color: gift.reserved
+                        ? "rgba(255,200,200,0.7)"
+                        : "rgba(129,199,132,0.7)",
+                      cursor: "pointer",
+                      transition: "all 0.2s",
+                      borderRadius: 2,
+                    }}
+                  >
+                    {gift.reserved ? "🔴 Reservado" : "✅ Disponible"}
+                  </button>
+
+                  {/* Edit button */}
+                  <button
+                    onClick={() => startEdit(gift)}
+                    style={{
+                      width: 30,
+                      height: 30,
+                      background: "rgba(181,137,78,0.06)",
+                      border: "1px solid rgba(181,137,78,0.15)",
+                      color: "rgba(181,137,78,0.35)",
+                      cursor: "pointer",
+                      borderRadius: 2,
+                      flexShrink: 0,
+                      fontSize: "0.75rem",
+                      transition: "all 0.2s",
+                    }}
+                  >
+                    ✏️
+                  </button>
+
+                  {/* Delete button (two-step) */}
+                  {deleting === gift.name ? (
+                    <button
+                      onClick={() => handleDelete(gift.name)}
+                      disabled={isSaving}
+                      style={{
+                        fontFamily: "var(--font-jost)",
+                        fontSize: "0.48rem",
+                        letterSpacing: "0.08em",
+                        padding: "0.35rem 0.5rem",
+                        background: "rgba(200,50,50,0.12)",
+                        border: "1px solid rgba(200,50,50,0.3)",
+                        color: "#ef9a9a",
+                        cursor: "pointer",
+                        borderRadius: 2,
+                        flexShrink: 0,
+                        whiteSpace: "nowrap",
+                      }}
+                    >
+                      ¿Eliminar?
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => { setDeleting(gift.name); setEditing(null); }}
+                      style={{
+                        width: 28,
+                        height: 28,
+                        background: "transparent",
+                        border: "1px solid rgba(200,80,80,0.1)",
+                        color: "rgba(239,154,154,0.25)",
+                        cursor: "pointer",
+                        borderRadius: 2,
+                        flexShrink: 0,
+                        fontSize: "0.65rem",
+                        transition: "all 0.2s",
+                      }}
+                    >
+                      ✕
+                    </button>
+                  )}
+                </>
+              )}
+            </motion.div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function formatPrice(value: string | undefined | null): string {
+  if (!value) return "";
+  const str = String(value);
+  // Si ya está formateado, devolverlo igual
+  if (/^\$[\d.]+$/.test(str)) return str;
+  // Sacar todo lo que no sea dígito
+  const digits = str.replace(/\D/g, "");
+  if (!digits) return "";
+  return "$" + parseInt(digits, 10).toLocaleString("es-AR");
+}
+
+function inputStyle(): React.CSSProperties {
+  return {
+    width: "100%",
+    background: "rgba(255,255,255,0.04)",
+    border: "1px solid rgba(181,137,78,0.15)",
+    padding: "0.6rem 0.75rem",
+    fontFamily: "var(--font-jost)",
+    fontSize: "0.82rem",
+    color: "var(--c-text-inv)",
+    outline: "none",
+    boxSizing: "border-box",
+  };
 }
 
 // ── Export Tab ─────────────────────────────────────────────────

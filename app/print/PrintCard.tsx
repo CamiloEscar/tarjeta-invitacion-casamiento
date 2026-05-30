@@ -481,8 +481,8 @@ export default function PrintCard({ slug, guest }: Props) {
                       </div>
                   }
                 </div>
-                <p style={{ fontFamily: "var(--font-jost)", fontSize: "0.48rem", letterSpacing: "0.16em", textTransform: "uppercase", color: "var(--c-text-3)", textAlign: "center", marginTop: "0.4rem" }}>
-                  Escaneá para abrir 
+                <p style={{ fontFamily: "var(--font-jost)", fontSize: "0.48rem", letterSpacing: "0.16em", textTransform: "uppercase", color: "var(--c-text-3)", textAlign: "center", marginTop: "0.4rem", lineHeight: 1.4 }}>
+                  Escaneá para ver<br />tu invitación y confirmar
                 </p>
               </div>
 
@@ -504,10 +504,10 @@ export default function PrintCard({ slug, guest }: Props) {
 
             {/* Dress code + RSVP deadline */}
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", textAlign: "center", marginBottom: "1.5rem" }}>
-              {/* <div style={{ flex: 1 }}>
-                <p style={{ fontFamily: "var(--font-jost)", fontSize: "0.52rem", letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--c-text-3)", marginBottom: "0.3rem" }}>VALOR TARJETA POR PERSONA</p>
-                <p style={{ fontFamily: "var(--font-jost)", fontSize: "0.78rem", color: "var(--c-text-2)", fontWeight: 300 }}>{W.reception.dresscode}</p>
-              </div> */}
+              <div style={{ flex: 1 }}>
+                <p style={{ fontFamily: "var(--font-jost)", fontSize: "0.52rem", letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--c-text-3)", marginBottom: "0.3rem" }}>VESTIMENTA</p>
+                <p style={{ fontFamily: "var(--font-jost)", fontSize: "0.78rem", color: "var(--c-text-2)", fontWeight: 300 }}>Formal elegante</p>
+              </div>
               <div style={{ width: 1, height: 32, background: "var(--c-border)", margin: "0 1rem", flexShrink: 0 }} />
               <div style={{ flex: 1 }}>
                 <p style={{ fontFamily: "var(--font-jost)", fontSize: "0.52rem", letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--c-text-3)", marginBottom: "0.3rem" }}>Confirmar antes del</p>

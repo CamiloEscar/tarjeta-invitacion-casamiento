@@ -89,11 +89,6 @@ function doPost(e) {
     if (action === "rsvp")    { saveRSVP(data); notifyRSVP(data); return ok("Confirmación registrada"); }
     if (action === "updateFlags") return updateFlags(data);
     if (action === "deleteGuest") return deleteGuest(data);
-    if (action === "toggleGift")  return toggleGift(data);
-    if (action === "initGifts")   return initGifts(data);
-    if (action === "addGift")     return addGift(data);
-    if (action === "editGift")    return editGift(data);
-    if (action === "deleteGift")  return deleteGift(data);
 
     return err_("Acción desconocida: " + action);
   } catch (err) {
@@ -140,7 +135,6 @@ function doGet(e) {
     else if (action === "getGuests")  result = getGuests();
     else if (action === "status")     result = getStatusBySlug(e.parameter.slug || "");
     else if (action === "getComments") result = getComments();
-    else if (action === "getGifts")   result = getGifts();
     else                              result = { status: "ok", message: "Endpoint activo ✓" };
     
 
@@ -217,20 +211,17 @@ function setMesa(data) {
 
 // ── Obtener mesa de un invitado por slug ─────────────────────
 function getMesaBySlug(slug) {
-  if (!slug) return { mesa: null, pago: false };
+  if (!slug) return { mesa: null };
 
   const sheet  = getOrCreateSheet();
   const values = sheet.getDataRange().getValues();
 
   for (let i = 1; i < values.length; i++) {
     if (values[i][COL.SLUG] === slug) {
-      return {
-        mesa: values[i][COL.MESA] || null,
-        pago: values[i][COL.PAGO] === "Si",
-      };
+      return { mesa: values[i][COL.MESA] || null };
     }
   }
-  return { mesa: null, pago: false };
+  return { mesa: null };
 }
 
 // ── Lista de invitados confirmados (para admin / mesas) ──────
@@ -526,144 +517,6 @@ function notifyRSVP(data) {
   });
 }
 
-// ═══════════════════════════════════════════════════
-//  REGALOS — Hoja "Gifts" para estado de regalos
-//  Columnas:
-//   A  Nombre       B  Reservado (Si/No)     C  FechaReserva
-// ═══════════════════════════════════════════════════
-const GIFT_SHEET_NAME = "Gifts";
-const GIFT_COL = {
-  NOMBRE: 0,
-  EMOJI: 1,
-  PRECIO: 2,
-  URL: 3,
-  RESERVADO: 4,
-  FECHA: 5,
-};
-const GIFT_HEADERS = ["Nombre", "Emoji", "Precio", "URL", "Reservado", "FechaReserva"];
-function getOrCreateGiftSheet() {
-  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-  let sheet = ss.getSheetByName(GIFT_SHEET_NAME);
-  if (!sheet) {
-    sheet = ss.insertSheet(GIFT_SHEET_NAME);
-    sheet.appendRow(GIFT_HEADERS);
-    const hr = sheet.getRange(1, 1, 1, GIFT_HEADERS.length);
-    hr.setBackground("#2C1A10").setFontColor("#CFAA70").setFontWeight("bold");
-    sheet.setFrozenRows(1);
-  }
-  return sheet;
-}
-// ── GET: devuelve lista de regalos con su estado de reserva ──
-function getGifts() {
-  const sheet = getOrCreateGiftSheet();
-  if (sheet.getLastRow() <= 1) return { items: [] };
-  const rows = sheet.getDataRange().getValues().slice(1);
-  const items = rows.map(r => ({
-    name: r[GIFT_COL.NOMBRE] || "",
-    emoji: r[GIFT_COL.EMOJI] || "",
-    price: r[GIFT_COL.PRECIO] || "",
-    url: r[GIFT_COL.URL] || "",
-    reserved: r[GIFT_COL.RESERVADO] === "Si",
-    date: r[GIFT_COL.FECHA] || "",
-  }));
-  return { items };
-}
-// ── POST: toggle reserva de un regalo ─────────────────────────
-function toggleGift(data) {
-  const name = (data.name || "").trim();
-  if (!name) return err_("name requerido");
-  const reserved = data.reserved === true;
-  const sheet = getOrCreateGiftSheet();
-  const values = sheet.getDataRange().getValues();
-  for (let i = 1; i < values.length; i++) {
-    if (values[i][GIFT_COL.NOMBRE] === name) {
-      sheet.getRange(i + 1, GIFT_COL.RESERVADO + 1).setValue(reserved ? "Si" : "No");
-      sheet.getRange(i + 1, GIFT_COL.FECHA + 1).setValue(
-        reserved
-          ? new Date().toLocaleString("es-AR", { timeZone: "America/Argentina/Buenos_Aires" })
-          : ""
-      );
-      return json({ status: "ok", name, reserved });
-    }
-  }
-  // Si no existe, lo agrega
-  sheet.appendRow([name, "", "", "", reserved ? "Si" : "No", ""]);
-  return json({ status: "ok", name, reserved });
-}
-// ── POST: inicializar la hoja con lista de regalos ────────────
-function initGifts(data) {
-  const names = data.gifts || [];
-  if (!names.length) return err_("Se requiere lista de nombres");
-  const sheet = getOrCreateGiftSheet();
-  // Limpiar rows existentes (excepto header)
-  const lastRow = sheet.getLastRow();
-  if (lastRow > 1) {
-    sheet.getRange(2, 1, lastRow - 1, GIFT_HEADERS.length).clearContent();
-  }
-  names.forEach(n => {
-    sheet.appendRow([n, "", "", "", "No", ""]);
-  });
-  return json({ status: "ok", count: names.length });
-}
-// ── POST: agregar un regalo nuevo ─────────────────────────────
-function addGift(data) {
-  const name = (data.name || "").trim();
-  if (!name) return err_("El nombre del regalo es requerido");
-  const sheet = getOrCreateGiftSheet();
-  // Verificar si ya existe
-  const values = sheet.getDataRange().getValues();
-  for (let i = 1; i < values.length; i++) {
-    if (values[i][GIFT_COL.NOMBRE] === name) {
-      return err_("Ya existe un regalo con ese nombre");
-    }
-  }
-  sheet.appendRow([
-    name,
-    data.emoji || "",
-    data.price || "",
-    data.url || "",
-    "No",
-    "",
-  ]);
-  return json({ status: "ok", name, emoji: data.emoji || "", price: data.price || "", url: data.url || "" });
-}
-
-// ── POST: editar un regalo existente ───────────────────────────
-function editGift(data) {
-  const oldName = (data.oldName || "").trim();
-  const name = (data.name || "").trim();
-  const emoji = data.emoji || "";
-  const price = data.price || "";
-  const url = data.url || "";
-  if (!oldName || !name) return err_("oldName y name requeridos");
-  const sheet = getOrCreateGiftSheet();
-  const values = sheet.getDataRange().getValues();
-  for (let i = 1; i < values.length; i++) {
-    if (values[i][GIFT_COL.NOMBRE] === oldName) {
-      sheet.getRange(i + 1, GIFT_COL.NOMBRE + 1).setValue(name);
-      sheet.getRange(i + 1, GIFT_COL.EMOJI + 1).setValue(emoji);
-      sheet.getRange(i + 1, GIFT_COL.PRECIO + 1).setValue(price);
-      sheet.getRange(i + 1, GIFT_COL.URL + 1).setValue(url);
-      return json({ status: "ok" });
-    }
-  }
-  return err_("Regalo no encontrado: " + oldName);
-}
-// ── POST: eliminar un regalo ───────────────────────────────────
-function deleteGift(data) {
-  const name = (data.name || "").trim();
-  if (!name) return err_("name requerido");
-  const sheet = getOrCreateGiftSheet();
-  const values = sheet.getDataRange().getValues();
-  for (let i = 1; i < values.length; i++) {
-    if (values[i][GIFT_COL.NOMBRE] === name) {
-      sheet.deleteRow(i + 1);
-      return json({ status: "ok" });
-    }
-  }
-  return err_("Regalo no encontrado: " + name);
-}
-
 // ── Helpers de respuesta ─────────────────────────────────────
 function ok(msg) {
   return ContentService
@@ -674,11 +527,5 @@ function ok(msg) {
 function err_(msg) {
   return ContentService
     .createTextOutput(JSON.stringify({ status: "error", message: msg }))
-    .setMimeType(ContentService.MimeType.JSON);
-}
-
-function json(data) {
-  return ContentService
-    .createTextOutput(JSON.stringify(data))
     .setMimeType(ContentService.MimeType.JSON);
 }
