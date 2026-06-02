@@ -17,6 +17,7 @@ interface Guest {
   totalPersonas: number;
 
   restricciones: string;
+  mensaje: string;
 
   slug: string;
   mesa: string;
@@ -914,6 +915,11 @@ async function toggleFlag(
                     ⚠ {guest.restricciones}
                   </p>
                 )}
+                {guest.mensaje && (
+                  <p style={{ fontSize: "0.6rem", color: "rgba(181,137,78,0.4)", fontWeight: 300, marginTop: "0.1rem", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", fontStyle: "italic" }}>
+                    💬 &ldquo;{guest.mensaje}&rdquo;
+                  </p>
+                )}
               </div>
 
               <div style={{
@@ -1574,9 +1580,9 @@ function ExportTab() {
   }, []);
 
   function exportCSV() {
-    const header = "Nombre,Adultos,Niños,Total,Mesa,Pagó,Restricciones";
+    const header = "Nombre,Adultos,Niños,Total,Mesa,Pagó,Restricciones,Mensaje";
     const rows = guests.map(g =>
-      `"${getGuestDisplayName(g)}",${g.adultos},${g.hijos},${g.totalPersonas},"${g.mesa || "—"}","${g.pago ? "Si" : "No"}","${g.restricciones || ""}"`
+      `"${getGuestDisplayName(g)}",${g.adultos},${g.hijos},${g.totalPersonas},"${g.mesa || "—"}","${g.pago ? "Si" : "No"}","${g.restricciones || ""}","${(g.mensaje || "").replace(/"/g, '""')}"`
     );
     const csv = [header, ...rows].join("\n");
     const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
@@ -1814,7 +1820,7 @@ function ExportTab() {
                     </div>
                   </div>
 
-                  {g.restricciones && (
+                    {g.restricciones && (
                     <span
                       style={{
                         fontSize: "0.58rem",
@@ -1824,6 +1830,19 @@ function ExportTab() {
                       }}
                     >
                       ⚠ {g.restricciones}
+                    </span>
+                  )}
+                  {g.mensaje && (
+                    <span
+                      style={{
+                        fontSize: "0.58rem",
+                        color: "rgba(181,137,78,0.4)",
+                        textAlign: "right",
+                        maxWidth: "180px",
+                        fontStyle: "italic",
+                      }}
+                    >
+                      💬 &ldquo;{g.mensaje}&rdquo;
                     </span>
                   )}
                 </div>

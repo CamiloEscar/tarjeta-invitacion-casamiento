@@ -38,6 +38,31 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
 
+    // ── UPDATE RSVP (editar mensaje, restricciones, hijos) ──
+    if (body.action === "update") {
+      if (!body.slug) {
+        return NextResponse.json({ error: "slug requerido" }, { status: 400 });
+      }
+
+      const payload = {
+        action:        "updateRSVP",
+        slug:          body.slug,
+        mensaje:       body.mensaje       ?? "",
+        restricciones: body.restricciones ?? "",
+        hijos:         body.hijos         ?? 0,
+      };
+
+      const res = await fetch(W.appsScriptUrl, {
+        method:  "POST",
+        headers: { "Content-Type": "application/json" },
+        body:    JSON.stringify(payload),
+      });
+
+      if (!res.ok) throw new Error(`Apps Script respondió ${res.status}`);
+      return NextResponse.json({ success: true });
+    }
+
+    // ── NUEVO RSVP ──
     // Validación mínima
     if (!body.nombre || !body.apellido || !body.asistencia)
       return NextResponse.json({ error: "Faltan campos requeridos" }, { status: 400 });

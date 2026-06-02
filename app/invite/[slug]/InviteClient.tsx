@@ -460,7 +460,17 @@ export default function InviteClient({ guest, slug }: Props) {
       const rsvpData = await rsvpRes.json();
       if (mesaData.mesa) setMesa(mesaData.mesa);
       if (mesaData.pago) setPago(mesaData.pago);
-      if (rsvpData.confirmado) setAlreadyConfirmed(true);
+      if (rsvpData.confirmado) {
+        setAlreadyConfirmed(true);
+        // Pre-populate form with existing data for editing
+        setForm(prev => ({
+          ...prev,
+          asistencia: "Si",
+          hijos: String(rsvpData.hijos ?? 0),
+          restricciones: rsvpData.restricciones ?? "",
+          mensaje: rsvpData.mensaje ?? "",
+        }));
+      }
     } catch {}
   }
 
@@ -531,6 +541,28 @@ export default function InviteClient({ guest, slug }: Props) {
       });
       if (!res.ok) throw new Error();
       // Refetch data from Google Sheets to update alreadyConfirmed / pago
+      setRsvpStatus("idle");
+      await loadData();
+    } catch {
+      setRsvpStatus("error");
+    }
+  }
+
+  async function updateDetails() {
+    setRsvpStatus("loading");
+    try {
+      const res = await fetch("/api/rsvp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "update",
+          slug,
+          mensaje: form.mensaje,
+          restricciones: form.restricciones,
+          hijos: parseInt(form.hijos) || 0,
+        }),
+      });
+      if (!res.ok) throw new Error();
       setRsvpStatus("idle");
       await loadData();
     } catch {
@@ -1303,37 +1335,104 @@ export default function InviteClient({ guest, slug }: Props) {
                 </button>
               </div>
             ) : (
-              /* Ya confirmó — status según pago */
-              pago ? (
-                <div style={{ textAlign: "center", padding: "1.5rem 0" }}>
-                  <div style={{ width: 56, height: 56, borderRadius: "50%", background: "rgba(129,199,132,0.08)", border: "1px solid rgba(129,199,132,0.25)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 1.25rem", fontSize: "1.6rem" }}>
-                    ✅
-                  </div>
-                  <h3 style={{ fontFamily: "var(--font-playfair)", fontStyle: "italic", fontSize: "1.4rem", color: "#81c784", marginBottom: "0.5rem" }}>
-                    Todo listo, {firstNames}
-                  </h3>
-                  <p style={{ fontFamily: "var(--font-jost)", fontSize: "0.82rem", color: "rgba(154,128,104,0.6)", fontWeight: 300, lineHeight: 1.7 }}>
-                    {isPair ? "Su" : "Tu"} pago y confirmación están registrados.<br />
-                    ¡{isPair ? "Los" : "Te"} esperamos el {W.weddingDateLabel}! 🌹
-                  </p>
+              <div>
+                {/* Ya confirmó — status según pago */}
+                <div style={{ textAlign: "center", padding: "1.5rem 0 0.75rem" }}>
+                  {pago ? (
+                    <>
+                      <div style={{ width: 56, height: 56, borderRadius: "50%", background: "rgba(129,199,132,0.08)", border: "1px solid rgba(129,199,132,0.25)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 1.25rem", fontSize: "1.6rem" }}>
+                        ✅
+                      </div>
+                      <h3 style={{ fontFamily: "var(--font-playfair)", fontStyle: "italic", fontSize: "1.4rem", color: "#81c784", marginBottom: "0.5rem" }}>
+                        Todo listo, {firstNames}
+                      </h3>
+                      <p style={{ fontFamily: "var(--font-jost)", fontSize: "0.82rem", color: "rgba(154,128,104,0.6)", fontWeight: 300, lineHeight: 1.7 }}>
+                        {isPair ? "Su" : "Tu"} pago y confirmación están registrados.<br />
+                        ¡{isPair ? "Los" : "Te"} esperamos el {W.weddingDateLabel}! 🌹
+                      </p>
+                    </>
+                  ) : (
+                    <>
+                      <div style={{ width: 56, height: 56, borderRadius: "50%", background: "rgba(181,137,78,0.08)", border: "1px solid rgba(181,137,78,0.2)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 1.25rem", fontSize: "1.6rem" }}>
+                        📋
+                      </div>
+                      <h3 style={{ fontFamily: "var(--font-playfair)", fontStyle: "italic", fontSize: "1.4rem", color: "var(--c-gold-lt)", marginBottom: "0.5rem" }}>
+                        Confirmación registrada, {firstNames}
+                      </h3>
+                      <p style={{ fontFamily: "var(--font-jost)", fontSize: "0.82rem", color: "rgba(154,128,104,0.6)", fontWeight: 300, lineHeight: 1.7 }}>
+                        Ya registramos {isPair ? "su" : "tu"} confirmación.<br />
+                        El pago de la tarjeta está pendiente.
+                      </p>
+                      <p style={{ fontFamily: "var(--font-cormorant)", fontStyle: "italic", fontSize: "0.85rem", color: "rgba(154,128,104,0.4)", marginTop: "0.75rem" }}>
+                        Cuando recibamos el pago, actualizamos el estado automáticamente 🎉
+                      </p>
+                    </>
+                  )}
                 </div>
-              ) : (
-                <div style={{ textAlign: "center", padding: "1.5rem 0" }}>
-                  <div style={{ width: 56, height: 56, borderRadius: "50%", background: "rgba(181,137,78,0.08)", border: "1px solid rgba(181,137,78,0.2)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 1.25rem", fontSize: "1.6rem" }}>
-                    📋
+
+                {/* ─── EDITAR MENSAJE, RESTRICCIONES E HIJOS ─── */}
+                <div style={{ borderTop: "1px solid rgba(181,137,78,0.08)", paddingTop: "1.25rem", marginTop: "0.25rem" }}>
+                  <p style={{ fontFamily: "var(--font-jost)", fontSize: "0.48rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(181,137,78,0.3)", marginBottom: "0.75rem", textAlign: "center" }}>
+                    ✏️ Editar mis datos
+                  </p>
+
+                  {/* Hijos */}
+                  <div style={{ marginBottom: "0.75rem" }}>
+                    <p style={{ fontFamily: "var(--font-jost)", fontSize: "0.55rem", letterSpacing: "0.16em", textTransform: "uppercase", color: "rgba(181,137,78,0.4)", marginBottom: "0.4rem" }}>
+                      Hijos que {isPair ? "traen" : "traés"}
+                    </p>
+                    <select value={form.hijos} onChange={e => setF("hijos", e.target.value)}
+                      style={{ width: "100%", background: "rgba(255,255,255,0.04)", border: "none", borderBottom: "1px solid rgba(181,137,78,0.22)", padding: "0.7rem 0.25rem", fontFamily: "var(--font-jost)", fontSize: "0.88rem", color: "var(--c-text-inv)", outline: "none", WebkitAppearance: "none" }}>
+                      <option value="0">Sin hijos</option>
+                      <option value="1">1 hijo</option>
+                      <option value="2">2 hijos</option>
+                      <option value="3">3 o más</option>
+                    </select>
                   </div>
-                  <h3 style={{ fontFamily: "var(--font-playfair)", fontStyle: "italic", fontSize: "1.4rem", color: "var(--c-gold-lt)", marginBottom: "0.5rem" }}>
-                    Confirmación registrada, {firstNames}
-                  </h3>
-                  <p style={{ fontFamily: "var(--font-jost)", fontSize: "0.82rem", color: "rgba(154,128,104,0.6)", fontWeight: 300, lineHeight: 1.7 }}>
-                    Ya registramos {isPair ? "su" : "tu"} confirmación.<br />
-                    El pago de la tarjeta está pendiente.
-                  </p>
-                  <p style={{ fontFamily: "var(--font-cormorant)", fontStyle: "italic", fontSize: "0.85rem", color: "rgba(154,128,104,0.4)", marginTop: "0.75rem" }}>
-                    Cuando recibamos el pago, actualizamos el estado automáticamente 🎉
-                  </p>
+
+                  {/* Restricciones */}
+                  <div style={{ marginBottom: "0.75rem" }}>
+                    <p style={{ fontFamily: "var(--font-jost)", fontSize: "0.55rem", letterSpacing: "0.16em", textTransform: "uppercase", color: "rgba(181,137,78,0.4)", marginBottom: "0.4rem" }}>
+                      Restricciones alimentarias
+                    </p>
+                    <input value={form.restricciones} onChange={e => setF("restricciones", e.target.value)}
+                      placeholder="Vegetariano, celíaco… (opcional)"
+                      style={{ width: "100%", background: "rgba(255,255,255,0.04)", border: "none", borderBottom: "1px solid rgba(181,137,78,0.22)", padding: "0.7rem 0.25rem", fontFamily: "var(--font-jost)", fontSize: "0.88rem", color: "var(--c-text-inv)", outline: "none" }} />
+                  </div>
+
+                  {/* Mensaje */}
+                  <div style={{ marginBottom: "0.75rem" }}>
+                    <p style={{ fontFamily: "var(--font-jost)", fontSize: "0.55rem", letterSpacing: "0.16em", textTransform: "uppercase", color: "rgba(181,137,78,0.4)", marginBottom: "0.4rem" }}>
+                      Mensaje
+                    </p>
+                    <textarea value={form.mensaje} onChange={e => setF("mensaje", e.target.value)}
+                      placeholder="Un saludo, un deseo, un recuerdo…"
+                      rows={3}
+                      style={{ width: "100%", background: "rgba(255,255,255,0.04)", border: "none", borderBottom: "1px solid rgba(181,137,78,0.22)", padding: "0.7rem 0.25rem", fontFamily: "var(--font-jost)", fontSize: "0.88rem", color: "var(--c-text-inv)", outline: "none", resize: "none" }} />
+                  </div>
+
+                  {rsvpStatus === "error" && (
+                    <p style={{ fontSize: "0.75rem", color: "#ef9a9a", padding: "0.6rem 0.75rem", background: "rgba(200,50,50,0.08)", borderLeft: "2px solid rgba(200,50,50,0.4)", marginBottom: "0.75rem" }}>
+                      Error al guardar. Intentá de nuevo.
+                    </p>
+                  )}
+
+                  {rsvpStatus === "loading" ? (
+                    <button disabled style={{ width: "100%", padding: "0.85rem", background: "rgba(181,137,78,0.06)", border: "1px solid rgba(181,137,78,0.1)", color: "rgba(181,137,78,0.3)", fontFamily: "var(--font-jost)", fontSize: "0.55rem", letterSpacing: "0.18em", textTransform: "uppercase", cursor: "default", display: "flex", alignItems: "center", justifyContent: "center", gap: "0.4rem" }}>
+                      <svg className="animate-spin" width="12" height="12" viewBox="0 0 24 24" fill="none">
+                        <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" opacity=".25"/>
+                        <path fill="currentColor" d="M4 12a8 8 0 018-8v8z" opacity=".75"/>
+                      </svg>
+                      Guardando…
+                    </button>
+                  ) : (
+                    <button onClick={updateDetails}
+                      style={{ width: "100%", padding: "0.85rem", background: "rgba(181,137,78,0.1)", border: "1px solid rgba(181,137,78,0.3)", color: "var(--c-gold-lt)", fontFamily: "var(--font-jost)", fontSize: "0.55rem", letterSpacing: "0.18em", textTransform: "uppercase", cursor: "pointer", transition: "all 0.2s" }}>
+                      Guardar cambios
+                    </button>
+                  )}
                 </div>
-              )
+              </div>
             )}
 
           </div>

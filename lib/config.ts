@@ -198,7 +198,7 @@ gifts: {
   photoAlbumUrl:   "https://photos.app.goo.gl/sS3YiuNvKkYFiAdB8",
   googleDriveFolder:
   "https://drive.google.com/drive/folders/10mLwcHSG_zEArnxtQBhg-XItQ29d73fE?usp=sharing",
-  appsScriptUrl:   "https://script.google.com/macros/s/AKfycbwWNZoFZ3P-3ICyGfOWtlpsqYyV-LxluZvtOqfGO_cjod5jiNyJTt4F1WN4vHlUFu9E/exec",
+  appsScriptUrl:   "https://script.google.com/macros/s/AKfycbxBZqeMV9kjc0p-zQmVuqZY2XczGUTnyJRnW5lyUFP1YlrLcWXQ0WypGE87BiMfgogQkA/exec",
   spotifyEmbedSrc: "https://open.spotify.com/embed/playlist/37i9dQZF1DX2sUQwD7tbmL?utm_source=generator&theme=0",
 
   heroVideo:         "/boda.mp4" as string,

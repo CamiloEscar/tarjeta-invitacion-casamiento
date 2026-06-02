@@ -87,6 +87,7 @@ function doPost(e) {
 
     if (action === "setMesa") return setMesa(data);
     if (action === "rsvp")    { saveRSVP(data); notifyRSVP(data); return ok("Confirmación registrada"); }
+    if (action === "updateRSVP") return updateRSVP(data);
     if (action === "updateFlags") return updateFlags(data);
     if (action === "deleteGuest") return deleteGuest(data);
     if (action === "toggleGift")  return toggleGift(data);
@@ -107,6 +108,9 @@ function getStatusBySlug(slug) {
     return {
       confirmado: false,
       paid: false,
+      mensaje: "",
+      restricciones: "",
+      hijos: 0,
     };
   }
 
@@ -119,6 +123,9 @@ function getStatusBySlug(slug) {
       return {
         confirmado: values[i][COL.CONFIRMADO] === "Si",
         paid: values[i][COL.PAGO] === "Si",
+        mensaje: values[i][COL.MENSAJE] || "",
+        restricciones: values[i][COL.RESTRICCIONES] || "",
+        hijos: parseInt(values[i][COL.HIJOS]) || 0,
       };
     }
   }
@@ -197,6 +204,40 @@ function saveRSVP(data) {
   sheet.getRange(lastRow, 1, 1, TOTAL_COLS).setBackground(bgColor);
 }
 
+// ── Actualizar RSVP existente (mensaje, restricciones, hijos) ─
+function updateRSVP(data) {
+  const slug = (data.slug || "").trim();
+  if (!slug) return err_("slug requerido");
+
+  const sheet  = getOrCreateSheet();
+  const values = sheet.getDataRange().getValues();
+
+  for (let i = 1; i < values.length; i++) {
+    if (values[i][COL.SLUG] === slug) {
+      const row = i + 1;
+
+      if (typeof data.mensaje !== "undefined") {
+        sheet.getRange(row, COL.MENSAJE + 1).setValue(data.mensaje);
+      }
+      if (typeof data.restricciones !== "undefined") {
+        sheet.getRange(row, COL.RESTRICCIONES + 1).setValue(data.restricciones);
+      }
+      if (typeof data.hijos !== "undefined") {
+        const hijos = parseInt(data.hijos) || 0;
+        sheet.getRange(row, COL.HIJOS + 1).setValue(hijos);
+        // Recalcular totalPersonas
+        const adultos = parseInt(values[i][COL.ADULTOS]) || 1;
+        const total   = adultos + hijos;
+        sheet.getRange(row, COL.TOTAL_PERSONAS + 1).setValue(total);
+      }
+
+      return ok("RSVP actualizado");
+    }
+  }
+
+  return err_("Invitado no encontrado: " + slug);
+}
+
 // ── Asignar mesa a invitado por slug ─────────────────────────
 function setMesa(data) {
   const slug = (data.slug || "").trim();
@@ -261,6 +302,7 @@ function getGuests() {
         hijos:         parseInt(r[COL.HIJOS])           || 0,
         totalPersonas: parseInt(r[COL.TOTAL_PERSONAS])  || 1,
         restricciones: r[COL.RESTRICCIONES] || "",
+        mensaje:       r[COL.MENSAJE]       || "",
         slug:          r[COL.SLUG]          || "",
         mesa:          r[COL.MESA]          || "",
         pago: r[COL.PAGO] === "Si",
