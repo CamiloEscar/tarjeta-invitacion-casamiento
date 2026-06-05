@@ -273,6 +273,10 @@ function getInvitationUrl(guest: Guest) {
   return `/print?${params.toString()}`;
 }
 
+function getInviteUrl(guest: Guest) {
+  return `${window.location.origin}/invite/${guest.slug}`;
+}
+
 // ── Dashboard ─────────────────────────────────────────────────
 function Dashboard({ tab, setTab }: { tab: Tab; setTab: (t: Tab) => void }) {
   const tabs: { id: Tab; icon: string; label: string }[] = [
@@ -641,6 +645,7 @@ function MesasTab() {
   const [edits,   setEdits]   = useState<Record<string, string>>({});
   const [search,  setSearch]  = useState("");
   const [filter,  setFilter]  = useState<"all" | "sin-mesa" | "con-mesa">("all");
+  const [openShare, setOpenShare] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true); setError("");
@@ -660,6 +665,13 @@ function MesasTab() {
   }, []);
 
   useEffect(() => { load(); }, [load]);
+
+  useEffect(() => {
+    if (!openShare) return;
+    const handler = () => setOpenShare(null);
+    document.addEventListener("click", handler);
+    return () => document.removeEventListener("click", handler);
+  }, [openShare]);
 
   async function saveMesa(slug: string) {
     const mesa = (edits[slug] ?? "").trim();
@@ -966,6 +978,7 @@ async function toggleFlag(
                   transition: "border-color 0.2s, color 0.2s",
                 }}
               />
+              <div style={{ display: "flex", gap: "0.35rem" }}>
               <a
                 href={getInvitationUrl(guest)}
                 target="_blank"
@@ -981,6 +994,99 @@ async function toggleFlag(
               >
                 🖨 Ver
               </a>
+
+              <div style={{ position: "relative" as const }}>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setOpenShare(openShare === guest.slug ? null : guest.slug);
+                  }}
+                  title="Compartir invitación"
+                  style={{
+                    color: "var(--c-gold-lt)",
+                    background: "none",
+                    border: "1px solid rgba(181,137,78,0.2)",
+                    padding: "0.35rem 0.55rem",
+                    cursor: "pointer",
+                    whiteSpace: "nowrap",
+                    fontFamily: "inherit",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    style={{ display: "block" }}
+                  >
+                    <circle cx="18" cy="5" r="3" />
+                    <circle cx="6" cy="12" r="3" />
+                    <circle cx="18" cy="19" r="3" />
+                    <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" />
+                    <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
+                  </svg>
+                </button>
+
+                {openShare === guest.slug && (
+                  <div
+                    style={{
+                      position: "absolute",
+                      top: "100%",
+                      right: 0,
+                      marginTop: "0.25rem",
+                      background: "var(--c-dark-2)",
+                      border: "1px solid rgba(181,137,78,0.2)",
+                      borderRadius: "0.375rem",
+                      padding: "0.25rem 0",
+                      minWidth: "170px",
+                      zIndex: 100,
+                      boxShadow: "0 8px 24px rgba(0,0,0,0.4)",
+                    }}
+                  >
+                    <DropdownItem
+                      label="🔗 Copiar link"
+                      onClick={() => {
+                        navigator.clipboard.writeText(getInviteUrl(guest));
+                        setOpenShare(null);
+                      }}
+                    />
+                    <DropdownItem
+                      label="💬 WhatsApp"
+                      onClick={() => {
+                        const url = getInviteUrl(guest);
+                        const text = encodeURIComponent(
+                          `¡Hola! Te invito a mi casamiento 🎉\n\nMirá la invitación acá: ${url}`
+                        );
+                        window.open(`https://wa.me/?text=${text}`, "_blank");
+                        setOpenShare(null);
+                      }}
+                    />
+                    <DropdownItem
+                      label="🖼 Descargar PNG"
+                      onClick={() => {
+                        window.open(`${getInvitationUrl(guest)}&action=download&format=png`, "_blank");
+                        setOpenShare(null);
+                      }}
+                    />
+                    <DropdownItem
+                      label="📄 Descargar PDF"
+                      onClick={() => {
+                        window.open(`${getInvitationUrl(guest)}&action=print`, "_blank");
+                        setOpenShare(null);
+                      }}
+                    />
+                  </div>
+                )}
+              </div>
+              </div>
 
               <button
                 onClick={() => deleteGuest(guest.slug)}
@@ -1852,6 +1958,32 @@ function ExportTab() {
         })}
       </div>
     </div>
+  );
+}
+
+// ── Dropdown Item for Share ────────────────────────────────────
+function DropdownItem({ label, onClick }: { label: string; onClick: () => void }) {
+  return (
+    <button
+      onClick={onClick}
+      style={{
+        display: "block",
+        width: "100%",
+        padding: "0.45rem 0.9rem",
+        fontSize: "0.75rem",
+        color: "var(--c-text-inv)",
+        background: "none",
+        border: "none",
+        textAlign: "left",
+        cursor: "pointer",
+        fontFamily: "inherit",
+        transition: "background 0.15s",
+      }}
+      onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(181,137,78,0.12)")}
+      onMouseLeave={(e) => (e.currentTarget.style.background = "none")}
+    >
+      {label}
+    </button>
   );
 }
 

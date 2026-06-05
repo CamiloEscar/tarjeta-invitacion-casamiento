@@ -38,6 +38,27 @@ export default function PrintCard({ slug, guest }: Props) {
     document.head.appendChild(s);
   }, [slug]);
 
+  // ── Auto-action from URL params (Compartir dropdown in /admin) ──
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const action = params.get("action");
+    const format = params.get("format");
+
+    if (action === "download" && format === "png") {
+      const timer = setTimeout(() => {
+        downloadImage();
+      }, 1500);
+      return () => clearTimeout(timer);
+    }
+
+    if (action === "print") {
+      const timer = setTimeout(() => {
+        window.print();
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, []);
+
   async function captureCard(): Promise<HTMLCanvasElement | null> {
     if (!cardRef.current || !(window as any).html2canvas) return null;
     return (window as any).html2canvas(cardRef.current, {
