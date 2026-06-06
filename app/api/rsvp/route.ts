@@ -64,7 +64,7 @@ export async function POST(req: NextRequest) {
 
     // ── NUEVO RSVP ──
     // Validación mínima
-    if (!body.nombre || !body.apellido || !body.asistencia)
+    if (!body.nombre || !body.asistencia)
       return NextResponse.json({ error: "Faltan campos requeridos" }, { status: 400 });
 
     const adultos       = Number(body.adultos)       || (body.nombre2 ? 2 : 1);

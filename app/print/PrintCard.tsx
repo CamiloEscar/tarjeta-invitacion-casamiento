@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, type CSSProperties } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { W } from "@/lib/config";
 import Link from "next/link";
@@ -17,9 +17,18 @@ export default function PrintCard({ slug, guest }: Props) {
   const [qrSrc,    setQrSrc]    = useState("");
   const [pageUrl,  setPageUrl]  = useState("");
   const [copied,   setCopied]   = useState(false);
-  const [sharing,  setSharing]  = useState(false);
-  const [shareMsg, setShareMsg] = useState("");
+  const [sharing,   setSharing]   = useState(false);
+  const [shareMsg,  setShareMsg]  = useState("");
   const [h2cLoaded, setH2cLoaded] = useState(false);
+  const [shareOpen, setShareOpen] = useState(false);
+
+  // Click-outside to close share dropdown
+  useEffect(() => {
+    if (!shareOpen) return;
+    const handler = () => setShareOpen(false);
+    document.addEventListener("click", handler);
+    return () => document.removeEventListener("click", handler);
+  }, [shareOpen]);
 
   useEffect(() => {
     const origin = window.location.origin;
@@ -169,7 +178,13 @@ export default function PrintCard({ slug, guest }: Props) {
       >
         {/* Si viene desde invitación generada */}
         {slug ? (
-          <>
+          <div style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: "0.4rem",
+            width: "100%",
+          }}>
             <Link
               href={`/invite/${slug}`}
               style={{
@@ -185,14 +200,114 @@ export default function PrintCard({ slug, guest }: Props) {
                 letterSpacing: "0.14em",
                 textTransform: "uppercase",
                 color: "var(--c-text-3)",
-                width: "100%",
                 maxWidth: 260,
-                margin: "0 auto",
               }}
             >
               ✨ Ver invitación completa
             </Link>
-          </>
+
+            {/* ── Share dropdown ── */}
+            <div style={{ position: "relative" as const }}>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShareOpen(!shareOpen);
+                }}
+                title="Compartir invitación"
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  padding: "0.55rem 0.75rem",
+                  background: "transparent",
+                  border: "1px solid var(--c-border)",
+                  cursor: "pointer",
+                  fontFamily: "var(--font-jost)",
+                  fontSize: "0.58rem",
+                  letterSpacing: "0.14em",
+                  textTransform: "uppercase",
+                  color: "var(--c-text-3)",
+                  transition: "all 0.2s",
+                }}
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  style={{ display: "block" }}
+                >
+                  <circle cx="18" cy="5" r="3" />
+                  <circle cx="6" cy="12" r="3" />
+                  <circle cx="18" cy="19" r="3" />
+                  <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" />
+                  <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
+                </svg>
+              </button>
+
+              {shareOpen && (
+                <div
+                  style={{
+                    position: "absolute",
+                    top: "100%",
+                    right: 0,
+                    marginTop: "0.25rem",
+                    background: "var(--c-base)",
+                    border: "1px solid var(--c-border)",
+                    padding: "0.25rem 0",
+                    minWidth: "185px",
+                    zIndex: 100,
+                    boxShadow: "0 8px 24px rgba(0,0,0,0.15)",
+                  }}
+                >
+                  <button
+                    onClick={() => {
+                      navigator.clipboard.writeText(pageUrl);
+                      setShareOpen(false);
+                    }}
+                    style={shareDropdownItemStyle}
+                  >
+                    🔗 Copiar link
+                  </button>
+                  <button
+                    onClick={() => {
+                      const text = encodeURIComponent(
+                        `¡Hola ${first}! 💍 Te mando tu invitación al casamiento de ${W.bride} y ${W.groom}\n\n📅 ${W.weddingDateLabel} · ${W.location}\n\n${pageUrl}`
+                      );
+                      window.open(`https://wa.me/?text=${text}`, "_blank");
+                      setShareOpen(false);
+                    }}
+                    style={shareDropdownItemStyle}
+                  >
+                    💬 WhatsApp
+                  </button>
+                  <button
+                    onClick={() => {
+                      window.open(`${window.location.origin}/print?slug=${slug}${window.location.search}&action=download&format=png`, "_blank");
+                      setShareOpen(false);
+                    }}
+                    style={shareDropdownItemStyle}
+                  >
+                    🖼 Descargar PNG
+                  </button>
+                  <button
+                    onClick={() => {
+                      window.open(`${window.location.origin}/print?slug=${slug}${window.location.search}&action=print`, "_blank");
+                      setShareOpen(false);
+                    }}
+                    style={shareDropdownItemStyle}
+                  >
+                    📄 Descargar PDF
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
         ) : (
           <>
             {/* Left */}
@@ -560,6 +675,21 @@ export default function PrintCard({ slug, guest }: Props) {
   );
 }
 
+// ── Share dropdown item style ─────────────────────────────────
+const shareDropdownItemStyle: CSSProperties = {
+  display: "block",
+  width: "100%",
+  textAlign: "left",
+  padding: "0.55rem 1rem",
+  background: "transparent",
+  border: "none",
+  fontFamily: "var(--font-jost)",
+  fontSize: "0.72rem",
+  color: "var(--c-text-2)",
+  cursor: "pointer",
+  transition: "background 0.15s",
+};
+
 // ── Invite Generator ──────────────────────────────────────────
 function InviteGenerator() {
   const [nombre,   setNombre]   = useState("");
@@ -587,7 +717,7 @@ function InviteGenerator() {
   function generate() {
     const n  = nombre.trim();
     const a  = apellido.trim();
-    if (!n || !a) return;
+    if (!n) return;
 
     const n2 = nombre2.trim();
     const a2 = apellido2.trim();
@@ -627,7 +757,7 @@ function InviteGenerator() {
         Generar invitaciones
       </h3>
       <p style={{ fontFamily: "var(--font-jost)", fontSize: "0.78rem", color: "var(--c-text-3)", fontWeight: 300, lineHeight: 1.65, marginBottom: "1.25rem" }}>
-        Completá nombre y apellido del invitado (o de los dos si es pareja) para generar su tarjeta personalizada.
+        Completá el nombre del invitado (y apellido si querés) para generar su tarjeta personalizada.
       </p>
 
       {/* Inputs — fila 1: invitado principal */}
@@ -637,7 +767,7 @@ function InviteGenerator() {
           style={{ flex: 1, background: "var(--c-base)", border: "1px solid var(--c-border)", padding: "0.75rem 1rem", fontFamily: "var(--font-jost)", fontSize: "0.88rem", color: "var(--c-text-1)", outline: "none" }} />
         <input value={apellido} onChange={e => setApellido(e.target.value)}
           onKeyDown={e => e.key === "Enter" && generate()}
-          placeholder="Apellido *"
+          placeholder="Apellido"
           style={{ flex: 1, background: "var(--c-base)", border: "1px solid var(--c-border)", padding: "0.75rem 1rem", fontFamily: "var(--font-jost)", fontSize: "0.88rem", color: "var(--c-text-1)", outline: "none" }} />
       </div>
 
@@ -652,8 +782,8 @@ function InviteGenerator() {
           style={{ flex: 1, background: "var(--c-base)", border: "1px solid var(--c-border)", padding: "0.75rem 1rem", fontFamily: "var(--font-jost)", fontSize: "0.88rem", color: "var(--c-text-1)", outline: "none", opacity: 0.75 }} />
       </div>
 
-      <button onClick={generate} disabled={!nombre.trim() || !apellido.trim()}
-        style={{ width: "100%", background: "var(--c-wine)", border: "none", padding: "0.85rem 1.25rem", fontFamily: "var(--font-jost)", fontSize: "0.62rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "white", cursor: nombre.trim() && apellido.trim() ? "pointer" : "not-allowed", opacity: nombre.trim() && apellido.trim() ? 1 : 0.4, transition: "opacity 0.2s", marginBottom: "1.25rem" }}>
+      <button onClick={generate} disabled={!nombre.trim()}
+        style={{ width: "100%", background: "var(--c-wine)", border: "none", padding: "0.85rem 1.25rem", fontFamily: "var(--font-jost)", fontSize: "0.62rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "white", cursor: nombre.trim() ? "pointer" : "not-allowed", opacity: nombre.trim() ? 1 : 0.4, transition: "opacity 0.2s", marginBottom: "1.25rem" }}>
         Generar invitación
       </button>
 
