@@ -57,10 +57,13 @@ export default function InvitePage({
     searchParams
   );
 
+  const noChildren = searchParams?.r === "1";
+
   return (
     <InviteClient
       guest={guest}
       slug={params.slug}
+      noChildren={noChildren}
     />
   );
 }

@@ -51,6 +51,7 @@ export function buildWhatsAppText(g: GuestInfo, url: string): string {
 interface Props {
   guest: GuestInfo;
   slug:  string;
+  noChildren?: boolean;
 }
 
 type RSVPStatus = "idle" | "loading" | "success" | "error";
@@ -440,7 +441,7 @@ function GallerySection() {
   );
 }
 
-export default function InviteClient({ guest, slug }: Props) {
+export default function InviteClient({ guest, slug, noChildren = false }: Props) {
   const { days, hours, minutes, seconds, ready } = useCountdown(W.weddingDate);
   const [mesa, setMesa] = useState<string | null>(null);
   const [pago, setPago] = useState(false);
@@ -521,7 +522,7 @@ export default function InviteClient({ guest, slug }: Props) {
     setRsvpStatus("loading");
     try {
       const adults = countAdults(guest);
-      const hijos  = parseInt(form.hijos) || 0;
+      const hijos  = noChildren ? 0 : parseInt(form.hijos) || 0;
       const res = await fetch("/api/rsvp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -1288,7 +1289,7 @@ export default function InviteClient({ guest, slug }: Props) {
                 )}
 
                 {/* Hijos */}
-                {form.asistencia === "Si" && (
+                {form.asistencia === "Si" && !noChildren && (
                   <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} style={{ overflow: "hidden" }}>
                     <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
                       <div>
@@ -1377,6 +1378,7 @@ export default function InviteClient({ guest, slug }: Props) {
                   </p>
 
                   {/* Hijos */}
+                  {!noChildren && (
                   <div style={{ marginBottom: "0.75rem" }}>
                     <p style={{ fontFamily: "var(--font-jost)", fontSize: "0.55rem", letterSpacing: "0.16em", textTransform: "uppercase", color: "rgba(181,137,78,0.4)", marginBottom: "0.4rem" }}>
                       Hijos que {isPair ? "traen" : "traés"}
@@ -1389,6 +1391,7 @@ export default function InviteClient({ guest, slug }: Props) {
                       <option value="3">3 o más</option>
                     </select>
                   </div>
+                  )}
 
                   {/* Restricciones */}
                   <div style={{ marginBottom: "0.75rem" }}>

@@ -5,9 +5,9 @@ import { W } from "@/lib/config";
 import Link from "next/link";
 import { type GuestInfo, displayFullNames } from "@/app/invite/[slug]/InviteClient";
 
-interface Props { slug: string; guest: GuestInfo; }
+interface Props { slug: string; guest: GuestInfo; noChildren?: boolean; }
 
-export default function PrintCard({ slug, guest }: Props) {
+export default function PrintCard({ slug, guest, noChildren = false }: Props) {
   const fullName = displayFullNames(guest);
   const first    = guest.nombre2
     ? `${guest.nombre} y ${guest.nombre2}`
@@ -31,8 +31,9 @@ export default function PrintCard({ slug, guest }: Props) {
   }, [shareOpen]);
 
   useEffect(() => {
-    const origin = window.location.origin;
-    const url    = `${origin}/invite/${slug}`;
+    const origin  = window.location.origin;
+    const qs      = noChildren ? "?r=1" : "";
+    const url     = `${origin}/invite/${slug}${qs}`;
     setPageUrl(url);
     setQrSrc(
       `https://api.qrserver.com/v1/create-qr-code/?size=240x240` +
@@ -45,7 +46,7 @@ export default function PrintCard({ slug, guest }: Props) {
     s.src = "https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js";
     s.onload = () => setH2cLoaded(true);
     document.head.appendChild(s);
-  }, [slug]);
+  }, [slug, noChildren]);
 
   // ── Auto-action from URL params (Compartir dropdown in /admin) ──
   useEffect(() => {
@@ -186,7 +187,7 @@ export default function PrintCard({ slug, guest }: Props) {
             width: "100%",
           }}>
             <Link
-              href={`/invite/${slug}`}
+              href={`/invite/${slug}${noChildren ? "?r=1" : ""}`}
               style={{
                 display: "flex",
                 alignItems: "center",
@@ -696,9 +697,10 @@ function InviteGenerator() {
   const [apellido, setApellido] = useState("");
   const [nombre2,   setNombre2]   = useState("");
   const [apellido2, setApellido2] = useState("");
-  const [list,     setList]     = useState<Array<{ name: string; url: string; print: string; wa: string }>>([]);
+  const [list,     setList]     = useState<Array<{ name: string; url: string; print: string; wa: string; sinHijos: boolean }>>([]);
   const [copied,   setCopied]   = useState<number | null>(null);
   const [origin,   setOrigin]   = useState<string>(W.baseUrl);
+  const [sinHijos, setSinHijos] = useState(false);
 
   useEffect(() => { setOrigin(window.location.origin); }, []);
 
@@ -732,6 +734,7 @@ function InviteGenerator() {
 
     if (n2) params.set("nombre2", n2);
     if (a2) params.set("apellido2", a2);
+    if (sinHijos) params.set("r", "1");
 
     const inviteUrl = `${origin}/invite/${slug}?${params}`;
     const printUrl  = `${origin}/print?slug=${slug}&${params}`;
@@ -740,7 +743,7 @@ function InviteGenerator() {
       : `¡Hola ${n}! 💍 Te mando tu invitación al casamiento de ${W.bride} y ${W.groom}\n\n📅 ${W.weddingDateLabel} · ${W.location}\n\n${inviteUrl}`;
     const wa = `https://wa.me/?text=${encodeURIComponent(waText)}`;
 
-    setList(l => [{ name: label, url: printUrl, print: printUrl, wa }, ...l]);
+    setList(l => [{ name: label, url: printUrl, print: printUrl, wa, sinHijos }, ...l]);
     setNombre(""); setApellido(""); setNombre2(""); setApellido2("");
   }
 
@@ -782,6 +785,14 @@ function InviteGenerator() {
           style={{ flex: 1, background: "var(--c-base)", border: "1px solid var(--c-border)", padding: "0.75rem 1rem", fontFamily: "var(--font-jost)", fontSize: "0.88rem", color: "var(--c-text-1)", outline: "none", opacity: 0.75 }} />
       </div>
 
+      <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "1rem" }}>
+        <label style={{ display: "flex", alignItems: "center", gap: "0.4rem", cursor: "pointer", fontFamily: "var(--font-jost)", fontSize: "0.72rem", color: "var(--c-text-2)", userSelect: "none" }}>
+          <input type="checkbox" checked={sinHijos} onChange={e => setSinHijos(e.target.checked)}
+            style={{ accentColor: "var(--c-wine)", width: "0.9rem", height: "0.9rem", cursor: "pointer" }} />
+          Sin hijos
+        </label>
+      </div>
+
       <button onClick={generate} disabled={!nombre.trim()}
         style={{ width: "100%", background: "var(--c-wine)", border: "none", padding: "0.85rem 1.25rem", fontFamily: "var(--font-jost)", fontSize: "0.62rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "white", cursor: nombre.trim() ? "pointer" : "not-allowed", opacity: nombre.trim() ? 1 : 0.4, transition: "opacity 0.2s", marginBottom: "1.25rem" }}>
         Generar invitación
@@ -794,7 +805,14 @@ function InviteGenerator() {
               initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
               style={{ display: "flex", alignItems: "center", gap: "0.75rem", padding: "0.85rem 1rem", background: "var(--c-base)", border: "1px solid var(--c-border)" }}>
               <div style={{ flex: 1, minWidth: 0 }}>
-                <p style={{ fontFamily: "var(--font-jost)", fontSize: "0.85rem", color: "var(--c-text-1)", fontWeight: 400, marginBottom: "0.1rem" }}>{item.name}</p>
+                <p style={{ fontFamily: "var(--font-jost)", fontSize: "0.85rem", color: "var(--c-text-1)", fontWeight: 400, marginBottom: "0.1rem" }}>
+                  {item.name}
+                  {item.sinHijos && (
+                    <span style={{ display: "inline-block", marginLeft: "0.4rem", fontSize: "0.55rem", fontFamily: "var(--font-jost)", letterSpacing: "0.08em", color: "var(--c-text-3)", border: "1px solid var(--c-border)", borderRadius: "2px", padding: "0.05rem 0.4rem", verticalAlign: "middle" }}>
+                      Sin hijos
+                    </span>
+                  )}
+                </p>
                 <p style={{ fontFamily: "monospace", fontSize: "0.62rem", color: "var(--c-text-3)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{item.url}</p>
               </div>
               <div style={{ display: "flex", gap: "0.4rem", flexShrink: 0 }}>
