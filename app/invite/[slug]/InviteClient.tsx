@@ -936,128 +936,167 @@ export default function InviteClient({ guest, slug, noChildren = false }: Props)
                   </span>
                 </button>
               )}
-            {/* Quick actions */}
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(3, 1fr)",
-              gap: "0.65rem",
-              marginTop: "0.25rem",
-            }}
-          >
-            {/* Compartir */}
-            <a
-            href={`https://wa.me/${W.whatsapp}?text=${encodeURIComponent(
-              `Hola! Tengo una consulta sobre el casamiento`
-            )}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: "0.45rem",
-              padding: "0.95rem 0.6rem",
-              background: "rgba(37,211,102,0.08)",
-              border: "1px solid rgba(37,211,102,0.22)",
-              textDecoration: "none",
-              transition: "all .2s ease",
-            }}
-          >
-            <span style={{ fontSize: "1.05rem" }}>💬</span>
-
-            <span
+            {/* Quick actions: Contacto + Ubicación */}
+            <div
               style={{
-                fontFamily: "var(--font-jost)",
-                fontSize: "0.5rem",
-                letterSpacing: "0.16em",
-                textTransform: "uppercase",
-                color: "#63df83",
-                textAlign: "center",
-                lineHeight: 1.4,
+                display: "grid",
+                gridTemplateColumns: "repeat(2, 1fr)",
+                gap: "0.65rem",
               }}
             >
-              Contacto
-            </span>
-          </a>
+              <a
+                href={`https://wa.me/${W.whatsapp}?text=${encodeURIComponent(
+                  `Hola! Tengo una consulta sobre el casamiento`
+                )}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: "0.4rem",
+                  padding: "0.85rem 0.6rem",
+                  background: "rgba(37,211,102,0.08)",
+                  border: "1px solid rgba(37,211,102,0.22)",
+                  textDecoration: "none",
+                  transition: "all .2s ease",
+                }}
+              >
+                <span style={{ fontSize: "1.05rem" }}>💬</span>
+                <span
+                  style={{
+                    fontFamily: "var(--font-jost)",
+                    fontSize: "0.5rem",
+                    letterSpacing: "0.16em",
+                    textTransform: "uppercase",
+                    color: "#63df83",
+                    textAlign: "center",
+                    lineHeight: 1.4,
+                  }}
+                >
+                  WhatsApp
+                </span>
+              </a>
 
-            {/* Calendario */}
+              <a
+                href={W.reception.mapsUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: "0.4rem",
+                  padding: "0.85rem 0.6rem",
+                  background: "rgba(255,255,255,0.03)",
+                  border: "1px solid rgba(181,137,78,0.14)",
+                  textDecoration: "none",
+                  transition: "all .2s ease",
+                }}
+              >
+                <span style={{ fontSize: "1.05rem" }}>📍</span>
+                <span
+                  style={{
+                    fontFamily: "var(--font-jost)",
+                    fontSize: "0.5rem",
+                    letterSpacing: "0.16em",
+                    textTransform: "uppercase",
+                    color: "rgba(238,226,210,0.78)",
+                    textAlign: "center",
+                    lineHeight: 1.4,
+                  }}
+                >
+                  Ubicación
+                </span>
+              </a>
+            </div>
+
+            {/* Explorar — card destacado */}
             <a
-              href={`https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(
-                `Casamiento ${W.bride} & ${W.groom}`
-              )}&dates=20261018T003000Z/20261018T090000Z&location=${encodeURIComponent(
-                W.location
-              )}&details=${encodeURIComponent(
-                "Ceremonia 18hs · Fiesta 20:30hs"
-              )}`}
-              target="_blank"
-              rel="noopener noreferrer"
+              href="/"
               style={{
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "center",
-                justifyContent: "center",
-                gap: "0.45rem",
-                padding: "0.95rem 0.6rem",
-                background: "rgba(181,137,78,0.06)",
-                border: "1px solid rgba(181,137,78,0.16)",
+                gap: "0.2rem",
+                padding: "0.85rem 1.15rem",
+                background: "linear-gradient(135deg, rgba(181,137,78,0.12), rgba(181,137,78,0.04))",
+                border: "1px solid rgba(181,137,78,0.28)",
+                borderLeft: "4px solid var(--c-gold)",
                 textDecoration: "none",
-                transition: "all .2s ease",
+                transition: "all .25s ease",
               }}
             >
-              <span style={{ fontSize: "1.05rem" }}>📅</span>
-
-              <span
-                style={{
+              <span style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "0.3rem" }}>
+                <span style={{ fontSize: "1rem", lineHeight: 1 }}>💌</span>
+                <span style={{
                   fontFamily: "var(--font-jost)",
-                  fontSize: "0.5rem",
-                  letterSpacing: "0.16em",
+                  fontSize: "0.72rem",
+                  letterSpacing: "0.08em",
                   textTransform: "uppercase",
                   color: "var(--c-gold-lt)",
-                  textAlign: "center",
-                  lineHeight: 1.4,
-                }}
-              >
-                Agregar a Calendario
+                  fontWeight: 500,
+                  lineHeight: 1.3,
+                }}>
+                  Página principal
+                </span>
+              </span>
+              <span style={{
+                fontFamily: "var(--font-jost)",
+                fontSize: "0.6rem",
+                letterSpacing: "0.05em",
+                color: "rgba(154,128,104,0.6)",
+                lineHeight: 1.3,
+                textAlign: "center",
+              }}>
+                Mirá la página completa, con info, historia, fotos y detalles &nbsp;→
               </span>
             </a>
 
-            {/* Ubicación */}
+            {/* Lista de regalos — card destacado */}
             <a
-              href={W.reception.mapsUrl}
-              target="_blank"
-              rel="noopener noreferrer"
+              href="/gifts"
               style={{
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "center",
-                justifyContent: "center",
-                gap: "0.45rem",
-                padding: "0.95rem 0.6rem",
-                background: "rgba(255,255,255,0.03)",
-                border: "1px solid rgba(181,137,78,0.14)",
+                gap: "0.2rem",
+                padding: "0.85rem 1.15rem",
+                background: "linear-gradient(135deg, rgba(181,137,78,0.08), rgba(181,137,78,0.03))",
+                border: "1px solid rgba(181,137,78,0.22)",
+                borderLeft: "4px solid var(--c-gold-lt)",
                 textDecoration: "none",
-                transition: "all .2s ease",
+                transition: "all .25s ease",
               }}
             >
-              <span style={{ fontSize: "1.05rem" }}>📍</span>
-
-              <span
-                style={{
+              <span style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "0.3rem" }}>
+                <span style={{ fontSize: "1rem", lineHeight: 1 }}>🎁</span>
+                <span style={{
                   fontFamily: "var(--font-jost)",
-                  fontSize: "0.5rem",
-                  letterSpacing: "0.16em",
+                  fontSize: "0.72rem",
+                  letterSpacing: "0.08em",
                   textTransform: "uppercase",
-                  color: "rgba(238,226,210,0.78)",
-                  textAlign: "center",
-                  lineHeight: 1.4,
-                }}
-              >
-                Ubicación
+                  color: "var(--c-gold-lt)",
+                  fontWeight: 500,
+                  lineHeight: 1.3,
+                }}>
+                  Lista de regalos
+                </span>
+              </span>
+              <span style={{
+                fontFamily: "var(--font-jost)",
+                fontSize: "0.6rem",
+                letterSpacing: "0.05em",
+                color: "rgba(154,128,104,0.6)",
+                lineHeight: 1.3,
+                textAlign: "center",
+              }}>
+                Elegí tu regalo para la fiesta &nbsp;→
               </span>
             </a>
-          </div>
+
           </motion.div>
 
           {/* Scroll hint */}
@@ -1082,14 +1121,26 @@ export default function InviteClient({ guest, slug, noChildren = false }: Props)
               { type: "Recepción & Fiesta", name: W.reception.name, time: W.reception.time, note: W.reception.cocktail, addr: W.reception.address, url: W.reception.mapsUrl },
             ].map((ev, i) => (
               <div key={i} style={{ padding: "1.25rem 1.5rem", background: "rgba(255,255,255,0.04)", border: "1px solid rgba(181,137,78,0.14)", borderLeft: "2px solid var(--c-wine)" }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "0.75rem" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "0.75rem" }}>
                   <p style={{ fontFamily: "var(--font-jost)", fontSize: "0.56rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(181,137,78,0.45)" }}>{ev.type}</p>
                   <a href={ev.url} target="_blank" rel="noopener noreferrer"
                     style={{ fontFamily: "var(--font-jost)", fontSize: "0.56rem", letterSpacing: "0.15em", textTransform: "uppercase", color: "var(--c-gold)", borderBottom: "1px solid var(--c-gold)", paddingBottom: "1px", textDecoration: "none" }}>
                     Ver mapa →
                   </a>
                 </div>
-                <p style={{ fontFamily: "var(--font-playfair)", fontStyle: "italic", fontSize: "1.1rem", color: "var(--c-text-inv)", marginBottom: "0.35rem" }}>{ev.name}</p>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: "0.5rem" }}>
+                  <p style={{ fontFamily: "var(--font-playfair)", fontStyle: "italic", fontSize: "1.1rem", color: "var(--c-text-inv)", marginBottom: "0.35rem" }}>{ev.name}</p>
+                  {ev.type === "Recepción & Fiesta" && (
+                    <a
+                      href={`https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(`Casamiento ${W.bride} & ${W.groom}`)}&dates=20261018T003000Z/20261018T090000Z&location=${encodeURIComponent(W.location)}&details=${encodeURIComponent("Ceremonia 18hs · Fiesta 20:30hs")}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{ fontFamily: "var(--font-jost)", fontSize: "0.48rem", letterSpacing: "0.08em", color: "var(--c-gold-lt)", borderBottom: "1px solid rgba(181,137,78,0.2)", paddingBottom: "1px", textDecoration: "none", whiteSpace: "nowrap", flexShrink: 0 }}
+                    >
+                      📅 Agregar a Calendario
+                    </a>
+                  )}
+                </div>
                 <p style={{ fontFamily: "var(--font-cormorant)", fontStyle: "italic", fontSize: "1.25rem", color: "var(--c-gold-lt)", marginBottom: "0.25rem" }}>{ev.time}</p>
                 <p style={{ fontFamily: "var(--font-jost)", fontSize: "0.72rem", color: "rgba(154,128,104,0.55)", fontWeight: 300, marginBottom: "0.2rem" }}>{ev.addr}</p>
                 <p style={{ fontFamily: "var(--font-jost)", fontSize: "0.68rem", color: "rgba(154,128,104,0.4)", fontWeight: 300 }}>{ev.note}</p>
