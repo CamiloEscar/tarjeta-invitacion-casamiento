@@ -192,19 +192,34 @@ export default function PrintCard({ slug, guest, noChildren = false }: Props) {
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                padding: "0.55rem 1rem",
-                background: "transparent",
-                border: "1px solid var(--c-border)",
+                gap: "0.55rem",
+                padding: "0.8rem 1.6rem",
+                background: "linear-gradient(135deg, rgba(181,137,78,0.22), rgba(181,137,78,0.08))",
+                border: "1px solid rgba(181,137,78,0.55)",
                 textDecoration: "none",
                 fontFamily: "var(--font-jost)",
-                fontSize: "0.58rem",
-                letterSpacing: "0.14em",
+                fontSize: "0.7rem",
+                letterSpacing: "0.2em",
                 textTransform: "uppercase",
-                color: "var(--c-text-3)",
-                maxWidth: 260,
+                color: "#1a0f08",
+                fontWeight: 400,
+                maxWidth: 340,
+                boxShadow: "0 2px 12px rgba(181,137,78,0.18), inset 0 1px 0 rgba(255,255,255,0.04)",
+                transition: "all .3s ease",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = "linear-gradient(135deg, rgba(181,137,78,0.32), rgba(181,137,78,0.14))";
+                e.currentTarget.style.boxShadow = "0 4px 18px rgba(181,137,78,0.28), inset 0 1px 0 rgba(255,255,255,0.06)";
+                e.currentTarget.style.transform = "translateY(-1px)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = "linear-gradient(135deg, rgba(181,137,78,0.22), rgba(181,137,78,0.08))";
+                e.currentTarget.style.boxShadow = "0 2px 12px rgba(181,137,78,0.18), inset 0 1px 0 rgba(255,255,255,0.04)";
+                e.currentTarget.style.transform = "translateY(0)";
               }}
             >
-              ✨ Ver invitación completa
+              <span style={{ fontSize: "0.9rem", lineHeight: 1 }}>✨</span>
+              <span>Ver invitación completa</span>
             </Link>
 
             {/* ── Share dropdown ── */}

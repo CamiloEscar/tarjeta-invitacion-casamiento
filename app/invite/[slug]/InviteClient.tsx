@@ -1021,41 +1021,53 @@ export default function InviteClient({ guest, slug, noChildren = false }: Props)
                 flexDirection: "column",
                 alignItems: "center",
                 gap: "0.2rem",
-                padding: "0.85rem 1.15rem",
-                background: "linear-gradient(135deg, rgba(181,137,78,0.12), rgba(181,137,78,0.04))",
-                border: "1px solid rgba(181,137,78,0.28)",
+                padding: "0.95rem 1.25rem",
+                background: "linear-gradient(135deg, rgba(181,137,78,0.2), rgba(181,137,78,0.07))",
+                border: "1px solid rgba(181,137,78,0.45)",
                 borderLeft: "4px solid var(--c-gold)",
                 textDecoration: "none",
-                transition: "all .25s ease",
+                boxShadow: "0 2px 14px rgba(181,137,78,0.16), inset 0 1px 0 rgba(255,255,255,0.04)",
+                transition: "all .3s ease",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = "linear-gradient(135deg, rgba(181,137,78,0.3), rgba(181,137,78,0.12))";
+                e.currentTarget.style.boxShadow = "0 6px 22px rgba(181,137,78,0.28), inset 0 1px 0 rgba(255,255,255,0.06)";
+                e.currentTarget.style.transform = "translateY(-2px)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = "linear-gradient(135deg, rgba(181,137,78,0.2), rgba(181,137,78,0.07))";
+                e.currentTarget.style.boxShadow = "0 2px 14px rgba(181,137,78,0.16), inset 0 1px 0 rgba(255,255,255,0.04)";
+                e.currentTarget.style.transform = "translateY(0)";
               }}
             >
-              <span style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "0.3rem" }}>
-                <span style={{ fontSize: "1rem", lineHeight: 1 }}>💌</span>
+              <span style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "0.35rem" }}>
+                <span style={{ fontSize: "1.1rem", lineHeight: 1 }}>💌</span>
                 <span style={{
                   fontFamily: "var(--font-jost)",
-                  fontSize: "0.72rem",
-                  letterSpacing: "0.08em",
+                  fontSize: "0.78rem",
+                  letterSpacing: "0.12em",
                   textTransform: "uppercase",
                   color: "var(--c-gold-lt)",
-                  fontWeight: 500,
+                  fontWeight: 600,
                   lineHeight: 1.3,
                 }}>
-                  Página principal
+                  Ver invitación completa
                 </span>
               </span>
               <span style={{
                 fontFamily: "var(--font-jost)",
-                fontSize: "0.6rem",
-                letterSpacing: "0.05em",
-                color: "rgba(154,128,104,0.6)",
+                fontSize: "0.62rem",
+                letterSpacing: "0.06em",
+                color: "rgba(207,170,112,0.78)",
                 lineHeight: 1.3,
                 textAlign: "center",
+                fontWeight: 400,
               }}>
                 Mirá la página completa, con info, historia, fotos y detalles &nbsp;→
               </span>
             </a>
 
-            {/* Lista de regalos — card destacado */}
+            {/* Lista de regalos — card destacado (paleta wine) */}
             <a
               href="/gifts"
               style={{
@@ -1063,23 +1075,34 @@ export default function InviteClient({ guest, slug, noChildren = false }: Props)
                 flexDirection: "column",
                 alignItems: "center",
                 gap: "0.2rem",
-                padding: "0.85rem 1.15rem",
-                background: "linear-gradient(135deg, rgba(181,137,78,0.08), rgba(181,137,78,0.03))",
-                border: "1px solid rgba(181,137,78,0.22)",
-                borderLeft: "4px solid var(--c-gold-lt)",
+                padding: "0.95rem 1.25rem",
+                background: "linear-gradient(135deg, rgba(107,38,53,0.22), rgba(107,38,53,0.07))",
+                border: "1px solid rgba(138,51,71,0.45)",
+                borderLeft: "4px solid var(--c-wine-lt)",
                 textDecoration: "none",
-                transition: "all .25s ease",
+                boxShadow: "0 2px 14px rgba(107,38,53,0.2), inset 0 1px 0 rgba(255,255,255,0.04)",
+                transition: "all .3s ease",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = "linear-gradient(135deg, rgba(107,38,53,0.32), rgba(107,38,53,0.12))";
+                e.currentTarget.style.boxShadow = "0 6px 22px rgba(107,38,53,0.32), inset 0 1px 0 rgba(255,255,255,0.06)";
+                e.currentTarget.style.transform = "translateY(-2px)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = "linear-gradient(135deg, rgba(107,38,53,0.22), rgba(107,38,53,0.07))";
+                e.currentTarget.style.boxShadow = "0 2px 14px rgba(107,38,53,0.2), inset 0 1px 0 rgba(255,255,255,0.04)";
+                e.currentTarget.style.transform = "translateY(0)";
               }}
             >
-              <span style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "0.3rem" }}>
-                <span style={{ fontSize: "1rem", lineHeight: 1 }}>🎁</span>
+              <span style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "0.35rem" }}>
+                <span style={{ fontSize: "1.1rem", lineHeight: 1 }}>🎁</span>
                 <span style={{
                   fontFamily: "var(--font-jost)",
-                  fontSize: "0.72rem",
-                  letterSpacing: "0.08em",
+                  fontSize: "0.78rem",
+                  letterSpacing: "0.12em",
                   textTransform: "uppercase",
-                  color: "var(--c-gold-lt)",
-                  fontWeight: 500,
+                  color: "#D49AAB",
+                  fontWeight: 600,
                   lineHeight: 1.3,
                 }}>
                   Lista de regalos
@@ -1087,13 +1110,14 @@ export default function InviteClient({ guest, slug, noChildren = false }: Props)
               </span>
               <span style={{
                 fontFamily: "var(--font-jost)",
-                fontSize: "0.6rem",
-                letterSpacing: "0.05em",
-                color: "rgba(154,128,104,0.6)",
+                fontSize: "0.62rem",
+                letterSpacing: "0.06em",
+                color: "rgba(212,154,171,0.72)",
                 lineHeight: 1.3,
                 textAlign: "center",
+                fontWeight: 400,
               }}>
-                Elegí tu regalo para la fiesta &nbsp;→
+                Elegí tu regalo para nuestra fiesta &nbsp;→
               </span>
             </a>
 
