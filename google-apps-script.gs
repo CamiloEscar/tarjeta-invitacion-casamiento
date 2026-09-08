@@ -89,7 +89,7 @@ function doPost(e) {
     if (action === "rsvp")    { saveRSVP(data); notifyRSVP(data); return ok("Confirmación registrada"); }
     if (action === "updateRSVP") return updateRSVP(data);
     if (action === "updateFlags") return updateFlags(data);
-    if (action === "deleteGuest") return deleteGuest(data);
+    if (action === "deleteGuest") return deleteGuestBySlug(data);
     if (action === "toggleGift")  return toggleGift(data);
     if (action === "initGifts")   return initGifts(data);
     if (action === "addGift")     return addGift(data);
@@ -372,7 +372,7 @@ function updateFlags(data) {
   return err_("Invitado no encontrado");
 }
 
-function deleteGuest(data) {
+function deleteGuestBySlug(data) {
   const slug = (data.slug || "").trim();
 
   if (!slug) return err_("slug requerido");

@@ -15,6 +15,7 @@ interface GiftItem {
   emoji: string;
   url: string;
   reserved: boolean;
+  date?: string;
 }
 
 // ── GET ─────────────────────────────────────────────────
@@ -28,12 +29,13 @@ export async function GET() {
       const res = await fetch(`${AS}?action=getGifts`, { cache: "no-store" });
       if (res.ok) {
         const data = await res.json();
-        apiItems = (data.items ?? []).map((i: { name: string; emoji?: string; price?: string; url?: string; reserved: boolean }) => ({
+        apiItems = (data.items ?? []).map((i: { name: string; emoji?: string; price?: string; url?: string; reserved: boolean; date?: string }) => ({
           name: i.name,
           emoji: i.emoji || "",
           price: i.price || "",
           url: i.url || "",
           reserved: i.reserved,
+          date: i.date || "",
         }));
       }
     }
@@ -44,18 +46,19 @@ export async function GET() {
       apiItems = W.giftList.map((g) => ({ ...g, reserved: false }));
     }
 
-    // Merge: si GAS devuelve datos, GAS es source of truth (qué items existen)
-    // Config solo aporta metadata (emoji, price, url)
+    // Merge: Sheets es la única fuente para los campos del item; sin fallback a config.
+    // Los items custom del admin (solo en Sheets, no en W.giftList) entran tal cual.
+    // `reserved` y `date` siempre desde Sheets.
     let merged: GiftItem[] = [];
     if (apiItems.length > 0) {
       for (const a of apiItems) {
-        const configMatch = W.giftList.find((g) => g.name === a.name);
         merged.push({
           name: a.name,
-          emoji: configMatch?.emoji || a.emoji || "🎁",
-          price: configMatch?.price || a.price || "",
-          url: configMatch?.url || a.url || "",
+          emoji: a.emoji,
+          price: a.price,
+          url: a.url,
           reserved: a.reserved,
+          date: a.date || "",
         });
       }
     } else {

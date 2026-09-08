@@ -380,7 +380,7 @@ export default function GiftsPage() {
                                   "0.7")
                               }
                             >
-                              Ver producto →
+                              Ver producto (de ejemplo)
                             </a>
                           )}
                           {gift.reserved && (
