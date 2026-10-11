@@ -105,6 +105,28 @@ export default function GiftsPage() {
     W.giftList.map((g) => ({ ...g, reserved: false }))
   );
   const [loading, setLoading] = useState(true);
+  const [reserving, setReserving] = useState<string | null>(null);
+  const [error, setError] = useState("");
+
+  async function reserveGift(name: string) {
+    if (reserving) return;
+    setReserving(name);
+    setError("");
+    setGifts((prev) => prev.map((g) => (g.name === name ? { ...g, reserved: true } : g)));
+    try {
+      const res = await fetch("/api/gifts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, reserved: true }),
+      });
+      if (!res.ok) throw new Error();
+    } catch {
+      setGifts((prev) => prev.map((g) => (g.name === name ? { ...g, reserved: false } : g)));
+      setError("No se pudo reservar el regalo. Intentalo de nuevo.");
+    } finally {
+      setReserving(null);
+    }
+  }
 
   useEffect(() => {
     fetch("/api/gifts")
@@ -278,6 +300,22 @@ export default function GiftsPage() {
               </div>
             </div>
 
+            {error && (
+              <p
+                style={{
+                  fontFamily: "var(--font-jost)",
+                  fontSize: "0.72rem",
+                  color: "var(--c-wine-lt)",
+                  background: "rgba(107,38,53,0.12)",
+                  border: "1px solid rgba(107,38,53,0.3)",
+                  padding: "0.6rem 0.9rem",
+                  marginBottom: "1rem",
+                }}
+              >
+                {error}
+              </p>
+            )}
+
             <div className="flex flex-col gap-3">
               {gifts.map((gift, index) => (
                   <motion.div
@@ -397,31 +435,80 @@ export default function GiftsPage() {
                         </div>
                       </div>
 
-                    <div
-                      style={{
-                        padding:
-                          "0.38rem 0.65rem",
-                        background: gift.reserved
-                          ? "rgba(120,120,120,0.2)"
-                          : "rgba(181,137,78,0.08)",
-                        border: gift.reserved
-                          ? "1px solid rgba(120,120,120,0.3)"
-                          : "1px solid rgba(181,137,78,0.14)",
-                        fontFamily:
-                          "var(--font-jost)",
-                        fontSize: "0.54rem",
-                        letterSpacing: "0.14em",
-                        textTransform: "uppercase",
-                        color: gift.reserved
-                          ? "rgba(200,200,200,0.5)"
-                          : "var(--c-gold-lt)",
-                        flexShrink: 0,
-                      }}
-                    >
-                      {gift.reserved
-                        ? "Reservado"
-                        : "Disponible"}
-                    </div>
+                    {gift.reserved ? (
+                      <div
+                        style={{
+                          padding:
+                            "0.38rem 0.65rem",
+                          background:
+                            "rgba(120,120,120,0.2)",
+                          border:
+                            "1px solid rgba(120,120,120,0.3)",
+                          fontFamily:
+                            "var(--font-jost)",
+                          fontSize: "0.54rem",
+                          letterSpacing: "0.14em",
+                          textTransform: "uppercase",
+                          color:
+                            "rgba(200,200,200,0.5)",
+                          flexShrink: 0,
+                        }}
+                      >
+                        Reservado
+                      </div>
+                    ) : (
+                      <button
+                        onClick={() =>
+                          reserveGift(gift.name)
+                        }
+                        disabled={
+                          reserving === gift.name
+                        }
+                        style={{
+                          padding:
+                            "0.38rem 0.75rem",
+                          background:
+                            reserving === gift.name
+                              ? "rgba(181,137,78,0.16)"
+                              : "rgba(181,137,78,0.08)",
+                          border:
+                            "1px solid rgba(181,137,78,0.28)",
+                          fontFamily:
+                            "var(--font-jost)",
+                          fontSize: "0.54rem",
+                          letterSpacing: "0.14em",
+                          textTransform: "uppercase",
+                          color: "var(--c-gold-lt)",
+                          cursor:
+                            reserving === gift.name
+                              ? "wait"
+                              : "pointer",
+                          flexShrink: 0,
+                          transition:
+                            "background 0.2s, border-color 0.2s",
+                        }}
+                        onMouseEnter={(e) => {
+                          if (reserving !== gift.name) {
+                            e.currentTarget.style.background =
+                              "rgba(181,137,78,0.18)";
+                            e.currentTarget.style.borderColor =
+                              "rgba(181,137,78,0.5)";
+                          }
+                        }}
+                        onMouseLeave={(e) => {
+                          if (reserving !== gift.name) {
+                            e.currentTarget.style.background =
+                              "rgba(181,137,78,0.08)";
+                            e.currentTarget.style.borderColor =
+                              "rgba(181,137,78,0.28)";
+                          }
+                        }}
+                      >
+                        {reserving === gift.name
+                          ? "Reservando..."
+                          : "Reservar"}
+                      </button>
+                    )}
                   </motion.div>
               ))}
             </div>

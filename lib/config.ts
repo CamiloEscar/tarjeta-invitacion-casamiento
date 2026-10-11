@@ -18,7 +18,7 @@ export const W = {
   ceremony: {
     name:    "Centro Civico",
     address: "Bv. De los Constituyentes 52, Concepción del Uruguay (Terminal de omnibus)",
-    time:    "16/10/2026 10:00 hs",
+    time:    "16/10/2026 12:00 hs",
     note:    "",
     mapsUrl: "https://maps.app.goo.gl/yUB9QuVCkznjQtsF6",
   },
