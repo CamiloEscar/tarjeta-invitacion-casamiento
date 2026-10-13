@@ -17,10 +17,10 @@ export const W = {
 
   ceremony: {
     name:    "Centro Civico",
-    address: "Bv. De los Constituyentes 52, Concepción del Uruguay (Terminal de omnibus)",
+    address: "San Martín 697, Concepción del Uruguay (Municipalidad)",
     time:    "16/10/2026 12:00 hs",
     note:    "",
-    mapsUrl: "https://maps.app.goo.gl/yUB9QuVCkznjQtsF6",
+    mapsUrl: "https://maps.app.goo.gl/8pzp7ABtgVYoqgEd9",
   },
   reception: {
     name:     "Il Palatium",
